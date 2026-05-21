@@ -79,12 +79,12 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T16 | x      | API: POST /api/contact | I.api.contact |
 | T17 | x      | API: GET/POST /api/testimonials | I.api.testimonials,V9 |
 | T18 | x      | API: PUT/DELETE /api/testimonials/[id] | I.api.testimonials,V1 |
-| T19 | .      | Landing page: TopBar + Header sticky + Hero | V10,C7,C13 |
-| T20 | .      | Landing: featured properties grids (SALE, RENT, DEVELOPMENT) | V10,I.api.properties |
-| T21 | .      | Landing: testimonials carousel (APPROVED only) | V9,V10 |
-| T22 | .      | Landing: quick contact form (Comprar/Vender toggle) | I.api.contact |
-| T23 | .      | Landing: Footer | C7 |
-| T24 | .      | Landing: JSON-LD RealEstateAgent schema | — |
+| T19 | x      | Landing page: TopBar + Header sticky + Hero | V10,C7,C13 |
+| T20 | x      | Landing: featured properties grids (SALE, RENT, DEVELOPMENT) | V10,I.api.properties |
+| T21 | x      | Landing: testimonials carousel (APPROVED only) | V9,V10 |
+| T22 | x      | Landing: quick contact form (Comprar/Vender toggle) | I.api.contact |
+| T23 | x      | Landing: Footer | C7 |
+| T24 | x      | Landing: JSON-LD RealEstateAgent schema | — |
 | T25 | .      | Catalog /propiedades: Server Component + searchParams filters | V10,I.api.properties,C7 |
 | T26 | .      | Catalog: sidebar filters (contractType, category, city, price, bedrooms) | C7 |
 | T27 | .      | Catalog: search debounce 300ms + URL-reflected filters | C7 |
