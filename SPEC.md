@@ -96,14 +96,14 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T33 | x      | Detail: sticky WhatsApp button mobile + lateral contact form desktop | V11,C7 |
 | T34 | x      | Detail: review form (name, text, 1-5 stars) | I.api.testimonials |
 | T35 | x      | Detail: generateMetadata + JSON-LD RealEstateListing | — |
-| T36 | .      | Contact page /contacto: BUY form | I.api.contact,C8 |
-| T37 | .      | Contact page: SELL form with multi-file upload to contact-uploads | V8,V12,I.supabase.storage |
-| T38 | .      | Admin login /admin/login: Supabase Auth email+password | I.supabase.auth,V13 |
-| T39 | .      | Admin dashboard: 4 metric cards | I.api.properties |
-| T40 | .      | Admin properties list: table + inline toggles active/featured | V1,I.api.properties |
-| T41 | .      | Admin property form: full CRUD with image upload+reorder | V1,V4,I.supabase.storage |
-| T42 | .      | Admin leads list: table + status change + notes + photo modal | V1,I.api.contact |
-| T43 | .      | Admin testimonials: table + approve/reject/delete inline | V1,V9 |
+| T36 | x      | Contact page /contacto: BUY form | I.api.contact,C8 |
+| T37 | x      | Contact page: SELL form with multi-file upload to contact-uploads | V8,V12,I.supabase.storage |
+| T38 | x      | Admin login /admin/login: Supabase Auth email+password | I.supabase.auth,V13 |
+| T39 | x      | Admin dashboard: 4 metric cards | I.api.properties |
+| T40 | x      | Admin properties list: table + inline toggles active/featured | V1,I.api.properties |
+| T41 | x      | Admin property form: full CRUD with image upload+reorder | V1,V4,I.supabase.storage |
+| T42 | x      | Admin leads list: table + status change + notes + photo modal | V1,I.api.contact |
+| T43 | x      | Admin testimonials: table + approve/reject/delete inline | V1,V9 |
 | T44 | .      | MXN/USD toggle: Context provider wrapping catalog+detail | V5,C7 |
 | T45 | .      | robots.txt — block /admin/*, allow rest | — |
 | T46 | .      | sitemap.ts — dynamic, all active properties | I.sitemap |
