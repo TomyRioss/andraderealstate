@@ -1,0 +1,101 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Property {
+  id           String       @id @default(cuid())
+  title        String
+  slug         String       @unique
+  description  String
+  address      String
+  city         String
+  state        String
+  zipCode      String?
+  lat          Float?
+  lng          Float?
+  contractType ContractType
+  category     Category
+  priceMXN     Float?
+  priceVisible Boolean      @default(true)
+  bedrooms     Int?
+  bathrooms    Int?
+  halfBaths    Int?
+  parkingSpots Int?
+  areaSqm      Float?
+  landAreaSqm  Float?
+  floors       Int?
+  yearBuilt    Int?
+  photos       String[]
+  videoUrl     String?
+  whatsapp     String?
+  amenities    String[]
+  features     String[]
+  active       Boolean      @default(true)
+  featured     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model ContactForm {
+  id        String     @id @default(cuid())
+  type      FormType
+  name      String?
+  phone     String
+  email     String
+  address   String?
+  photos    String[]
+  status    LeadStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Testimonial {
+  id        String            @id @default(cuid())
+  author    String
+  location  String?
+  rating    Int
+  content   String
+  status    TestimonialStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+enum ContractType {
+  SALE
+  RENT
+  DEVELOPMENT
+}
+
+enum Category {
+  HOUSE
+  APARTMENT
+  LAND
+  COMMERCIAL
+  DEVELOPMENT_PROJECT
+  OTHER
+}
+
+enum FormType {
+  BUY
+  SELL
+}
+
+enum LeadStatus {
+  PENDING
+  CONTACTED
+  CLOSED
+  DISCARDED
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

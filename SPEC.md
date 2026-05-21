@@ -66,14 +66,14 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T3  | x      | Add Poppins font via next/font/google | C12 |
 | T4  | x      | Configure Tailwind v4 @theme tokens (colors, radius, shadows) | C2,C13 |
 | T5  | x      | Install shadcn/ui + configure | C4 |
-| T6  | .      | Write Prisma schema (Property, ContactForm, Testimonial + enums) | I.prisma,V2 |
-| T7  | .      | lib/prisma.ts singleton | V3 |
-| T8  | .      | lib/supabase/client.ts + server.ts | I.supabase.auth |
-| T9  | .      | lib/currency.ts formatPrice MXN/USD | V5 |
-| T10 | .      | lib/whatsapp.ts buildWhatsappLink | V11 |
-| T11 | .      | lib/validations/ Zod schemas (property, contact, testimonial) | C8 |
-| T12 | .      | types/index.ts — shared TS types | C1 |
-| T13 | .      | middleware.ts — Supabase session guard /admin/* | I.middleware,V1,V13 |
+| T6  | x      | Write Prisma schema (Property, ContactForm, Testimonial + enums) | I.prisma,V2 |
+| T7  | x      | lib/prisma.ts singleton | V3 |
+| T8  | x      | lib/supabase/client.ts + server.ts | I.supabase.auth |
+| T9  | x      | lib/currency.ts formatPrice MXN/USD | V5 |
+| T10 | x      | lib/whatsapp.ts buildWhatsappLink | V11 |
+| T11 | x      | lib/validations/ Zod schemas (property, contact, testimonial) | C8 |
+| T12 | x      | types/index.ts — shared TS types | C1 |
+| T13 | x      | middleware.ts — Supabase session guard /admin/* | I.middleware,V1,V13 |
 | T14 | .      | API: GET/POST /api/properties with filters+pagination | I.api.properties,V1 |
 | T15 | .      | API: GET/PUT/DELETE /api/properties/[id] | I.api.properties,V1 |
 | T16 | .      | API: POST /api/contact | I.api.contact |

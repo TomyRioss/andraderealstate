@@ -1,0 +1,34 @@
+import { z } from 'zod'
+
+export const propertySchema = z.object({
+  title: z.string().min(1),
+  slug: z.string().min(1),
+  description: z.string().min(1),
+  address: z.string().min(1),
+  city: z.string().min(1),
+  state: z.string().min(1),
+  zipCode: z.string().optional(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+  contractType: z.enum(['SALE', 'RENT', 'DEVELOPMENT']),
+  category: z.enum(['HOUSE', 'APARTMENT', 'LAND', 'COMMERCIAL', 'DEVELOPMENT_PROJECT', 'OTHER']),
+  priceMXN: z.number().optional(),
+  priceVisible: z.boolean().default(true),
+  bedrooms: z.number().optional(),
+  bathrooms: z.number().optional(),
+  halfBaths: z.number().optional(),
+  parkingSpots: z.number().optional(),
+  floors: z.number().optional(),
+  yearBuilt: z.number().optional(),
+  areaSqm: z.number().optional(),
+  landAreaSqm: z.number().optional(),
+  photos: z.array(z.string()).default([]),
+  videoUrl: z.string().optional(),
+  whatsapp: z.string().optional(),
+  amenities: z.array(z.string()).default([]),
+  features: z.array(z.string()).default([]),
+  active: z.boolean().default(true),
+  featured: z.boolean().default(false),
+})
+
+export type PropertyFormData = z.infer<typeof propertySchema>
