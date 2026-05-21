@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
 const navLinks = [
   { label: 'Inicio', href: '/' },
@@ -12,6 +13,7 @@ const navLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { currency, toggle } = useCurrency()
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
@@ -40,8 +42,9 @@ export default function Header() {
             variant="outline"
             size="sm"
             className="text-xs border-gray-300 text-gray-600 hover:text-[#1e3a5f]"
+            onClick={toggle}
           >
-            MXN | USD
+            {currency === 'MXN' ? 'MXN | USD' : 'USD | MXN'}
           </Button>
 
           {/* Hamburger */}

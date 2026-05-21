@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git branch *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(find app *)",
+      "Bash(dir /s /b /ad app components lib types)",
+      "Bash(npx shadcn@latest init --defaults)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npx prisma *)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(ls C:UsersPcDesktopandrade_realstatecomponentsproperties *)",
+      "Read(//mnt/c/Users/Pc/Desktop/andrade_realstate/lib/**)",
+      "Read(//mnt/c/Users/Pc/Desktop/andrade_realstate/**)",
+      "Bash(dir \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\lib\\\\supabase\")",
+      "Bash(dir \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\")",
+      "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin *)",
+      "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin\\\\login *)"
+    ]
+  }
+}

@@ -104,11 +104,11 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T41 | x      | Admin property form: full CRUD with image upload+reorder | V1,V4,I.supabase.storage |
 | T42 | x      | Admin leads list: table + status change + notes + photo modal | V1,I.api.contact |
 | T43 | x      | Admin testimonials: table + approve/reject/delete inline | V1,V9 |
-| T44 | .      | MXN/USD toggle: Context provider wrapping catalog+detail | V5,C7 |
-| T45 | .      | robots.txt — block /admin/*, allow rest | — |
-| T46 | .      | sitemap.ts — dynamic, all active properties | I.sitemap |
-| T47 | .      | Performance QA: next/image sizes, Poppins font, lazy load catalog | C11,C12 |
-| T48 | .      | Responsive QA at 375·768·1024·1280px | C7 |
+| T44 | x      | MXN/USD toggle: Context provider wrapping catalog+detail | V5,C7 |
+| T45 | x      | robots.txt — block /admin/*, allow rest | — |
+| T46 | x      | sitemap.ts — dynamic, all active properties | I.sitemap |
+| T47 | x      | Performance QA: next/image sizes, Poppins font, lazy load catalog | C11,C12 |
+| T48 | x      | Responsive QA at 375·768·1024·1280px | C7 |
 
 ---
 

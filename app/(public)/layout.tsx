@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
+import { CurrencyProvider } from '@/lib/contexts/CurrencyContext'
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>
+  return <CurrencyProvider>{children}</CurrencyProvider>
 }

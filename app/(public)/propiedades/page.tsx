@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import PropertyCard from '@/components/properties/PropertyCard'
 import PropertyFilters from '@/components/properties/PropertyFilters'
 import Pagination from '@/components/properties/Pagination'
