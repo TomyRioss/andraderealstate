@@ -74,11 +74,11 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T11 | x      | lib/validations/ Zod schemas (property, contact, testimonial) | C8 |
 | T12 | x      | types/index.ts — shared TS types | C1 |
 | T13 | x      | middleware.ts — Supabase session guard /admin/* | I.middleware,V1,V13 |
-| T14 | .      | API: GET/POST /api/properties with filters+pagination | I.api.properties,V1 |
-| T15 | .      | API: GET/PUT/DELETE /api/properties/[id] | I.api.properties,V1 |
-| T16 | .      | API: POST /api/contact | I.api.contact |
-| T17 | .      | API: GET/POST /api/testimonials | I.api.testimonials,V9 |
-| T18 | .      | API: PUT/DELETE /api/testimonials/[id] | I.api.testimonials,V1 |
+| T14 | x      | API: GET/POST /api/properties with filters+pagination | I.api.properties,V1 |
+| T15 | x      | API: GET/PUT/DELETE /api/properties/[id] | I.api.properties,V1 |
+| T16 | x      | API: POST /api/contact | I.api.contact |
+| T17 | x      | API: GET/POST /api/testimonials | I.api.testimonials,V9 |
+| T18 | x      | API: PUT/DELETE /api/testimonials/[id] | I.api.testimonials,V1 |
 | T19 | .      | Landing page: TopBar + Header sticky + Hero | V10,C7,C13 |
 | T20 | .      | Landing: featured properties grids (SALE, RENT, DEVELOPMENT) | V10,I.api.properties |
 | T21 | .      | Landing: testimonials carousel (APPROVED only) | V9,V10 |
