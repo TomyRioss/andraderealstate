@@ -5,21 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Brand colors (non-conflicting with shadcn tokens) */
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --color-primary-dark: #0f4c5c;
   --color-dark: #0f172a;
   --color-light: #f8f9ff;
-
-  /* Font */
-  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-
-  /* Border radius */
   --radius-pill: 50px;
-  --radius-card: 12px;
-  --radius-card-lg: 16px;
-
-  /* Shadows */
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --radius-card: 14px;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.16);
 }
 
 @theme inline {
@@ -145,5 +138,6 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
 }

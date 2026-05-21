@@ -1,17 +1,16 @@
 export default function TopBar() {
   return (
-    <div className="bg-[#0f172a] text-white text-xs py-2 px-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span>55 1234 5678</span>
-          <span className="hidden sm:inline text-gray-400">|</span>
-          <span className="hidden sm:inline text-gray-300">contacto@andraderealestate.com</span>
+    <div className="bg-[#1e3a5f] text-white text-xs">
+      <div className="max-w-7xl mx-auto px-6 h-9 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <span>📞 +52 55 1234 5678</span>
+          <span className="hidden md:inline">✉ contacto@andraderealestate.mx</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-300">
+        <div className="hidden md:flex items-center gap-3 text-white/80">
           <a href="#" className="hover:text-white transition-colors">Facebook</a>
-          <span>·</span>
+          <span className="text-white/40">·</span>
           <a href="#" className="hover:text-white transition-colors">Instagram</a>
-          <span>·</span>
+          <span className="text-white/40">·</span>
           <a href="#" className="hover:text-white transition-colors">WhatsApp</a>
         </div>
       </div>

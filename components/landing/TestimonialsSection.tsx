@@ -10,30 +10,41 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
   if (testimonials.length === 0) return null
 
   return (
-    <section className="py-12 px-4 md:px-8 bg-[#f8f9ff]">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl md:text-3xl font-bold text-[#0f172a] mb-8 font-sans text-center">
-          Lo que dicen nuestros clientes
-        </h2>
-        <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
-          {testimonials.map((t) => (
-            <div
-              key={t.id}
-              className="min-w-[280px] md:min-w-0 snap-start bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex flex-col gap-3"
-            >
-              <div className="text-[#10b981] text-lg tracking-wide">
-                {'★'.repeat(Math.max(0, Math.min(5, t.rating)))}
-                {'☆'.repeat(Math.max(0, 5 - Math.min(5, t.rating)))}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed flex-1">"{t.content}"</p>
-              <div>
-                <p className="font-semibold text-[#0f172a] text-sm">{t.author}</p>
-                {t.location && (
-                  <p className="text-xs text-gray-400">{t.location}</p>
+    <section className="py-20 bg-[#1e3a5f]">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <div className="mb-12">
+          <p className="text-[#10b981] text-xs font-bold uppercase tracking-[0.15em] mb-2">
+            Testimonios
+          </p>
+          <h2 className="text-3xl md:text-4xl font-black text-white">
+            Lo que dicen nuestros clientes
+          </h2>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimonials.map((t) => {
+            const rating = Math.max(0, Math.min(5, t.rating))
+            return (
+              <div
+                key={t.id}
+                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+              >
+                <div>
+                  <span className="text-[#10b981]">{'★'.repeat(rating)}</span>
+                  <span className="text-white/20">{'★'.repeat(5 - rating)}</span>
+                </div>
+                <p className="text-white/90 text-sm leading-relaxed mt-3 mb-4">
+                  &ldquo;{t.content}&rdquo;
+                </p>
+                <p className="text-white font-bold text-sm">{t.author}</p>
+                {t.location != null && (
+                  <p className="text-white/50 text-xs">{t.location}</p>
                 )}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

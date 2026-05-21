@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
 const navLinks = [
@@ -16,56 +15,50 @@ export default function Header() {
   const { currency, toggle } = useCurrency()
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="font-bold text-[#1e3a5f] text-lg tracking-tight">
-          Andrade Real Estate
+    <header className="sticky top-0 z-50 bg-white border-b border-[#e5e7eb] shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="flex flex-col leading-none">
+          <span className="font-black text-[#1e3a5f] text-xl tracking-widest">ANDRADE</span>
+          <span className="font-light text-[#1e3a5f] text-sm tracking-wide">Real Estate</span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-gray-700 hover:text-[#1e3a5f] font-medium transition-colors"
+              className="text-sm font-medium text-[#374151] hover:text-[#1e3a5f] border-b-2 border-transparent hover:border-[#10b981] pb-0.5 transition-colors"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        {/* Right side */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-xs border-gray-300 text-gray-600 hover:text-[#1e3a5f]"
-            onClick={toggle}
-          >
-            {currency === 'MXN' ? 'MXN | USD' : 'USD | MXN'}
-          </Button>
-
-          {/* Hamburger */}
           <button
-            className="md:hidden text-xl text-[#1e3a5f] leading-none"
+            onClick={toggle}
+            className="rounded-full border border-[#1e3a5f] text-[#1e3a5f] text-xs px-4 py-1.5 font-semibold hover:bg-[#1e3a5f] hover:text-white transition-colors"
+          >
+            {currency === 'MXN' ? 'MXN' : 'USD'}
+          </button>
+
+          <button
+            className="md:hidden text-[#1e3a5f] text-xl leading-none"
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="Menu"
           >
-            {menuOpen ? 'X' : '☰'}
+            {menuOpen ? '✕' : '☰'}
           </button>
         </div>
       </div>
 
-      {/* Mobile nav */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 flex flex-col gap-3">
+        <div className="md:hidden bg-white border-t border-[#e5e7eb] px-6 py-4 flex flex-col gap-4">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-gray-700 hover:text-[#1e3a5f] font-medium py-1"
+              className="text-sm font-medium text-[#374151] hover:text-[#1e3a5f] transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
