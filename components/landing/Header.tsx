@@ -2,67 +2,174 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
-const navLinks = [
+interface NavChild { label: string; href: string }
+interface NavItem { label: string; href: string; children?: NavChild[] }
+
+const navItems: NavItem[] = [
   { label: 'Inicio', href: '/' },
-  { label: 'Propiedades', href: '/propiedades' },
+  {
+    label: 'Venta',
+    href: '/propiedades/venta',
+    children: [
+      { label: 'Casas', href: '/propiedades/venta/casas' },
+      { label: 'Departamentos', href: '/propiedades/venta/departamentos' },
+      { label: 'Terrenos', href: '/propiedades/venta/terrenos' },
+    ],
+  },
+  {
+    label: 'Renta',
+    href: '/propiedades/renta',
+    children: [
+      { label: 'Casas', href: '/propiedades/renta/casas' },
+      { label: 'Departamentos', href: '/propiedades/renta/departamentos' },
+      { label: 'Oficinas', href: '/propiedades/renta/oficinas' },
+    ],
+  },
+  { label: 'Desarrollos', href: '/propiedades/desarrollos' },
   { label: 'Contacto', href: '/contacto' },
 ]
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const { currency, toggle } = useCurrency()
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#e5e7eb] shadow-sm">
+    <header className="sticky top-0 z-50 bg-[#18140D]/95 backdrop-blur-sm border-b border-[#2E2820]">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex flex-col leading-none">
-          <span className="font-black text-[#1e3a5f] text-xl tracking-widest">ANDRADE</span>
-          <span className="font-light text-[#1e3a5f] text-sm tracking-wide">Real Estate</span>
+        {/* Logo */}
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/andrade_realstate_logo.png"
+            alt="Andrade & Co Real Estate"
+            width={260}
+            height={80}
+            className="h-16 w-auto"
+            style={{ filter: 'brightness(0) invert(1)' }}
+            priority
+          />
         </Link>
 
+        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-[#374151] hover:text-[#1e3a5f] border-b-2 border-transparent hover:border-[#10b981] pb-0.5 transition-colors"
+          {navItems.map((item) => (
+            <div
+              key={item.href}
+              className="relative group"
+              onMouseEnter={() => item.children && setOpenDropdown(item.label)}
+              onMouseLeave={() => setOpenDropdown(null)}
             >
-              {link.label}
-            </Link>
+              <Link
+                href={item.href}
+                className="flex items-center gap-1 text-base font-normal text-[#D4C8B8] hover:text-[#B07030] hover:underline underline-offset-4 transition-colors tracking-wide py-1"
+              >
+                {item.label}
+                {item.children && (
+                  <svg
+                    width="10" height="6" viewBox="0 0 10 6" fill="none"
+                    className={`transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''}`}
+                  >
+                    <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </Link>
+
+              {item.children && openDropdown === item.label && (
+                <div className="absolute top-full left-0 mt-1 w-44 bg-[#1E1910] border border-[#2E2820] rounded-lg shadow-xl py-1 z-50">
+                  {item.children.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className="block px-4 py-2.5 text-sm text-[#C4B49E] hover:text-white hover:bg-[#2E2820] transition-colors"
+                      onClick={() => setOpenDropdown(null)}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </nav>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={toggle}
-            className="rounded-full border border-[#1e3a5f] text-[#1e3a5f] text-xs px-4 py-1.5 font-semibold hover:bg-[#1e3a5f] hover:text-white transition-colors"
-          >
-            {currency === 'MXN' ? 'MXN' : 'USD'}
-          </button>
+          {/* Currency toggle */}
+          <div className="flex flex-col items-center gap-0.5">
+            <span className="text-[9px] tracking-[0.2em] uppercase text-[#A89880] font-semibold">Moneda</span>
+            <button
+              onClick={toggle}
+              className="flex items-center rounded-full border border-[#3A3028] bg-[#1E1910] p-0.5"
+              aria-label="Cambiar moneda"
+            >
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold tracking-widest transition-all ${
+                currency === 'MXN' ? 'bg-[#B07030] text-white' : 'text-[#6B5E4E] hover:text-[#A89880]'
+              }`}>MXN</span>
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold tracking-widest transition-all ${
+                currency === 'USD' ? 'bg-[#B07030] text-white' : 'text-[#6B5E4E] hover:text-[#A89880]'
+              }`}>USD</span>
+            </button>
+          </div>
 
+          {/* Mobile hamburger */}
           <button
-            className="md:hidden text-[#1e3a5f] text-xl leading-none"
+            className="md:hidden text-[#D4C8B8] leading-none p-1"
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="Menu"
           >
-            {menuOpen ? '✕' : '☰'}
+            {menuOpen ? (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l16 16M17 1L1 17"/></svg>
+            ) : (
+              <svg width="20" height="14" viewBox="0 0 20 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M0 1h20M0 7h20M0 13h20"/></svg>
+            )}
           </button>
         </div>
       </div>
 
+      {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-[#e5e7eb] px-6 py-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-[#374151] hover:text-[#1e3a5f] transition-colors"
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
+        <div className="md:hidden bg-[#18140D] border-t border-[#2E2820] px-6 py-5 flex flex-col gap-1">
+          {navItems.map((item) => (
+            <div key={item.href}>
+              <div className="flex items-center justify-between">
+                <Link
+                  href={item.href}
+                  className="py-2.5 text-base font-normal text-[#D4C8B8] hover:text-[#B07030] transition-colors tracking-wide"
+                  onClick={() => { if (!item.children) setMenuOpen(false) }}
+                >
+                  {item.label}
+                </Link>
+                {item.children && (
+                  <button
+                    onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                    className="text-[#6B5E4E] hover:text-[#D4C8B8] p-2 transition-colors"
+                  >
+                    <svg
+                      width="10" height="6" viewBox="0 0 10 6" fill="none"
+                      className={`transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`}
+                    >
+                      <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {item.children && openDropdown === item.label && (
+                <div className="pl-4 pb-2 flex flex-col gap-0.5 border-l border-[#2E2820] ml-1">
+                  {item.children.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className="py-2 text-sm text-[#8C7B68] hover:text-[#D4C8B8] transition-colors"
+                      onClick={() => { setMenuOpen(false); setOpenDropdown(null) }}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

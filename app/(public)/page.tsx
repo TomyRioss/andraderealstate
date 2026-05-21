@@ -1,5 +1,3 @@
-import TopBar from '@/components/landing/TopBar'
-import Header from '@/components/landing/Header'
 import Hero from '@/components/landing/Hero'
 import PropertiesSection from '@/components/landing/PropertiesSection'
 import TestimonialsSection from '@/components/landing/TestimonialsSection'
@@ -45,8 +43,6 @@ export default async function LandingPage() {
   return (
     <>
       <JsonLd />
-      <TopBar />
-      <Header />
       <Hero />
       <PropertiesSection title="Propiedades en Venta" properties={saleProps} />
       <PropertiesSection title="Propiedades en Renta" properties={rentProps} />

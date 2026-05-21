@@ -10,38 +10,43 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
   if (testimonials.length === 0) return null
 
   return (
-    <section className="py-20 bg-[#1e3a5f]">
+    <section className="py-20 bg-[#18140D]">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Header */}
         <div className="mb-12">
-          <p className="text-[#10b981] text-xs font-bold uppercase tracking-[0.15em] mb-2">
-            Testimonios
-          </p>
-          <h2 className="text-3xl md:text-4xl font-black text-white">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-px w-8 bg-[#B07030]" />
+            <span className="text-[#B07030] text-xs tracking-[0.25em] uppercase font-medium">Testimonios</span>
+          </div>
+          <h2
+            className="text-4xl md:text-5xl text-white leading-tight"
+            style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
+          >
             Lo que dicen nuestros clientes
           </h2>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {testimonials.map((t) => {
             const rating = Math.max(0, Math.min(5, t.rating))
             return (
               <div
                 key={t.id}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+                className="bg-[#1E1910] rounded-xl p-6 border border-[#2E2820]"
               >
-                <div>
-                  <span className="text-[#10b981]">{'★'.repeat(rating)}</span>
-                  <span className="text-white/20">{'★'.repeat(5 - rating)}</span>
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} className={i < rating ? 'text-[#B07030]' : 'text-[#3A3028]'}>★</span>
+                  ))}
                 </div>
-                <p className="text-white/90 text-sm leading-relaxed mt-3 mb-4">
+                <p className="text-[#C8BCAE] text-sm leading-relaxed mb-5 font-light">
                   &ldquo;{t.content}&rdquo;
                 </p>
-                <p className="text-white font-bold text-sm">{t.author}</p>
-                {t.location != null && (
-                  <p className="text-white/50 text-xs">{t.location}</p>
-                )}
+                <div>
+                  <p className="text-white font-medium text-sm">{t.author}</p>
+                  {t.location != null && (
+                    <p className="text-[#6B5E4E] text-xs mt-0.5">{t.location}</p>
+                  )}
+                </div>
               </div>
             )
           })}

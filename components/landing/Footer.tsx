@@ -1,64 +1,55 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import { Globe, Camera, MessageCircle } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0f172a] text-white">
-      {/* Top section */}
+    <footer className="bg-[#18140D]">
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 
-          {/* Col 1 — Brand (spans 2 on lg) */}
-          <div className="lg:col-span-2 space-y-4">
-            <div>
-              <p className="font-black text-2xl tracking-widest text-white">ANDRADE</p>
-              <p className="font-light text-white/60 text-sm">Real Estate</p>
-            </div>
-            <p className="text-white/50 text-sm leading-relaxed max-w-xs">
+          <div className="lg:col-span-2 space-y-5">
+            <Image
+              src="/andrade_realstate_logo.png"
+              alt="Andrade & Co Real Estate"
+              width={180}
+              height={80}
+              className="brightness-[1.8]"
+            />
+            <p className="text-[#A89880] text-sm leading-relaxed max-w-xs font-light">
               Tu aliado de confianza en bienes raíces en México.
             </p>
-            <div className="flex gap-5 pt-2">
-              <a href="#" className="font-medium text-white/40 hover:text-white text-sm transition-colors">
-                Facebook
+            <div className="flex gap-5 pt-1">
+              <a href="#" aria-label="Facebook" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
+                <Globe size={18} />
               </a>
-              <a href="#" className="font-medium text-white/40 hover:text-white text-sm transition-colors">
-                Instagram
+              <a href="#" aria-label="Instagram" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
+                <Camera size={18} />
               </a>
-              <a href="#" className="font-medium text-white/40 hover:text-white text-sm transition-colors">
-                WhatsApp
+              <a href="#" aria-label="WhatsApp" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
+                <MessageCircle size={18} />
               </a>
             </div>
           </div>
 
-          {/* Col 2 — Propiedades */}
           <div className="space-y-4">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/60">Propiedades</p>
-            <nav className="flex flex-col gap-2 text-sm text-white/50">
-              <Link href="/propiedades?contractType=SALE" className="hover:text-white transition-colors">
-                Venta
-              </Link>
-              <Link href="/propiedades?contractType=RENT" className="hover:text-white transition-colors">
-                Renta
-              </Link>
-              <Link href="/propiedades?type=development" className="hover:text-white transition-colors">
-                Desarrollos
-              </Link>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8C7B68]">Propiedades</p>
+            <nav className="flex flex-col gap-2.5">
+              {[
+                { label: 'Venta', href: '/propiedades?contractType=SALE' },
+                { label: 'Renta', href: '/propiedades?contractType=RENT' },
+                { label: 'Desarrollos', href: '/propiedades?type=development' },
+              ].map((l) => (
+                <Link key={l.href} href={l.href} className="text-sm text-[#A89880] hover:text-[#D4B896] transition-colors">
+                  {l.label}
+                </Link>
+              ))}
             </nav>
           </div>
 
-          {/* Col 3 — Empresa */}
           <div className="space-y-4">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/60">Empresa</p>
-            <nav className="flex flex-col gap-2 text-sm text-white/50">
-              <Link href="/" className="hover:text-white transition-colors">Inicio</Link>
-              <Link href="/propiedades" className="hover:text-white transition-colors">Propiedades</Link>
-              <Link href="/#contacto" className="hover:text-white transition-colors">Contacto</Link>
-            </nav>
-          </div>
-
-          {/* Col 4 — Contacto */}
-          <div className="space-y-4">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/60">Contacto</p>
-            <div className="flex flex-col gap-2 text-sm text-white/50">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8C7B68]">Contacto</p>
+            <div className="flex flex-col gap-2.5 text-sm text-[#A89880]">
               <span>+52 55 0000 0000</span>
               <span>contacto@andraderealestate.mx</span>
               <span>Ciudad de México, México</span>
@@ -68,11 +59,10 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-white/10 pt-6 pb-6">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/30">
-          <span>© 2025 Andrade Real Estate. Todos los derechos reservados.</span>
-          <Link href="/admin" className="hover:text-white/60 transition-colors">
+      <div className="border-t border-[#2E2820] py-5">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[#8C7B68]">
+          <span>© {new Date().getFullYear()} Andrade & Co. Todos los derechos reservados.</span>
+          <Link href="/admin" className="hover:text-[#8C7B68] transition-colors">
             Admin
           </Link>
         </div>

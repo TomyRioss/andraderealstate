@@ -27,9 +27,9 @@ const contractLabel: Record<PropertyCardProps['contractType'], string> = {
 }
 
 const contractColor: Record<PropertyCardProps['contractType'], string> = {
-  SALE: 'bg-[#1e3a5f] text-white',
-  RENT: 'bg-[#0f172a] text-white',
-  DEVELOPMENT: 'bg-[#10b981] text-white',
+  SALE: 'bg-[#1B2E4B] text-white',
+  RENT: 'bg-[#18140D] text-white',
+  DEVELOPMENT: 'bg-[#B07030] text-white',
 }
 
 export default function PropertyCard({
@@ -65,9 +65,9 @@ export default function PropertyCard({
 
   return (
     <Link href={`/propiedades/${slug}`} className="group block">
-      <div className="bg-white rounded-2xl overflow-hidden border border-[#e5e7eb] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+      <div className="bg-white rounded-xl overflow-hidden border border-[#E8E2D9] hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(24,20,13,0.12)] transition-all duration-300">
         {/* Image */}
-        <div className="relative w-full aspect-video">
+        <div className="relative w-full aspect-video overflow-hidden">
           {photos.length > 0 ? (
             <Image
               src={photos[0] ?? ''}
@@ -77,34 +77,37 @@ export default function PropertyCard({
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="absolute inset-0 bg-[#f8f9ff] flex items-center justify-center">
-              <span className="text-[#9ca3af] text-sm">Sin fotografía</span>
+            <div className="absolute inset-0 bg-[#F0EDE8] flex items-center justify-center">
+              <span className="text-[#A89880] text-xs tracking-wide uppercase">Sin fotografía</span>
             </div>
           )}
-          <span
-            className={`absolute top-3 left-3 rounded-full text-xs font-bold px-3 py-1 ${contractColor[contractType]}`}
-          >
+          <span className={`absolute top-3 left-3 rounded-full text-xs font-medium px-3 py-1 tracking-wider ${contractColor[contractType]}`}>
             {contractLabel[contractType]}
           </span>
           {featured && (
-            <span className="absolute top-3 right-3 rounded-full bg-[#10b981] text-white text-xs font-bold px-2.5 py-1">
+            <span className="absolute top-3 right-3 rounded-full bg-[#B07030] text-white text-xs font-medium px-3 py-1 tracking-wide">
               Destacado
             </span>
           )}
         </div>
 
         {/* Body */}
-        <div className="p-5 space-y-3">
-          <p className="text-xs text-[#6b7280] font-medium uppercase tracking-wide">
+        <div className="p-5">
+          <p className="text-xs text-[#A89880] font-medium uppercase tracking-[0.15em] mb-1.5">
             {city}, {state}
           </p>
-          <h3 className="text-base font-bold text-[#0f172a] leading-snug line-clamp-2 group-hover:text-[#1e3a5f] transition-colors">
+          <h3 className="text-sm font-semibold text-[#18140D] leading-snug line-clamp-2 group-hover:text-[#1B2E4B] transition-colors mb-3">
             {title}
           </h3>
-          <p className="text-xl font-black text-[#1e3a5f]">{formattedPrice}</p>
+          <p
+            className="text-xl font-semibold text-[#1B2E4B] mb-3"
+            style={{ fontFamily: 'var(--font-playfair)' }}
+          >
+            {formattedPrice}
+          </p>
           {specs && (
-            <div className="border-t border-[#f3f4f6] pt-3">
-              <p className="flex gap-3 text-xs text-[#6b7280]">{specs}</p>
+            <div className="border-t border-[#F0EDE8] pt-3">
+              <p className="text-xs text-[#A89880] tracking-wide">{specs}</p>
             </div>
           )}
         </div>

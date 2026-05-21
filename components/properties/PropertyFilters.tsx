@@ -4,14 +4,20 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 
+export interface CategoryOption { value: string; label: string }
+
 export interface PropertyFiltersProps {
-  contractType?: string | undefined
-  category?: string | undefined
-  city?: string | undefined
-  minPrice?: string | undefined
-  maxPrice?: string | undefined
-  bedrooms?: string | undefined
-  search?: string | undefined
+  contractType?: string
+  category?: string
+  city?: string
+  minPrice?: string
+  maxPrice?: string
+  bedrooms?: string
+  search?: string
+  basePath?: string
+  hiddenContractType?: string
+  hiddenCategory?: string
+  allowedCategories?: CategoryOption[]
 }
 
 export default function PropertyFilters({
@@ -22,6 +28,10 @@ export default function PropertyFilters({
   maxPrice = '',
   bedrooms = '',
   search = '',
+  basePath = '/propiedades',
+  hiddenContractType,
+  hiddenCategory,
+  allowedCategories,
 }: PropertyFiltersProps) {
   const router = useRouter()
 
@@ -56,10 +66,9 @@ export default function PropertyFilters({
 
   function push(overrides: Record<string, string> = {}) {
     const qs = buildParams(overrides)
-    router.push(qs ? `/propiedades?${qs}` : '/propiedades')
+    router.push(qs ? `${basePath}?${qs}` : basePath)
   }
 
-  // debounced search
   useEffect(() => {
     if (searchTimer.current) clearTimeout(searchTimer.current)
     searchTimer.current = setTimeout(() => push({ search: searchVal }), 300)
@@ -67,7 +76,6 @@ export default function PropertyFilters({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchVal])
 
-  // debounced city
   useEffect(() => {
     if (cityTimer.current) clearTimeout(cityTimer.current)
     cityTimer.current = setTimeout(() => push({ city: cityVal }), 300)
@@ -91,95 +99,106 @@ export default function PropertyFilters({
     push({ [field]: value })
   }
 
+  const inputCls = 'border border-[#E0D9CF] bg-white rounded-lg px-3 py-2 text-sm text-[#18140D] outline-none focus:ring-2 focus:ring-[#B07030] placeholder:text-[#A89880]'
+  const labelCls = 'text-xs font-medium text-[#8C7B68] mb-1'
+
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-xl p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-3 md:items-end">
+    <div className="w-full bg-white border border-[#E8E2D9] rounded-xl p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-3 md:items-end">
       {/* Search */}
-      <div className="flex flex-col gap-1 flex-1 min-w-[160px]">
-        <label className="text-xs font-medium text-gray-600">Buscar</label>
+      <div className="flex flex-col flex-1 min-w-[160px]">
+        <label className={labelCls}>Buscar</label>
         <input
           type="text"
           value={searchVal}
           onChange={e => setSearchVal(e.target.value)}
           placeholder="Título, dirección..."
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+          className={inputCls}
         />
       </div>
 
-      {/* Contract type */}
-      <div className="flex flex-col gap-1 min-w-[140px]">
-        <label className="text-xs font-medium text-gray-600">Tipo</label>
-        <select
-          value={contractVal}
-          onChange={e => handleSelect('contractType', e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-        >
-          <option value="">Todos</option>
-          <option value="SALE">Venta</option>
-          <option value="RENT">Renta</option>
-          <option value="DEVELOPMENT">Desarrollo</option>
-        </select>
-      </div>
+      {/* Contract type — hidden if locked by sub-page */}
+      {!hiddenContractType && (
+        <div className="flex flex-col min-w-[140px]">
+          <label className={labelCls}>Tipo</label>
+          <select
+            value={contractVal}
+            onChange={e => handleSelect('contractType', e.target.value)}
+            className={inputCls}
+          >
+            <option value="">Todos</option>
+            <option value="SALE">Venta</option>
+            <option value="RENT">Renta</option>
+            <option value="DEVELOPMENT">Desarrollo</option>
+          </select>
+        </div>
+      )}
 
-      {/* Category */}
-      <div className="flex flex-col gap-1 min-w-[150px]">
-        <label className="text-xs font-medium text-gray-600">Categoría</label>
-        <select
-          value={categoryVal}
-          onChange={e => handleSelect('category', e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
-        >
-          <option value="">Todas</option>
-          <option value="HOUSE">Casa</option>
-          <option value="APARTMENT">Departamento</option>
-          <option value="LAND">Terreno</option>
-          <option value="COMMERCIAL">Comercial</option>
-          <option value="DEVELOPMENT_PROJECT">Desarrollo</option>
-          <option value="OTHER">Otro</option>
-        </select>
-      </div>
+      {/* Category — hidden if locked by sub-page */}
+      {!hiddenCategory && (
+        <div className="flex flex-col min-w-[150px]">
+          <label className={labelCls}>Categoría</label>
+          <select
+            value={categoryVal}
+            onChange={e => handleSelect('category', e.target.value)}
+            className={inputCls}
+          >
+            <option value="">Todas</option>
+            {(allowedCategories ?? [
+              { value: 'HOUSE', label: 'Casa' },
+              { value: 'APARTMENT', label: 'Departamento' },
+              { value: 'LAND', label: 'Terreno' },
+              { value: 'COMMERCIAL', label: 'Comercial / Oficina' },
+              { value: 'DEVELOPMENT_PROJECT', label: 'Desarrollo' },
+              { value: 'OTHER', label: 'Otro' },
+            ]).map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* City */}
-      <div className="flex flex-col gap-1 min-w-[130px]">
-        <label className="text-xs font-medium text-gray-600">Ciudad</label>
+      <div className="flex flex-col min-w-[130px]">
+        <label className={labelCls}>Ciudad</label>
         <input
           type="text"
           value={cityVal}
           onChange={e => setCityVal(e.target.value)}
           placeholder="Ciudad..."
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+          className={inputCls}
         />
       </div>
 
       {/* Price range */}
-      <div className="flex flex-col gap-1 min-w-[120px]">
-        <label className="text-xs font-medium text-gray-600">Precio mín.</label>
+      <div className="flex flex-col min-w-[120px]">
+        <label className={labelCls}>Precio mín.</label>
         <input
           type="number"
           value={minPriceVal}
           onChange={e => handlePrice('minPrice', e.target.value)}
           placeholder="0"
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+          className={inputCls}
         />
       </div>
 
-      <div className="flex flex-col gap-1 min-w-[120px]">
-        <label className="text-xs font-medium text-gray-600">Precio máx.</label>
+      <div className="flex flex-col min-w-[120px]">
+        <label className={labelCls}>Precio máx.</label>
         <input
           type="number"
           value={maxPriceVal}
           onChange={e => handlePrice('maxPrice', e.target.value)}
           placeholder="∞"
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+          className={inputCls}
         />
       </div>
 
       {/* Bedrooms */}
-      <div className="flex flex-col gap-1 min-w-[110px]">
-        <label className="text-xs font-medium text-gray-600">Recámaras</label>
+      <div className="flex flex-col min-w-[110px]">
+        <label className={labelCls}>Recámaras</label>
         <select
           value={bedroomsVal}
           onChange={e => handleSelect('bedrooms', e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+          className={inputCls}
         >
           <option value="">Cualquiera</option>
           <option value="1">1+</option>
@@ -193,7 +212,7 @@ export default function PropertyFilters({
       <div className="flex items-end">
         <Button
           variant="outline"
-          className="border-[#1e3a5f] text-[#1e3a5f] hover:bg-[#1e3a5f] hover:text-white text-sm"
+          className="border-[#E8E2D9] text-[#5C5047] hover:bg-[#18140D] hover:text-white hover:border-[#18140D] text-sm"
           onClick={() => {
             setSearchVal('')
             setCityVal('')
@@ -202,10 +221,10 @@ export default function PropertyFilters({
             setMinPriceVal('')
             setMaxPriceVal('')
             setBedroomsVal('')
-            router.push('/propiedades')
+            router.push(basePath)
           }}
         >
-          Limpiar filtros
+          Limpiar
         </Button>
       </div>
     </div>

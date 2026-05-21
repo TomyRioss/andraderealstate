@@ -24,7 +24,14 @@
       "Bash(dir \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\")",
       "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin *)",
       "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin\\\\login *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object FullName)",
+      "Bash(xargs grep -l \"FormType\\\\|type FormType\")",
+      "Bash(awk '{print $NF}')",
+      "mcp__desktop-commander__read_file",
+      "Bash(Copy-Item *)",
+      "Bash(node *)"
     ]
   }
 }

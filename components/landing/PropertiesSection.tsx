@@ -11,28 +11,32 @@ interface PropertiesSectionProps {
 
 export default function PropertiesSection({ title, properties }: PropertiesSectionProps) {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-[#F7F3EE]">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Header */}
         <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-[#10b981] text-xs font-bold uppercase tracking-[0.15em] mb-2">
-              Propiedades
-            </p>
-            <h2 className="text-3xl md:text-4xl font-black text-[#0f172a]">{title}</h2>
-            <div className="mt-3 w-12 h-1 bg-[#10b981] rounded-full" />
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-px w-8 bg-[#B07030]" />
+              <span className="text-[#B07030] text-xs tracking-[0.25em] uppercase font-medium">Propiedades</span>
+            </div>
+            <h2
+              className="text-4xl md:text-5xl text-[#18140D] leading-tight"
+              style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
+            >
+              {title}
+            </h2>
           </div>
           <Link
             href="/propiedades"
-            className="hidden md:block text-sm text-[#1e3a5f] font-semibold hover:underline"
+            className="hidden md:flex items-center gap-2 text-sm text-[#5C5047] hover:text-[#18140D] font-medium transition-colors tracking-wide group"
           >
-            Ver todas →
+            Ver todas
+            <span className="group-hover:translate-x-0.5 transition-transform">→</span>
           </Link>
         </div>
 
-        {/* Grid / Empty */}
         {properties.length === 0 ? (
-          <div className="py-16 text-[#9ca3af] text-center">
+          <div className="py-20 text-[#A89880] text-center text-sm">
             No hay propiedades disponibles en este momento.
           </div>
         ) : (
