@@ -85,17 +85,17 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T22 | x      | Landing: quick contact form (Comprar/Vender toggle) | I.api.contact |
 | T23 | x      | Landing: Footer | C7 |
 | T24 | x      | Landing: JSON-LD RealEstateAgent schema | — |
-| T25 | .      | Catalog /propiedades: Server Component + searchParams filters | V10,I.api.properties,C7 |
-| T26 | .      | Catalog: sidebar filters (contractType, category, city, price, bedrooms) | C7 |
-| T27 | .      | Catalog: search debounce 300ms + URL-reflected filters | C7 |
-| T28 | .      | Catalog: pagination 12/page | I.api.properties |
-| T29 | .      | Detail /propiedades/[id]: photo gallery + lightbox | C11 |
-| T30 | .      | Detail: video player (YouTube iframe vs <video> detect) | V7 |
-| T31 | .      | Detail: map embed (Google Maps) conditional on lat/lng | V6 |
-| T32 | .      | Detail: features grid + amenities list | — |
-| T33 | .      | Detail: sticky WhatsApp button mobile + lateral contact form desktop | V11,C7 |
-| T34 | .      | Detail: review form (name, text, 1-5 stars) | I.api.testimonials |
-| T35 | .      | Detail: generateMetadata + JSON-LD RealEstateListing | — |
+| T25 | x      | Catalog /propiedades: Server Component + searchParams filters | V10,I.api.properties,C7 |
+| T26 | x      | Catalog: sidebar filters (contractType, category, city, price, bedrooms) | C7 |
+| T27 | x      | Catalog: search debounce 300ms + URL-reflected filters | C7 |
+| T28 | x      | Catalog: pagination 12/page | I.api.properties |
+| T29 | x      | Detail /propiedades/[id]: photo gallery + lightbox | C11 |
+| T30 | x      | Detail: video player (YouTube iframe vs <video> detect) | V7 |
+| T31 | x      | Detail: map embed (Google Maps) conditional on lat/lng | V6 |
+| T32 | x      | Detail: features grid + amenities list | — |
+| T33 | x      | Detail: sticky WhatsApp button mobile + lateral contact form desktop | V11,C7 |
+| T34 | x      | Detail: review form (name, text, 1-5 stars) | I.api.testimonials |
+| T35 | x      | Detail: generateMetadata + JSON-LD RealEstateListing | — |
 | T36 | .      | Contact page /contacto: BUY form | I.api.contact,C8 |
 | T37 | .      | Contact page: SELL form with multi-file upload to contact-uploads | V8,V12,I.supabase.storage |
 | T38 | .      | Admin login /admin/login: Supabase Auth email+password | I.supabase.auth,V13 |
