@@ -23,7 +23,8 @@
       "Bash(dir \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\lib\\\\supabase\")",
       "Bash(dir \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\")",
       "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin *)",
-      "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin\\\\login *)"
+      "Bash(dir C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\app\\\\admin\\\\login *)",
+      "Bash(git commit *)"
     ]
   }
 }
