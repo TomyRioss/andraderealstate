@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function WhatsAppButton({ phone, title, url }: Props) {
-  const resolvedPhone = phone || process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || ''
+  const resolvedPhone = phone || process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || '5213221682424'
 
   if (!resolvedPhone) return null
 

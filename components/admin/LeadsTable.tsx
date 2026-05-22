@@ -154,7 +154,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
               <tr key={lead.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                 <td className="px-4 py-3 font-medium text-slate-800">{lead.name || '—'}</td>
                 <td className="px-4 py-3 text-slate-600">{TYPE_LABELS[lead.type] ?? lead.type}</td>
-                <td className="px-4 py-3 text-slate-600 max-w-[140px] truncate">{lead.email}</td>
+                <td className="px-4 py-3 text-slate-600 break-all">{lead.email}</td>
                 <td className="px-4 py-3 text-slate-600">{lead.phone}</td>
                 <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{fmtDate(lead.createdAt)}</td>
                 <td className="px-4 py-3">

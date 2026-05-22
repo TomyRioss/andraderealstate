@@ -47,6 +47,16 @@ const navLinks = [
       </svg>
     ),
   },
+  {
+    href: '/admin/usuarios',
+    label: 'Usuarios',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+      </svg>
+    ),
+  },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -158,7 +168,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main */}
       <main className="flex-1 min-h-screen pt-16 md:pt-0 overflow-auto">
-        <div className="w-full">
+        <div className="w-full px-6 py-8 md:px-10 md:py-10">
           {children}
         </div>
       </main>

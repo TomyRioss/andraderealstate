@@ -158,21 +158,21 @@ export default function ContactSection() {
               Teléfono
             </span>
             <span className="text-[#18140D] font-semibold text-base group-hover:text-[#B07030] transition-colors">
-              +52 55 0000 0000
+              +52 132 2168 2424
             </span>
           </a>
 
           <div className="hidden sm:block w-px h-10 bg-[#D4C4A8]" />
 
           <a
-            href="mailto:contacto@andraderealestate.mx"
+            href="mailto:rentasysolucionnes@gmail.com"
             className="group flex flex-col items-center sm:items-start gap-0.5"
           >
             <span className="text-[9px] tracking-[0.25em] uppercase text-[#8C7B6B] font-bold">
               Email
             </span>
             <span className="text-[#18140D] font-semibold text-base group-hover:text-[#B07030] transition-colors">
-              contacto@andraderealestate.mx
+              rentasysolucionnes@gmail.com
             </span>
           </a>
         </div>
