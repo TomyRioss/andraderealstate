@@ -1,18 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabase/server'
+import { auth } from '@/auth'
 
 type Params = { params: Promise<{ id: string }> }
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { id } = await params
     const body = await req.json()
-    const { status, notes } = body
+    const { status, notes, active } = body
 
     const validStatuses = ['PENDING', 'CONTACTED', 'CLOSED', 'DISCARDED']
     if (status !== undefined && !validStatuses.includes(status)) {
@@ -22,6 +21,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const data: Record<string, unknown> = {}
     if (status !== undefined) data.status = status
     if (notes !== undefined) data.notes = notes
+    if (active !== undefined) data.active = active
 
     const entry = await prisma.contactForm.update({ where: { id }, data })
     return NextResponse.json(entry)
@@ -33,9 +33,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { id } = await params
     await prisma.contactForm.delete({ where: { id } })

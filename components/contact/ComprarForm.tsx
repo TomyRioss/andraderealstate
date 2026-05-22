@@ -9,10 +9,11 @@ interface Banner {
 }
 
 const inputCls =
-  'w-full border border-[#e5e7eb] rounded-xl px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:border-[#1e3a5f] focus:ring-1 focus:ring-[#1e3a5f] transition bg-white'
-const labelCls = 'block text-sm font-medium text-[#1e3a5f] mb-1'
+  'w-full border border-[#e5e7eb] rounded-xl px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:border-[#C9A96E] focus:ring-1 focus:ring-[#C9A96E] transition bg-white'
+const labelCls = 'block text-sm font-medium text-[#18140D] mb-1'
 
 export default function ComprarForm() {
+  const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -27,10 +28,11 @@ export default function ComprarForm() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'BUY', phone, email, message }),
+        body: JSON.stringify({ type: 'BUY', name, phone, email, message }),
       })
       if (res.status === 201) {
         setBanner({ type: 'success', message: 'Consulta enviada. Te contactamos pronto.' })
+        setName('')
         setPhone('')
         setEmail('')
         setMessage('')
@@ -49,22 +51,39 @@ export default function ComprarForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-[#e5e7eb] p-8 max-w-xl w-full mx-auto">
-      <h2 className="text-xl font-black text-[#1e3a5f] mb-1">Quiero comprar</h2>
-      <p className="text-sm text-[#6b7280] mb-6">Dejanos tus datos y te asesoramos sin cargo.</p>
+      <h2 className="text-xl font-black text-[#18140D] mb-1">Quiero comprar</h2>
+      <p className="text-sm text-[#8C7B68] mb-6">Dejanos tus datos y te asesoramos sin cargo.</p>
 
       {banner && (
         <div
-          className={`mb-5 rounded-xl px-4 py-3 text-sm font-medium ${
+          className={`mb-5 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2 ${
             banner.type === 'success'
-              ? 'bg-[#d1fae5] text-[#065f46] border border-[#10b981]/30'
+              ? 'bg-green-50 text-green-700 border border-green-200'
               : 'bg-red-50 text-red-600 border border-red-200'
           }`}
         >
+          {banner.type === 'success' && (
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          )}
           {banner.message}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className={labelCls}>Nombre completo *</label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Tu nombre"
+            className={inputCls}
+          />
+        </div>
+
         <div>
           <label className={labelCls}>Teléfono *</label>
           <input
@@ -103,7 +122,7 @@ export default function ComprarForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#10b981] hover:bg-[#0d9e6e] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#18140D] hover:bg-[#2E2820] disabled:opacity-60 text-[#C9A96E] font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : 'Enviar consulta'}
         </Button>

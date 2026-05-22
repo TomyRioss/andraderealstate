@@ -74,7 +74,7 @@ export default function Hero() {
                 Ver catálogo completo
               </Link>
               <Link
-                href="/contacto"
+                href="/#contacto"
                 className="text-[#D4C8B8] hover:text-white text-sm transition-colors underline underline-offset-4"
               >
                 Contáctanos

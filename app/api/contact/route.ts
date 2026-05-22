@@ -10,11 +10,11 @@ export async function POST(request: NextRequest) {
     if (!cleanPhone || cleanPhone.length < 10) {
       return NextResponse.json({ error: 'Phone required (min 10 chars)' }, { status: 400 })
     }
-    if (!email) {
-      return NextResponse.json({ error: 'Email required' }, { status: 400 })
+    if (!type || !['BUY', 'SELL', 'MANAGE'].includes(type)) {
+      return NextResponse.json({ error: 'Type must be BUY, SELL or MANAGE' }, { status: 400 })
     }
-    if (!type || !['BUY', 'SELL'].includes(type)) {
-      return NextResponse.json({ error: 'Type must be BUY or SELL' }, { status: 400 })
+    if (type !== 'MANAGE' && !email) {
+      return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
 
     const entry = await prisma.contactForm.create({
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         type,
         name: name ?? null,
         phone: cleanPhone,
-        email,
+        email: email ?? '',
         address: address ?? null,
         photos: photos ?? [],
       },

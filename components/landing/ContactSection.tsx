@@ -27,7 +27,7 @@ export default function ContactSection() {
 
       {/* Photo cards */}
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
           {/* Comprar */}
           <Link
@@ -106,6 +106,42 @@ export default function ContactSection() {
               </h3>
               <span className="inline-flex items-center gap-2.5 text-xs font-bold tracking-[0.15em] uppercase text-white bg-white/10 backdrop-blur-sm border border-white/25 rounded-full px-5 py-2.5 transition-all duration-300 group-hover:bg-[#B07030] group-hover:border-[#B07030]">
                 Quiero Vender
+                <span className="text-base leading-none transition-transform duration-300 group-hover:translate-x-1 inline-block">→</span>
+              </span>
+            </div>
+          </Link>
+
+          {/* Administrar */}
+          <Link
+            href="/administrar"
+            className="group relative overflow-hidden rounded-3xl block"
+            style={{ height: '480px' }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80"
+              alt="Administrar propiedad"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0906]/90 via-[#0D0906]/25 to-transparent" />
+            <div className="absolute inset-0 bg-[#B07030]/0 group-hover:bg-[#B07030]/10 transition-colors duration-500" />
+
+            <div className="absolute top-7 left-7">
+              <span className="text-[10px] tracking-[0.3em] uppercase text-white/70 font-semibold border border-white/20 rounded-full px-3 py-1.5 backdrop-blur-sm">
+                Administrar
+              </span>
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 p-8">
+              <h3
+                className="text-4xl md:text-5xl font-bold text-white leading-tight mb-6"
+                style={{ fontFamily: 'var(--font-playfair)' }}
+              >
+                Administra sin<br />
+                <em className="italic font-normal">preocupaciones</em>
+              </h3>
+              <span className="inline-flex items-center gap-2.5 text-xs font-bold tracking-[0.15em] uppercase text-white bg-white/10 backdrop-blur-sm border border-white/25 rounded-full px-5 py-2.5 transition-all duration-300 group-hover:bg-[#B07030] group-hover:border-[#B07030]">
+                Quiero Administrar
                 <span className="text-base leading-none transition-transform duration-300 group-hover:translate-x-1 inline-block">→</span>
               </span>
             </div>

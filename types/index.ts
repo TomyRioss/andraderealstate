@@ -1,6 +1,6 @@
 export type ContractType = 'SALE' | 'RENT' | 'DEVELOPMENT'
 export type Category = 'HOUSE' | 'APARTMENT' | 'LAND' | 'COMMERCIAL' | 'DEVELOPMENT_PROJECT' | 'OTHER'
-export type FormType = 'BUY' | 'SELL'
+export type FormType = 'BUY' | 'SELL' | 'MANAGE'
 export type LeadStatus = 'PENDING' | 'CONTACTED' | 'CLOSED' | 'DISCARDED'
 export type TestimonialStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 export type Currency = 'MXN' | 'USD'
@@ -19,6 +19,7 @@ export interface Property {
   contractType: ContractType
   category: Category
   priceMXN?: number | null
+  priceUSD?: number | null
   priceVisible: boolean
   bedrooms?: number | null
   bathrooms?: number | null
@@ -30,6 +31,7 @@ export interface Property {
   yearBuilt?: number | null
   photos: string[]
   videoUrl?: string | null
+  mapsUrl?: string | null
   whatsapp?: string | null
   amenities: string[]
   features: string[]
@@ -49,6 +51,7 @@ export interface ContactFormEntry {
   photos: string[]
   status: LeadStatus
   notes?: string | null
+  active: boolean
   createdAt: string
   updatedAt: string
 }
@@ -60,6 +63,7 @@ export interface Testimonial {
   rating: number
   content: string
   status: TestimonialStatus
+  active: boolean
   createdAt: string
   updatedAt: string
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabase/server'
+import { auth } from '@/auth'
 import { propertySchema } from '@/lib/validations/property'
 import { Prisma } from '@prisma/client'
 
@@ -64,9 +64,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
 

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabase/server'
+import { auth } from '@/auth'
 
 async function requireAdmin(): Promise<NextResponse | null> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
+  const session = await auth()
+  if (!session?.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   return null
@@ -21,7 +20,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { status, author, location, rating, content } = body
+    const { status, author, location, rating, content, active } = body
 
     const validStatuses = ['PENDING', 'APPROVED', 'REJECTED']
     if (status && !validStatuses.includes(status)) {
@@ -34,6 +33,7 @@ export async function PUT(
     if (location !== undefined) data.location = location
     if (rating !== undefined) data.rating = Number(rating)
     if (content !== undefined) data.content = content
+    if (active !== undefined) data.active = active
 
     const updated = await prisma.testimonial.update({
       where: { id },

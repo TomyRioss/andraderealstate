@@ -3,13 +3,17 @@ import LeadsTable from '@/components/admin/LeadsTable'
 import { ContactFormEntry } from '@/types'
 
 export default async function LeadsPage() {
-  const rows = await prisma.contactForm.findMany({ orderBy: { createdAt: 'desc' } })
-  const leads = rows as unknown as ContactFormEntry[]
+  const [active, archived] = await Promise.all([
+    prisma.contactForm.findMany({ where: { active: true }, orderBy: { createdAt: 'desc' } }),
+    prisma.contactForm.findMany({ where: { active: false }, orderBy: { createdAt: 'desc' } }),
+  ])
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">Leads</h1>
-      <LeadsTable leads={leads} />
+    <div className="flex flex-col h-full">
+      <div className="px-6 py-5">
+        <h1 className="text-3xl font-light" style={{ color: '#18140D', fontFamily: 'Georgia, serif' }}>Leads</h1>
+      </div>
+      <LeadsTable leads={active as unknown as ContactFormEntry[]} archived={archived as unknown as ContactFormEntry[]} />
     </div>
   )
 }

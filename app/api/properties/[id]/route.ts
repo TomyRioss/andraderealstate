@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabase/server'
+import { auth } from '@/auth'
 import { propertySchema } from '@/lib/validations/property'
 
 type Params = { params: Promise<{ id: string }> }
@@ -24,9 +24,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { id } = await params
     const body = await req.json()
@@ -51,11 +50,29 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
 }
 
+export async function PATCH(req: NextRequest, { params }: Params) {
+  try {
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const { id } = await params
+    const body = await req.json()
+    const data: Record<string, unknown> = {}
+    if (body.active !== undefined) data.active = body.active
+    if (body.featured !== undefined) data.featured = body.featured
+
+    const property = await prisma.property.update({ where: { id }, data })
+    return NextResponse.json(property)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Internal server error'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
 export async function DELETE(_req: NextRequest, { params }: Params) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = await auth()
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { id } = await params
     await prisma.property.delete({ where: { id } })

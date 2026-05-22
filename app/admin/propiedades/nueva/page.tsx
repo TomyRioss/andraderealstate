@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
 import type { ContractType, Category } from '@/types'
+
+const PropertyMap = dynamic(() => import('@/components/ui/PropertyMap'), { ssr: false })
 
 interface FormState {
   title: string
@@ -13,6 +15,7 @@ interface FormState {
   contractType: ContractType
   category: Category
   priceMXN: string
+  priceUSD: string
   priceVisible: boolean
   address: string
   city: string
@@ -32,34 +35,18 @@ interface FormState {
   active: boolean
   featured: boolean
   videoUrl: string
+  mapsUrl: string
 }
 
 const defaultForm: FormState = {
-  title: '',
-  slug: '',
-  description: '',
-  contractType: 'SALE',
-  category: 'HOUSE',
-  priceMXN: '',
-  priceVisible: true,
-  address: '',
-  city: '',
-  state: '',
-  zipCode: '',
-  bedrooms: '',
-  bathrooms: '',
-  halfBaths: '',
-  parkingSpots: '',
-  areaSqm: '',
-  landAreaSqm: '',
-  floors: '',
-  yearBuilt: '',
-  amenities: '',
-  features: '',
-  whatsapp: '',
-  active: true,
-  featured: false,
-  videoUrl: '',
+  title: '', slug: '', description: '',
+  contractType: 'SALE', category: 'HOUSE',
+  priceMXN: '', priceUSD: '', priceVisible: true,
+  address: '', city: '', state: '', zipCode: '',
+  bedrooms: '', bathrooms: '', halfBaths: '', parkingSpots: '',
+  areaSqm: '', landAreaSqm: '', floors: '', yearBuilt: '',
+  amenities: '', features: '',
+  whatsapp: '', active: true, featured: false, videoUrl: '', mapsUrl: '',
 }
 
 function toSlug(str: string) {
@@ -71,91 +58,99 @@ function toSlug(str: string) {
     .replace(/^-|-$/g, '')
 }
 
+const inputCls =
+  'w-full px-3 py-2 rounded-lg border border-[#E5DDD5] bg-[#FAF8F5] text-sm text-[#18140D] focus:outline-none focus:border-[#C9A96E] transition-colors'
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs font-semibold uppercase tracking-widest text-[#8C7B68]">{label}</label>
+      {children}
+    </div>
+  )
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="bg-white rounded-xl border border-[#E5DDD5] p-6 flex flex-col gap-4">
+      <p className="text-xs font-semibold uppercase tracking-widest text-[#C9A96E]">{title}</p>
+      {children}
+    </section>
+  )
+}
+
 export default function NuevaPropiedad() {
   const router = useRouter()
   const [form, setForm] = useState<FormState>(defaultForm)
   const [slugManual, setSlugManual] = useState(false)
-  const [photos, setPhotos] = useState<string[]>([])
-  const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
   const set = useCallback(
     (field: keyof FormState, value: string | boolean) =>
-      setForm(prev => ({ ...prev, [field]: value })),
+      setForm((prev) => ({ ...prev, [field]: value })),
     []
   )
+
+  const mapCoords = useMemo(() => {
+    const url = form.mapsUrl
+    if (!url) return null
+    // Format: @lat,lng or ?q=lat,lng or !3dlat!4dlng
+    const atMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)
+    if (atMatch) return { lat: parseFloat(atMatch[1]), lng: parseFloat(atMatch[2]) }
+    const qMatch = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/)
+    if (qMatch) return { lat: parseFloat(qMatch[1]), lng: parseFloat(qMatch[2]) }
+    const dMatch = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/)
+    if (dMatch) return { lat: parseFloat(dMatch[1]), lng: parseFloat(dMatch[2]) }
+    return null
+  }, [form.mapsUrl])
 
   function handleTitleChange(value: string) {
     set('title', value)
     if (!slugManual) set('slug', toSlug(value))
   }
 
-  function handleSlugChange(value: string) {
-    setSlugManual(true)
-    set('slug', value)
-  }
-
-  async function handlePhotos(files: FileList | null) {
-    if (!files || files.length === 0) return
-    setUploading(true)
-    setError(null)
-    const supabase = createClient()
-    const paths: string[] = []
-    try {
-      for (const file of Array.from(files)) {
-        const path = `properties/${Date.now()}-${file.name}`
-        const { error: upErr } = await supabase.storage
-          .from('property-images')
-          .upload(path, file)
-        if (upErr) throw new Error(upErr.message)
-        paths.push(path)
-      }
-      setPhotos(prev => [...prev, ...paths])
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Upload failed')
-    } finally {
-      setUploading(false)
-    }
-  }
-
-  function removePhoto(path: string) {
-    setPhotos(prev => prev.filter(p => p !== path))
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
     setError(null)
+
+    const num = (v: string) => (v === '' ? undefined : Number(v))
+    const str = (v: string) => (v === '' ? undefined : v)
+
+    const body = {
+      title: form.title,
+      slug: form.slug,
+      description: form.description,
+      contractType: form.contractType,
+      category: form.category,
+      priceMXN: num(form.priceMXN),
+      priceUSD: num(form.priceUSD),
+      priceVisible: form.priceVisible,
+      address: form.address,
+      city: form.city,
+      state: form.state,
+      zipCode: str(form.zipCode),
+      bedrooms: num(form.bedrooms),
+      bathrooms: num(form.bathrooms),
+      halfBaths: num(form.halfBaths),
+      parkingSpots: num(form.parkingSpots),
+      areaSqm: num(form.areaSqm),
+      landAreaSqm: num(form.landAreaSqm),
+      floors: num(form.floors),
+      yearBuilt: num(form.yearBuilt),
+      amenities: form.amenities ? form.amenities.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      features: form.features ? form.features.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      whatsapp: str(form.whatsapp),
+      videoUrl: str(form.videoUrl),
+      mapsUrl: str(form.mapsUrl),
+      active: form.active,
+      featured: form.featured,
+      photos: [],
+    }
+
     try {
-      const body = {
-        title: form.title,
-        slug: form.slug,
-        description: form.description,
-        contractType: form.contractType,
-        category: form.category,
-        priceMXN: form.priceMXN ? Number(form.priceMXN) : undefined,
-        priceVisible: form.priceVisible,
-        address: form.address,
-        city: form.city,
-        state: form.state,
-        zipCode: form.zipCode || undefined,
-        bedrooms: form.bedrooms ? Number(form.bedrooms) : undefined,
-        bathrooms: form.bathrooms ? Number(form.bathrooms) : undefined,
-        halfBaths: form.halfBaths ? Number(form.halfBaths) : undefined,
-        parkingSpots: form.parkingSpots ? Number(form.parkingSpots) : undefined,
-        areaSqm: form.areaSqm ? Number(form.areaSqm) : undefined,
-        landAreaSqm: form.landAreaSqm ? Number(form.landAreaSqm) : undefined,
-        floors: form.floors ? Number(form.floors) : undefined,
-        yearBuilt: form.yearBuilt ? Number(form.yearBuilt) : undefined,
-        amenities: form.amenities ? form.amenities.split(',').map(s => s.trim()).filter(Boolean) : [],
-        features: form.features ? form.features.split(',').map(s => s.trim()).filter(Boolean) : [],
-        whatsapp: form.whatsapp || undefined,
-        active: form.active,
-        featured: form.featured,
-        videoUrl: form.videoUrl || undefined,
-        photos,
-      }
       const res = await fetch('/api/properties', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -163,58 +158,101 @@ export default function NuevaPropiedad() {
       })
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error ?? 'Error al guardar')
+        throw new Error(typeof data.error === 'string' ? data.error : 'Error al crear propiedad')
       }
-      router.push('/admin/propiedades')
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error desconocido')
+      setSuccess(true)
+      setTimeout(() => router.push('/admin/propiedades'), 1200)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido')
     } finally {
       setSaving(false)
     }
   }
 
-  const inputCls = 'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] bg-white'
-  const labelCls = 'block text-xs font-semibold text-gray-600 mb-1'
-  const sectionCls = 'bg-gray-50 rounded-lg p-4 space-y-4'
-
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#1e3a5f] mb-6">Nueva Propiedad</h1>
+    <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          type="button"
+          onClick={() => router.push('/admin/propiedades')}
+          className="text-[#8C7B68] hover:text-[#C9A96E] transition-colors"
+          aria-label="Volver"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M19 12H5M5 12l7 7M5 12l7-7" />
+          </svg>
+        </button>
+        <h1 className="text-3xl font-light" style={{ color: '#18140D', fontFamily: 'Georgia, serif' }}>
+          Nueva propiedad
+        </h1>
+      </div>
 
       {error && (
-        <div className="mb-4 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-          {error}
+        <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
+      )}
+      {success && (
+        <div className="mb-6 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+          Propiedad creada. Redirigiendo…
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic info */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Información básica</h2>
-          <div>
-            <label className={labelCls}>Título *</label>
-            <input className={inputCls} value={form.title} onChange={e => handleTitleChange(e.target.value)} required />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <Section title="Identificación">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Título *">
+              <input
+                required
+                className={inputCls}
+                value={form.title}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                placeholder="Ej: Casa en Las Lomas"
+              />
+            </Field>
+            <Field label="Slug *">
+              <input
+                required
+                className={inputCls}
+                value={form.slug}
+                onChange={(e) => { setSlugManual(true); set('slug', e.target.value) }}
+                placeholder="casa-en-las-lomas"
+              />
+            </Field>
+            <Field label="Ciudad *">
+              <input required className={inputCls} value={form.city} onChange={(e) => set('city', e.target.value)} placeholder="Ciudad de México" />
+            </Field>
+            <Field label="Estado *">
+              <input required className={inputCls} value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="CDMX" />
+            </Field>
+            <Field label="Código postal">
+              <input className={inputCls} value={form.zipCode} onChange={(e) => set('zipCode', e.target.value)} placeholder="11000" />
+            </Field>
           </div>
-          <div>
-            <label className={labelCls}>Slug *</label>
-            <input className={inputCls} value={form.slug} onChange={e => handleSlugChange(e.target.value)} required />
-          </div>
-          <div>
-            <label className={labelCls}>Descripción *</label>
-            <textarea className={inputCls} rows={4} value={form.description} onChange={e => set('description', e.target.value)} required />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>Tipo de contrato</label>
-              <select className={inputCls} value={form.contractType} onChange={e => set('contractType', e.target.value as ContractType)}>
+          <Field label="Dirección *">
+            <input required className={inputCls} value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="Calle, número, colonia" />
+          </Field>
+          <Field label="Descripción *">
+            <textarea
+              required
+              rows={4}
+              className={inputCls}
+              value={form.description}
+              onChange={(e) => set('description', e.target.value)}
+              placeholder="Descripción detallada…"
+            />
+          </Field>
+        </Section>
+
+        <Section title="Clasificación y precio">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Field label="Tipo de contrato">
+              <select className={inputCls} value={form.contractType} onChange={(e) => set('contractType', e.target.value as ContractType)}>
                 <option value="SALE">Venta</option>
                 <option value="RENT">Renta</option>
                 <option value="DEVELOPMENT">Desarrollo</option>
               </select>
-            </div>
-            <div>
-              <label className={labelCls}>Categoría</label>
-              <select className={inputCls} value={form.category} onChange={e => set('category', e.target.value as Category)}>
+            </Field>
+            <Field label="Categoría">
+              <select className={inputCls} value={form.category} onChange={(e) => set('category', e.target.value as Category)}>
                 <option value="HOUSE">Casa</option>
                 <option value="APARTMENT">Departamento</option>
                 <option value="LAND">Terreno</option>
@@ -222,141 +260,105 @@ export default function NuevaPropiedad() {
                 <option value="DEVELOPMENT_PROJECT">Proyecto</option>
                 <option value="OTHER">Otro</option>
               </select>
-            </div>
+            </Field>
+            <Field label="Precio MXN">
+              <input type="number" min={0} className={inputCls} value={form.priceMXN} onChange={(e) => set('priceMXN', e.target.value)} placeholder="3500000" />
+            </Field>
+            <Field label="Precio USD">
+              <input type="number" min={0} className={inputCls} value={form.priceUSD} onChange={(e) => set('priceUSD', e.target.value)} placeholder="180000" />
+            </Field>
           </div>
-        </div>
-
-        {/* Price */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Precio</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>Precio MXN</label>
-              <input className={inputCls} type="number" min="0" value={form.priceMXN} onChange={e => set('priceMXN', e.target.value)} />
-            </div>
-            <div className="flex items-end gap-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                <input type="checkbox" checked={form.priceVisible} onChange={e => set('priceVisible', e.target.checked)} className="rounded" />
-                Precio visible
+          <div className="flex flex-wrap gap-6">
+            {([
+              ['priceVisible', 'Precio visible'],
+              ['active', 'Activa'],
+              ['featured', 'Destacada'],
+            ] as [keyof FormState, string][]).map(([field, label]) => (
+              <label key={field} className="flex items-center gap-2 text-sm text-[#5C4F42] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form[field] as boolean}
+                  onChange={(e) => set(field, e.target.checked)}
+                  className="accent-[#C9A96E]"
+                />
+                {label}
               </label>
-            </div>
+            ))}
           </div>
-        </div>
+        </Section>
 
-        {/* Location */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Ubicación</h2>
-          <div>
-            <label className={labelCls}>Dirección *</label>
-            <input className={inputCls} value={form.address} onChange={e => set('address', e.target.value)} required />
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className={labelCls}>Ciudad *</label>
-              <input className={inputCls} value={form.city} onChange={e => set('city', e.target.value)} required />
-            </div>
-            <div>
-              <label className={labelCls}>Estado *</label>
-              <input className={inputCls} value={form.state} onChange={e => set('state', e.target.value)} required />
-            </div>
-            <div>
-              <label className={labelCls}>C.P.</label>
-              <input className={inputCls} value={form.zipCode} onChange={e => set('zipCode', e.target.value)} />
-            </div>
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Detalles</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Section title="Características">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {([
               ['bedrooms', 'Recámaras'],
               ['bathrooms', 'Baños'],
               ['halfBaths', 'Medios baños'],
               ['parkingSpots', 'Estacionamientos'],
+              ['floors', 'Pisos'],
+              ['yearBuilt', 'Año construcción'],
               ['areaSqm', 'Área (m²)'],
               ['landAreaSqm', 'Terreno (m²)'],
-              ['floors', 'Plantas'],
-              ['yearBuilt', 'Año construcción'],
             ] as [keyof FormState, string][]).map(([field, label]) => (
-              <div key={field}>
-                <label className={labelCls}>{label}</label>
-                <input className={inputCls} type="number" min="0" value={form[field] as string} onChange={e => set(field, e.target.value)} />
-              </div>
+              <Field key={field} label={label}>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputCls}
+                  value={form[field] as string}
+                  onChange={(e) => set(field, e.target.value)}
+                />
+              </Field>
             ))}
           </div>
-        </div>
+        </Section>
 
-        {/* Amenities & Features */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Amenidades y características</h2>
-          <div>
-            <label className={labelCls}>Amenidades (separadas por coma)</label>
-            <input className={inputCls} value={form.amenities} onChange={e => set('amenities', e.target.value)} placeholder="Alberca, Gimnasio, Jardín" />
-          </div>
-          <div>
-            <label className={labelCls}>Características (separadas por coma)</label>
-            <input className={inputCls} value={form.features} onChange={e => set('features', e.target.value)} placeholder="Cocina integral, Clósets" />
-          </div>
-        </div>
+        <Section title="Amenidades y características">
+          <Field label="Amenidades (separar con coma)">
+            <input className={inputCls} value={form.amenities} onChange={(e) => set('amenities', e.target.value)} placeholder="Alberca, Gimnasio, Jardín" />
+          </Field>
+          <Field label="Características (separar con coma)">
+            <input className={inputCls} value={form.features} onChange={(e) => set('features', e.target.value)} placeholder="Cocina integral, Clósets" />
+          </Field>
+        </Section>
 
-        {/* Media */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Multimedia</h2>
-          <div>
-            <label className={labelCls}>Fotos</label>
+        <Section title="Contacto y media">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="WhatsApp">
+              <input className={inputCls} value={form.whatsapp} onChange={(e) => set('whatsapp', e.target.value)} placeholder="+52 55 1234 5678" />
+            </Field>
+            <Field label="URL de video">
+              <input className={inputCls} value={form.videoUrl} onChange={(e) => set('videoUrl', e.target.value)} placeholder="https://youtube.com/..." />
+            </Field>
+          </div>
+          <Field label="Link de Google Maps">
             <input
-              type="file"
-              accept="image/*"
-              multiple
-              disabled={uploading}
-              onChange={e => handlePhotos(e.target.files)}
-              className="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#1e3a5f] file:text-white hover:file:bg-[#16305a] cursor-pointer"
+              className={inputCls}
+              value={form.mapsUrl}
+              onChange={(e) => set('mapsUrl', e.target.value)}
+              placeholder="https://www.google.com/maps/place/..."
             />
-            {uploading && <p className="text-xs text-gray-500 mt-1">Subiendo...</p>}
-            {photos.length > 0 && (
-              <ul className="mt-2 space-y-1">
-                {photos.map(p => (
-                  <li key={p} className="flex items-center gap-2 text-xs text-gray-600">
-                    <span className="truncate flex-1">{p}</span>
-                    <button type="button" onClick={() => removePhoto(p)} className="text-red-500 hover:text-red-700 text-xs shrink-0">Eliminar</button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div>
-            <label className={labelCls}>URL de video</label>
-            <input className={inputCls} value={form.videoUrl} onChange={e => set('videoUrl', e.target.value)} placeholder="https://youtube.com/..." />
-          </div>
-        </div>
+          </Field>
+          {mapCoords && (
+            <div>
+              <p className="text-xs text-[#8C7B68] mb-2">Vista previa del mapa</p>
+              <PropertyMap lat={mapCoords.lat} lng={mapCoords.lng} mapsUrl={form.mapsUrl} />
+            </div>
+          )}
+          {form.mapsUrl && !mapCoords && (
+            <p className="text-xs text-amber-600">No se pudo parsear lat/lng del link. Verifica que sea un link directo de Google Maps (no acortado).</p>
+          )}
+        </Section>
 
-        {/* Contact & Status */}
-        <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Contacto y estado</h2>
-          <div>
-            <label className={labelCls}>WhatsApp</label>
-            <input className={inputCls} value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)} placeholder="+52 55 0000 0000" />
-          </div>
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-              <input type="checkbox" checked={form.active} onChange={e => set('active', e.target.checked)} className="rounded" />
-              Activa
-            </label>
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-              <input type="checkbox" checked={form.featured} onChange={e => set('featured', e.target.checked)} className="rounded" />
-              Destacada
-            </label>
-          </div>
-        </div>
-
-        <div className="flex gap-3 justify-end">
+        <div className="flex gap-3 justify-end pb-8">
           <Button type="button" variant="outline" onClick={() => router.push('/admin/propiedades')}>
             Cancelar
           </Button>
-          <Button type="submit" disabled={saving || uploading} className="bg-[#1e3a5f] text-white hover:bg-[#16305a]">
-            {saving ? 'Guardando...' : 'Crear propiedad'}
+          <Button
+            type="submit"
+            disabled={saving}
+            className="bg-[#18140D] hover:bg-[#2E2820] text-[#C9A96E] font-semibold"
+          >
+            {saving ? 'Guardando…' : 'Crear propiedad'}
           </Button>
         </div>
       </form>

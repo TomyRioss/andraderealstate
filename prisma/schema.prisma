@@ -22,6 +22,7 @@ model Property {
   contractType ContractType
   category     Category
   priceMXN     Float?
+  priceUSD     Float?
   priceVisible Boolean      @default(true)
   bedrooms     Int?
   bathrooms    Int?
@@ -33,6 +34,7 @@ model Property {
   yearBuilt    Int?
   photos       String[]
   videoUrl     String?
+  mapsUrl      String?
   whatsapp     String?
   amenities    String[]
   features     String[]
@@ -52,6 +54,7 @@ model ContactForm {
   photos    String[]
   status    LeadStatus @default(PENDING)
   notes     String?
+  active    Boolean    @default(true)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
@@ -63,6 +66,7 @@ model Testimonial {
   rating    Int
   content   String
   status    TestimonialStatus @default(PENDING)
+  active    Boolean           @default(true)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 }
@@ -85,6 +89,7 @@ enum Category {
 enum FormType {
   BUY
   SELL
+  MANAGE
 }
 
 enum LeadStatus {
@@ -98,4 +103,19 @@ enum TestimonialStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
 }

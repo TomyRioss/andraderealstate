@@ -47,8 +47,8 @@ export default async function LandingPage() {
       <PropertiesSection title="Propiedades en Venta" properties={saleProps} />
       <PropertiesSection title="Propiedades en Renta" properties={rentProps} />
       <PropertiesSection title="Desarrollos" properties={devProps} />
-      <TestimonialsSection testimonials={testimonials} />
       <ContactSection />
+      <TestimonialsSection testimonials={testimonials} />
       <Footer />
     </>
   )

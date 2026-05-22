@@ -14,15 +14,15 @@ const MAX_SIZE_MB = 20
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 const inputCls =
-  'w-full border border-[#e5e7eb] rounded-xl px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:border-[#C9A96E] focus:ring-1 focus:ring-[#C9A96E] transition bg-white'
+  'w-full border border-[#D4C4A8] rounded-xl px-4 py-3 text-sm text-[#18140D] focus:outline-none focus:border-[#B07030] focus:ring-1 focus:ring-[#B07030] transition bg-white placeholder:text-[#A89880]'
 const labelCls = 'block text-sm font-medium text-[#18140D] mb-1'
 
-export default function VenderForm() {
-  const [name, setName] = useState('')
+export default function AdministrarForm() {
+  const [nombre, setNombre] = useState('')
+  const [apellido, setApellido] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
-  const [message, setMessage] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
   const [banner, setBanner] = useState<Banner | null>(null)
@@ -53,16 +53,6 @@ export default function VenderForm() {
     setBanner(null)
     setPhotoError(null)
 
-    if (files.length > MAX_FILES) {
-      setPhotoError(`Máximo ${MAX_FILES} fotos.`)
-      return
-    }
-    const oversized = files.find((f) => f.size > MAX_SIZE_BYTES)
-    if (oversized) {
-      setPhotoError(`"${oversized.name}" supera ${MAX_SIZE_MB}MB.`)
-      return
-    }
-
     setLoading(true)
     try {
       const supabase = createClient()
@@ -70,7 +60,7 @@ export default function VenderForm() {
 
       for (const file of files) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-        const path = `${Date.now()}-${safeName}`
+        const path = `manage-${Date.now()}-${safeName}`
         const { error } = await supabase.storage.from('contact-uploads').upload(path, file)
         if (error) {
           setBanner({ type: 'error', message: `Error subiendo "${file.name}": ${error.message}` })
@@ -84,35 +74,46 @@ export default function VenderForm() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'SELL', name, phone, email, address, message, photos: photoPaths }),
+        body: JSON.stringify({
+          type: 'MANAGE',
+          name: `${nombre} ${apellido}`.trim(),
+          phone,
+          email: email || undefined,
+          address,
+          photos: photoPaths,
+        }),
       })
 
       if (res.status === 201) {
-        setBanner({ type: 'success', message: 'Propiedad enviada. Te contactamos pronto.' })
-        setName('')
+        setBanner({ type: 'success', message: 'Solicitud enviada. Un vendedor te contactará por WhatsApp pronto.' })
+        setNombre('')
+        setApellido('')
         setPhone('')
         setEmail('')
         setAddress('')
-        setMessage('')
         setFiles([])
         if (fileRef.current) fileRef.current.value = ''
       } else {
         const data = await res.json().catch(() => ({}))
         setBanner({ type: 'error', message: data?.error ?? 'Error al enviar. Intentalo de nuevo.' })
-        console.error('[VenderForm] API error:', data)
+        console.error('[AdministrarForm] API error:', data)
       }
     } catch (err) {
       setBanner({ type: 'error', message: 'Error de red. Intentalo de nuevo.' })
-      console.error('[VenderForm] fetch error:', err)
+      console.error('[AdministrarForm] fetch error:', err)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#e5e7eb] p-8 max-w-xl w-full mx-auto">
-      <h2 className="text-xl font-black text-[#18140D] mb-1">Quiero vender</h2>
-      <p className="text-sm text-[#8C7B68] mb-6">Cargá tu propiedad y te contactamos sin cargo.</p>
+    <div className="bg-white rounded-2xl shadow-sm border border-[#E8DFD0] p-8 max-w-xl w-full mx-auto">
+      <h2 className="text-xl font-bold text-[#18140D] mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+        Quiero administrar mi propiedad
+      </h2>
+      <p className="text-sm text-[#8C7B6B] mb-6">
+        Completá el formulario y un vendedor te contactará por WhatsApp.
+      </p>
 
       {banner && (
         <div
@@ -132,16 +133,29 @@ export default function VenderForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className={labelCls}>Nombre completo *</label>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Tu nombre"
-            className={inputCls}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelCls}>Nombre *</label>
+            <input
+              type="text"
+              required
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              placeholder="Tu nombre"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className={labelCls}>Apellido *</label>
+            <input
+              type="text"
+              required
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+              placeholder="Tu apellido"
+              className={inputCls}
+            />
+          </div>
         </div>
 
         <div>
@@ -157,10 +171,11 @@ export default function VenderForm() {
         </div>
 
         <div>
-          <label className={labelCls}>Correo electrónico *</label>
+          <label className={labelCls}>
+            Correo electrónico <span className="text-[#A89880] font-normal">(opcional)</span>
+          </label>
           <input
             type="email"
-            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu@email.com"
@@ -169,21 +184,21 @@ export default function VenderForm() {
         </div>
 
         <div>
-          <label className={labelCls}>Dirección de la propiedad *</label>
+          <label className={labelCls}>Dirección del inmueble *</label>
           <input
             type="text"
             required
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Calle y colonia"
+            placeholder="Calle, colonia y ciudad"
             className={inputCls}
           />
         </div>
 
         <div>
           <label className={labelCls}>
-            Fotos{' '}
-            <span className="text-gray-400 font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
+            Fotos del inmueble{' '}
+            <span className="text-[#A89880] font-normal">(opcional · máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
           </label>
           <input
             ref={fileRef}
@@ -191,31 +206,20 @@ export default function VenderForm() {
             accept="image/*"
             multiple
             onChange={handleFileChange}
-            className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#18140D] file:text-[#C9A96E] hover:file:bg-[#2E2820] cursor-pointer"
+            className="w-full text-sm text-[#8C7B6B] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#B07030] file:text-white hover:file:bg-[#9A6028] cursor-pointer"
           />
           {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
           {files.length > 0 && !photoError && (
-            <p className="mt-1 text-xs text-gray-400">{files.length} foto(s) seleccionada(s)</p>
+            <p className="mt-1 text-xs text-[#A89880]">{files.length} foto(s) seleccionada(s)</p>
           )}
-        </div>
-
-        <div>
-          <label className={labelCls}>Mensaje (opcional)</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={4}
-            placeholder="Información adicional sobre la propiedad..."
-            className={`${inputCls} resize-none`}
-          />
         </div>
 
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#18140D] hover:bg-[#2E2820] disabled:opacity-60 text-[#C9A96E] font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#B07030] hover:bg-[#9A6028] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
-          {loading ? 'Enviando...' : 'Publicar propiedad'}
+          {loading ? 'Enviando...' : 'Solicitar administración'}
         </Button>
       </form>
     </div>

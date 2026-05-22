@@ -31,7 +31,9 @@
       "Bash(awk '{print $NF}')",
       "mcp__desktop-commander__read_file",
       "Bash(Copy-Item *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "mcp__desktop-commander__list_directory",
+      "Bash(Get-ChildItem -Path \".\\\\app\\\\api\" -Recurse -Filter \"*.ts\" -ErrorAction SilentlyContinue)"
     ]
   }
 }

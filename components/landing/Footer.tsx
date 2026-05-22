@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Globe, Camera, MessageCircle } from 'lucide-react'
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa'
 
 export default function Footer() {
   return (
@@ -19,15 +19,16 @@ export default function Footer() {
             <p className="text-[#A89880] text-sm leading-relaxed max-w-xs font-light">
               Tu aliado de confianza en bienes raíces en México.
             </p>
-            <div className="flex gap-5 pt-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8C7B68]">Síguenos en:</p>
+            <div className="flex gap-5">
               <a href="#" aria-label="Facebook" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
-                <Globe size={18} />
+                <FaFacebook size={18} />
               </a>
               <a href="#" aria-label="Instagram" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
-                <Camera size={18} />
+                <FaInstagram size={18} />
               </a>
-              <a href="#" aria-label="WhatsApp" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
-                <MessageCircle size={18} />
+              <a href="#" aria-label="TikTok" className="text-[#8C7B68] hover:text-[#D4B896] transition-colors">
+                <FaTiktok size={18} />
               </a>
             </div>
           </div>
@@ -57,12 +58,25 @@ export default function Footer() {
           </div>
 
         </div>
+
+        <div className="mt-10 mb-0 text-left text-sm text-[#8C7B68]">
+          Desarrollado por{' '}
+          <a
+            href="https://wa.me/5491134083140?text=Hola%2C%20me%20interesa%20desarrollar%20una%20idea."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#D4B896] hover:underline transition-colors"
+          >
+            TTM Agencia
+          </a>
+          .
+        </div>
       </div>
 
       <div className="border-t border-[#2E2820] py-5">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-[#8C7B68]">
           <span>© {new Date().getFullYear()} Andrade & Co. Todos los derechos reservados.</span>
-          <Link href="/admin" className="hover:text-[#8C7B68] transition-colors">
+          <Link href="/admin" className="hover:text-[#D4B896] transition-colors">
             Admin
           </Link>
         </div>
