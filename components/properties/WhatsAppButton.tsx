@@ -23,7 +23,7 @@ export default function WhatsAppButton({ phone, title, url }: Props) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center w-full py-4 bg-[#10b981] text-white font-semibold text-base"
+          className="flex items-center justify-center w-full py-4 bg-[#16a34a] text-white font-semibold text-base"
         >
           Consultar por WhatsApp
         </a>
@@ -34,7 +34,7 @@ export default function WhatsAppButton({ phone, title, url }: Props) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="hidden md:flex items-center justify-center w-full py-3 px-4 bg-[#10b981] hover:bg-[#0d9e6e] text-white font-semibold rounded-lg transition-colors"
+        className="hidden md:flex items-center justify-center w-full py-3 px-4 bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold rounded-lg transition-colors"
       >
         Consultar por WhatsApp
       </a>

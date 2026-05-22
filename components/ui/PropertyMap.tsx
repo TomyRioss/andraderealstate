@@ -33,6 +33,7 @@ export default function PropertyMap({ lat, lng, mapsUrl }: Props) {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       })
 
+      if ((ref.current as HTMLElement & { _leaflet_id?: number })._leaflet_id) return
       map = L.map(ref.current!, { zoomControl: true, scrollWheelZoom: false }).setView([lat, lng], 15)
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

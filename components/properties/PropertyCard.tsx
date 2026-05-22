@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
 interface PropertyCardProps {
   id: string
@@ -12,6 +13,7 @@ interface PropertyCardProps {
   contractType: 'SALE' | 'RENT' | 'DEVELOPMENT'
   category: string
   priceMXN?: number | null
+  priceUSD?: number | null
   priceVisible: boolean
   bedrooms?: number | null
   bathrooms?: number | null
@@ -27,7 +29,7 @@ const contractLabel: Record<PropertyCardProps['contractType'], string> = {
 }
 
 const contractColor: Record<PropertyCardProps['contractType'], string> = {
-  SALE: 'bg-[#1B2E4B] text-white',
+  SALE: 'bg-[#18140D] text-white',
   RENT: 'bg-[#18140D] text-white',
   DEVELOPMENT: 'bg-[#B07030] text-white',
 }
@@ -39,6 +41,7 @@ export default function PropertyCard({
   state,
   contractType,
   priceMXN,
+  priceUSD,
   priceVisible,
   bedrooms,
   bathrooms,
@@ -46,14 +49,21 @@ export default function PropertyCard({
   photos,
   featured,
 }: PropertyCardProps) {
-  const formattedPrice =
-    priceVisible && priceMXN != null
-      ? new Intl.NumberFormat('es-MX', {
-          style: 'currency',
-          currency: 'MXN',
-          maximumFractionDigits: 0,
-        }).format(priceMXN)
-      : 'Precio a consultar'
+  const { currency } = useCurrency()
+
+  const formattedPrice = (() => {
+    if (!priceVisible) return 'Precio a consultar'
+    if (currency === 'USD') {
+      if (priceUSD != null) {
+        return 'USD $' + new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(priceUSD)
+      }
+      return 'USD ---'
+    }
+    if (priceMXN != null) {
+      return 'MXN $' + new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(priceMXN)
+    }
+    return 'Precio a consultar'
+  })()
 
   const specs = [
     bedrooms != null ? `${bedrooms} hab` : null,
@@ -100,8 +110,7 @@ export default function PropertyCard({
             {title}
           </h3>
           <p
-            className="text-xl font-semibold text-[#1B2E4B] mb-3"
-            style={{ fontFamily: 'var(--font-playfair)' }}
+            className="text-xl font-semibold text-[#18140D] mb-3 tracking-tight font-sans"
           >
             {formattedPrice}
           </p>

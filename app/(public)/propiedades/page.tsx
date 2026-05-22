@@ -62,9 +62,9 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
   const { page: _p, ...filtersOnly } = params
 
   return (
-    <main className="min-h-screen bg-[#f8f9ff]">
+    <main className="min-h-screen bg-[#f5f4f0]">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#1e3a5f]">Propiedades</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900">Propiedades</h1>
 
         <PropertyFilters
           contractType={contractType ?? undefined}
@@ -98,6 +98,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
                   contractType={property.contractType}
                   category={property.category}
                   priceMXN={property.priceMXN ?? null}
+                  priceUSD={property.priceUSD ?? null}
                   priceVisible={property.priceVisible}
                   bedrooms={property.bedrooms ?? null}
                   bathrooms={property.bathrooms ?? null}

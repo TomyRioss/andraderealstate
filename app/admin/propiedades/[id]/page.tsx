@@ -13,6 +13,7 @@ interface FormState {
   contractType: ContractType
   category: Category
   priceMXN: string
+  priceUSD: string
   priceVisible: boolean
   address: string
   city: string
@@ -42,6 +43,7 @@ function propToForm(p: Property): FormState {
     contractType: p.contractType,
     category: p.category,
     priceMXN: p.priceMXN != null ? String(p.priceMXN) : '',
+    priceUSD: p.priceUSD != null ? String(p.priceUSD) : '',
     priceVisible: p.priceVisible,
     address: p.address,
     city: p.city,
@@ -97,17 +99,17 @@ export default function EditPropiedad() {
     setUploading(true)
     setError(null)
     const supabase = createClient()
-    const paths: string[] = []
     try {
       for (const file of Array.from(files)) {
-        const path = `properties/${Date.now()}-${file.name}`
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const path = `properties/${Date.now()}-${safeName}`
         const { error: upErr } = await supabase.storage
           .from('property-images')
           .upload(path, file)
         if (upErr) throw new Error(upErr.message)
-        paths.push(path)
+        const { data: pub } = supabase.storage.from('property-images').getPublicUrl(path)
+        setPhotos(prev => [...prev, pub.publicUrl])
       }
-      setPhotos(prev => [...prev, ...paths])
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upload failed')
     } finally {
@@ -132,6 +134,7 @@ export default function EditPropiedad() {
         contractType: form.contractType,
         category: form.category,
         priceMXN: form.priceMXN ? Number(form.priceMXN) : undefined,
+        priceUSD: form.priceUSD ? Number(form.priceUSD) : undefined,
         priceVisible: form.priceVisible,
         address: form.address,
         city: form.city,
@@ -229,12 +232,16 @@ export default function EditPropiedad() {
         {/* Price */}
         <div className={sectionCls}>
           <h2 className="text-sm font-bold text-[#1e3a5f]">Precio</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
               <label className={labelCls}>Precio MXN</label>
               <input className={inputCls} type="number" min="0" value={form.priceMXN} onChange={e => set('priceMXN', e.target.value)} />
             </div>
-            <div className="flex items-end gap-2">
+            <div>
+              <label className={labelCls}>Precio USD</label>
+              <input className={inputCls} type="number" min="0" value={form.priceUSD} onChange={e => set('priceUSD', e.target.value)} />
+            </div>
+            <div className="flex items-end gap-2 col-span-2">
               <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
                 <input type="checkbox" checked={form.priceVisible} onChange={e => set('priceVisible', e.target.checked)} className="rounded" />
                 Precio visible
@@ -306,24 +313,29 @@ export default function EditPropiedad() {
           <h2 className="text-sm font-bold text-[#1e3a5f]">Multimedia</h2>
           <div>
             <label className={labelCls}>Fotos</label>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              disabled={uploading}
-              onChange={e => handlePhotos(e.target.files)}
-              className="block w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#1e3a5f] file:text-white hover:file:bg-[#16305a] cursor-pointer"
-            />
-            {uploading && <p className="text-xs text-gray-500 mt-1">Subiendo...</p>}
+            <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors bg-[#18140D] text-[#C9A96E] hover:bg-[#2E2820]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              {uploading ? 'Subiendo…' : 'Agregar fotos'}
+              <input type="file" accept="image/*" multiple disabled={uploading} onChange={e => handlePhotos(e.target.files)} className="hidden" />
+            </label>
+            {uploading && <p className="text-xs text-gray-500 mt-2">Subiendo...</p>}
             {photos.length > 0 && (
-              <ul className="mt-2 space-y-1">
-                {photos.map(p => (
-                  <li key={p} className="flex items-center gap-2 text-xs text-gray-600">
-                    <span className="truncate flex-1">{p}</span>
-                    <button type="button" onClick={() => removePhoto(p)} className="text-red-500 hover:text-red-700 text-xs shrink-0">Eliminar</button>
-                  </li>
+              <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 gap-3">
+                {photos.map((p, i) => (
+                  <div key={i} className="relative group rounded-lg overflow-hidden border border-slate-200">
+                    <img src={p} alt={`Foto ${i + 1}`} className="w-full h-24 object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(p)}
+                      className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
           <div>

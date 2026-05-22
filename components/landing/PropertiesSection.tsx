@@ -52,6 +52,7 @@ export default function PropertiesSection({ title, properties }: PropertiesSecti
                 contractType={p.contractType}
                 category={p.category}
                 priceMXN={p.priceMXN ?? null}
+                priceUSD={p.priceUSD ?? null}
                 priceVisible={p.priceVisible}
                 bedrooms={p.bedrooms ?? null}
                 bathrooms={p.bathrooms ?? null}

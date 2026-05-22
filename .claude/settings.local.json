@@ -33,7 +33,14 @@
       "Bash(Copy-Item *)",
       "Bash(node *)",
       "mcp__desktop-commander__list_directory",
-      "Bash(Get-ChildItem -Path \".\\\\app\\\\api\" -Recurse -Filter \"*.ts\" -ErrorAction SilentlyContinue)"
+      "Bash(Get-ChildItem -Path \".\\\\app\\\\api\" -Recurse -Filter \"*.ts\" -ErrorAction SilentlyContinue)",
+      "Skill(commit-commands:commit)",
+      "Bash(next build *)",
+      "Bash(npx next *)",
+      "Bash(del \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\middleware.ts\")",
+      "Bash(git rm *)",
+      "Skill(commit-commands:commit-push-pr)",
+      "Bash(git checkout *)"
     ]
   }
 }

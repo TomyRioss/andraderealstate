@@ -6,6 +6,30 @@ import { Button } from '@/components/ui/button'
 
 export interface CategoryOption { value: string; label: string }
 
+const CATS_SALE: CategoryOption[] = [
+  { value: 'HOUSE', label: 'Casa' },
+  { value: 'APARTMENT', label: 'Departamento' },
+  { value: 'LAND', label: 'Terreno' },
+]
+
+const CATS_RENT: CategoryOption[] = [
+  { value: 'HOUSE', label: 'Casa' },
+  { value: 'APARTMENT', label: 'Departamento' },
+  { value: 'COMMERCIAL', label: 'Oficina' },
+]
+
+function getCategoriesForType(type: string): CategoryOption[] | null {
+  if (type === 'SALE') return CATS_SALE
+  if (type === 'RENT') return CATS_RENT
+  if (type === 'DEVELOPMENT') return null
+  return [
+    { value: 'HOUSE', label: 'Casa' },
+    { value: 'APARTMENT', label: 'Departamento' },
+    { value: 'LAND', label: 'Terreno' },
+    { value: 'COMMERCIAL', label: 'Comercial / Oficina' },
+  ]
+}
+
 export interface PropertyFiltersProps {
   contractType?: string | undefined
   category?: string | undefined
@@ -31,7 +55,6 @@ export default function PropertyFilters({
   basePath = '/propiedades',
   hiddenContractType,
   hiddenCategory,
-  allowedCategories,
 }: PropertyFiltersProps) {
   const router = useRouter()
 
@@ -42,6 +65,8 @@ export default function PropertyFilters({
   const [minPriceVal, setMinPriceVal] = useState(minPrice)
   const [maxPriceVal, setMaxPriceVal] = useState(maxPrice)
   const [bedroomsVal, setBedroomsVal] = useState(bedrooms)
+
+  const visibleCategories = getCategoriesForType(hiddenContractType ?? contractVal)
 
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const cityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -84,12 +109,14 @@ export default function PropertyFilters({
   }, [cityVal])
 
   function handleSelect(field: string, value: string) {
-    const map: Record<string, () => void> = {
-      contractType: () => setContractVal(value),
-      category: () => setCategoryVal(value),
-      bedrooms: () => setBedroomsVal(value),
+    if (field === 'contractType') {
+      setContractVal(value)
+      setCategoryVal('')
+      push({ contractType: value, category: '' })
+      return
     }
-    map[field]?.()
+    if (field === 'category') setCategoryVal(value)
+    if (field === 'bedrooms') setBedroomsVal(value)
     push({ [field]: value })
   }
 
@@ -133,8 +160,8 @@ export default function PropertyFilters({
         </div>
       )}
 
-      {/* Category — hidden if locked by sub-page */}
-      {!hiddenCategory && (
+      {/* Category — hidden if locked, hidden for DEVELOPMENT type */}
+      {!hiddenCategory && visibleCategories !== null && (
         <div className="flex flex-col min-w-[150px]">
           <label className={labelCls}>Categoría</label>
           <select
@@ -143,14 +170,7 @@ export default function PropertyFilters({
             className={inputCls}
           >
             <option value="">Todas</option>
-            {(allowedCategories ?? [
-              { value: 'HOUSE', label: 'Casa' },
-              { value: 'APARTMENT', label: 'Departamento' },
-              { value: 'LAND', label: 'Terreno' },
-              { value: 'COMMERCIAL', label: 'Comercial / Oficina' },
-              { value: 'DEVELOPMENT_PROJECT', label: 'Desarrollo' },
-              { value: 'OTHER', label: 'Otro' },
-            ]).map(opt => (
+            {visibleCategories.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>

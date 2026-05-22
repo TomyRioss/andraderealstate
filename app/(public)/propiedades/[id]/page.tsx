@@ -126,12 +126,12 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Features */}
               {features.length > 0 && (
                 <div>
-                  <h2 className="font-semibold text-[#1e3a5f] text-lg mb-3">Características</h2>
+                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Características</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {features.map(f => (
-                      <div key={f.label} className="bg-gray-50 rounded-lg px-3 py-2">
+                      <div key={f.label} className="bg-stone-50 rounded-lg px-3 py-2">
                         <p className="text-xs text-gray-500">{f.label}</p>
-                        <p className="font-semibold text-[#1e3a5f] text-sm">{f.value}</p>
+                        <p className="font-semibold text-[#18140D] text-sm">{f.value}</p>
                       </div>
                     ))}
                   </div>
@@ -141,10 +141,10 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Amenities */}
               {property.amenities.length > 0 && (
                 <div>
-                  <h2 className="font-semibold text-[#1e3a5f] text-lg mb-3">Amenidades</h2>
+                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Amenidades</h2>
                   <div className="flex flex-wrap gap-2">
                     {property.amenities.map(a => (
-                      <span key={a} className="bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                      <span key={a} className="bg-stone-100 rounded-full px-3 py-1 text-sm text-stone-600">
                         {a}
                       </span>
                     ))}
@@ -155,10 +155,10 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Features list */}
               {property.features.length > 0 && (
                 <div>
-                  <h2 className="font-semibold text-[#1e3a5f] text-lg mb-3">Extras</h2>
+                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Extras</h2>
                   <div className="flex flex-wrap gap-2">
                     {property.features.map(f => (
-                      <span key={f} className="bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-700">
+                      <span key={f} className="bg-stone-100 rounded-full px-3 py-1 text-sm text-stone-600">
                         {f}
                       </span>
                     ))}
@@ -168,14 +168,14 @@ export default async function PropertyDetailPage({ params }: Props) {
 
               {/* Description */}
               <div>
-                <h2 className="font-semibold text-[#1e3a5f] text-lg mb-2">Descripción</h2>
+                <h2 className="font-semibold text-[#18140D] text-lg mb-2">Descripción</h2>
                 <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">{property.description}</p>
               </div>
 
               {/* Map */}
               {property.lat != null && property.lng != null && (
                 <div>
-                  <h2 className="font-semibold text-[#1e3a5f] text-lg mb-3">Ubicación</h2>
+                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Ubicación</h2>
                   <PropertyMap lat={property.lat} lng={property.lng} title={property.title} />
                 </div>
               )}
@@ -183,7 +183,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Video */}
               {property.videoUrl && (
                 <div>
-                  <h2 className="font-semibold text-[#1e3a5f] text-lg mb-3">Video</h2>
+                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Video</h2>
                   <VideoPlayer videoUrl={property.videoUrl} />
                 </div>
               )}
@@ -227,17 +227,17 @@ function MobileHeader({ property }: { property: Property }) {
         <span className="text-xs bg-[#1e3a5f] text-white px-2 py-0.5 rounded">
           {CONTRACT_LABELS[property.contractType] ?? property.contractType}
         </span>
-        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+        <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded">
           {CATEGORY_LABELS[property.category] ?? property.category}
         </span>
       </div>
-      <h1 className="text-xl font-bold text-[#1e3a5f]">{property.title}</h1>
-      <p className="text-sm text-gray-500">{property.address}, {property.city}, {property.state}</p>
+      <h1 className="text-xl font-bold text-[#18140D]">{property.title}</h1>
+      <p className="text-sm text-stone-400">{property.address}, {property.city}, {property.state}</p>
       {property.priceVisible && property.priceMXN != null && (
-        <p className="text-2xl font-bold text-[#10b981]">{formatPrice(property.priceMXN)}</p>
+        <p className="text-2xl font-bold text-[#18140D]">{formatPrice(property.priceMXN)}</p>
       )}
       {!property.priceVisible && (
-        <p className="text-sm text-gray-500 italic">Precio a consultar</p>
+        <p className="text-sm text-stone-400 italic">Precio a consultar</p>
       )}
     </div>
   )
@@ -250,14 +250,14 @@ function DesktopHeader({ property }: { property: Property }) {
         <span className="text-xs bg-[#1e3a5f] text-white px-2 py-0.5 rounded">
           {CONTRACT_LABELS[property.contractType] ?? property.contractType}
         </span>
-        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+        <span className="text-xs bg-stone-100 text-stone-600 px-2 py-0.5 rounded">
           {CATEGORY_LABELS[property.category] ?? property.category}
         </span>
       </div>
-      <h1 className="text-2xl font-bold text-[#1e3a5f]">{property.title}</h1>
-      <p className="text-sm text-gray-500">{property.address}, {property.city}, {property.state}</p>
+      <h1 className="text-2xl font-bold text-[#18140D]">{property.title}</h1>
+      <p className="text-sm text-stone-400">{property.address}, {property.city}, {property.state}</p>
       {property.priceVisible && property.priceMXN != null && (
-        <p className="text-3xl font-bold text-[#10b981]">{formatPrice(property.priceMXN)}</p>
+        <p className="text-3xl font-bold text-[#18140D]">{formatPrice(property.priceMXN)}</p>
       )}
       {!property.priceVisible && (
         <p className="text-sm text-gray-500 italic">Precio a consultar</p>

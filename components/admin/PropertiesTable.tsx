@@ -1,12 +1,21 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Property } from '@/types'
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+const CATEGORY_LABELS: Record<string, string> = {
+  HOUSE: 'Casa',
+  APARTMENT: 'Departamento',
+  LAND: 'Terreno',
+  COMMERCIAL: 'Comercial',
+  DEVELOPMENT_PROJECT: 'Proyecto',
+  OTHER: 'Otro',
+}
 
 type SortKey = 'title' | 'city' | 'category' | 'priceMXN' | 'featured'
 type SortDir = 'asc' | 'desc'
@@ -136,6 +145,9 @@ export default function PropertiesTable({ properties: initial, archived: initial
     { key: 'featured', label: 'Destacada' },
   ]
 
+  const fmtUSD = (n?: number | null) =>
+    n != null ? `$${n.toLocaleString('en-US')} USD` : '—'
+
   return (
     <>
       {/* Tabs + search */}
@@ -143,13 +155,13 @@ export default function PropertiesTable({ properties: initial, archived: initial
         <div className="flex gap-2 items-center">
           <Link
             href="/admin/propiedades/nueva"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap"
             style={{ backgroundColor: '#C9A96E', color: '#fff' }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M12 5v14M5 12h14" />
             </svg>
-            Nueva
+            Nueva propiedad
           </Link>
           <button
             onClick={() => setTab('active')}
@@ -184,14 +196,20 @@ export default function PropertiesTable({ properties: initial, archived: initial
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-[#18140D] text-[#C9A96E]">
+              <th className="px-4 py-3 text-left font-semibold">Imagen</th>
               {cols.map(({ key, label }) => (
-                <th key={key}
-                  className="px-4 py-3 text-left font-semibold cursor-pointer select-none whitespace-nowrap hover:text-[#E8C98A] transition-colors"
-                  onClick={() => handleSort(key)}
-                >
-                  {label}
-                  <SortIcon active={sortKey === key} dir={sortDir} />
-                </th>
+                <React.Fragment key={key}>
+                  <th
+                    className="px-4 py-3 text-left font-semibold cursor-pointer select-none whitespace-nowrap hover:text-[#E8C98A] transition-colors"
+                    onClick={() => handleSort(key)}
+                  >
+                    {label}
+                    <SortIcon active={sortKey === key} dir={sortDir} />
+                  </th>
+                  {key === 'priceMXN' && (
+                    <th className="px-4 py-3 text-left font-semibold whitespace-nowrap">Precio USD</th>
+                  )}
+                </React.Fragment>
               ))}
               <th className="px-4 py-3 text-left font-semibold">Acciones</th>
             </tr>
@@ -199,10 +217,18 @@ export default function PropertiesTable({ properties: initial, archived: initial
           <tbody>
             {displayed.map((p, i) => (
               <tr key={p.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                <td className="px-2 py-2">
+                  {p.photos[0] ? (
+                    <img src={p.photos[0]} alt="" className="w-20 h-14 object-cover rounded-lg border border-slate-200" />
+                  ) : (
+                    <div className="w-20 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300 text-xs">Sin foto</div>
+                  )}
+                </td>
                 <td className="px-4 py-3 font-medium text-slate-800 max-w-[180px] truncate">{p.title}</td>
                 <td className="px-4 py-3 text-slate-600">{p.city}</td>
-                <td className="px-4 py-3 text-slate-600">{p.category}</td>
+                <td className="px-4 py-3 text-slate-600">{CATEGORY_LABELS[p.category] ?? p.category}</td>
                 <td className="px-4 py-3 text-slate-600">{fmt(p.priceMXN)}</td>
+                <td className="px-4 py-3 text-slate-600 whitespace-nowrap">{fmtUSD(p.priceUSD)}</td>
                 <td className="px-4 py-3">
                   {tab === 'active' ? (
                     <button

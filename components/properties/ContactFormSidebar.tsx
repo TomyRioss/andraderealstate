@@ -39,7 +39,7 @@ export default function ContactFormSidebar() {
       <h3 className="font-semibold text-[#1e3a5f]">Contactar</h3>
 
       {status === 'success' && (
-        <div className="bg-[#10b981]/10 border border-[#10b981] text-[#10b981] rounded px-3 py-2 text-sm">
+        <div className="bg-stone-100 border border-stone-300 text-stone-700 rounded px-3 py-2 text-sm">
           Mensaje enviado. Te contactaremos pronto.
         </div>
       )}
@@ -57,7 +57,7 @@ export default function ContactFormSidebar() {
           required
           value={phone}
           onChange={e => setPhone(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
+          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/40"
         />
       </div>
 
@@ -68,7 +68,7 @@ export default function ContactFormSidebar() {
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
+          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/40"
         />
       </div>
 
@@ -78,7 +78,7 @@ export default function ContactFormSidebar() {
           value={message}
           onChange={e => setMessage(e.target.value)}
           rows={3}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981] resize-none"
+          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/40 resize-none"
         />
       </div>
 
