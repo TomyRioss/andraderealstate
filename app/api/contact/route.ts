@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { type, name, phone, email, address, photos } = body
+    const { type, name, phone, email, address, photos, message } = body
 
     const cleanPhone = (phone ?? '').replace(/\s+/g, '')
     if (!cleanPhone || cleanPhone.length < 10) {
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
         email: email ?? '',
         address: address ?? null,
         photos: photos ?? [],
+        notes: message ?? null,
       },
     })
 

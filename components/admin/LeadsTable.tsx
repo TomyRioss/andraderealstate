@@ -56,6 +56,8 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
   }
 
   async function saveNotes(id: string, notes: string) {
+    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, notes } : l)))
+    setArchived((prev) => prev.map((l) => (l.id === id ? { ...l, notes } : l)))
     try {
       await fetch(`${BASE}/api/contact/${id}`, {
         method: 'PUT',
@@ -175,6 +177,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
                 <td className="px-4 py-3">
                   {tab === 'active' && (
                     <textarea
+                      key={lead.id + (lead.notes ?? '')}
                       defaultValue={lead.notes || ''}
                       rows={2}
                       onBlur={(e) => saveNotes(lead.id, e.target.value)}
@@ -240,6 +243,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
                   ))}
                 </select>
                 <textarea
+                  key={lead.id + (lead.notes ?? '')}
                   defaultValue={lead.notes || ''}
                   rows={2}
                   onBlur={(e) => saveNotes(lead.id, e.target.value)}
