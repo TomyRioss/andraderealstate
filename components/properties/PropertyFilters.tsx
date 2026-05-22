@@ -7,17 +7,17 @@ import { Button } from '@/components/ui/button'
 export interface CategoryOption { value: string; label: string }
 
 export interface PropertyFiltersProps {
-  contractType?: string
-  category?: string
-  city?: string
-  minPrice?: string
-  maxPrice?: string
-  bedrooms?: string
-  search?: string
-  basePath?: string
-  hiddenContractType?: string
-  hiddenCategory?: string
-  allowedCategories?: CategoryOption[]
+  contractType?: string | undefined
+  category?: string | undefined
+  city?: string | undefined
+  minPrice?: string | undefined
+  maxPrice?: string | undefined
+  bedrooms?: string | undefined
+  search?: string | undefined
+  basePath?: string | undefined
+  hiddenContractType?: string | undefined
+  hiddenCategory?: string | undefined
+  allowedCategories?: CategoryOption[] | undefined
 }
 
 export default function PropertyFilters({

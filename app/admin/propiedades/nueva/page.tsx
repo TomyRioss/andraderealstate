@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/client'
 import type { ContractType, Category } from '@/types'
 
 const PropertyMap = dynamic(() => import('@/components/ui/PropertyMap'), { ssr: false })
@@ -86,6 +87,10 @@ export default function NuevaPropiedad() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [photos, setPhotos] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [photoError, setPhotoError] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   const set = useCallback(
     (field: keyof FormState, value: string | boolean) =>
@@ -98,13 +103,35 @@ export default function NuevaPropiedad() {
     if (!url) return null
     // Format: @lat,lng or ?q=lat,lng or !3dlat!4dlng
     const atMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)
-    if (atMatch) return { lat: parseFloat(atMatch[1]), lng: parseFloat(atMatch[2]) }
+    if (atMatch) return { lat: parseFloat(atMatch[1]!), lng: parseFloat(atMatch[2]!) }
     const qMatch = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/)
-    if (qMatch) return { lat: parseFloat(qMatch[1]), lng: parseFloat(qMatch[2]) }
+    if (qMatch) return { lat: parseFloat(qMatch[1]!), lng: parseFloat(qMatch[2]!) }
     const dMatch = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/)
-    if (dMatch) return { lat: parseFloat(dMatch[1]), lng: parseFloat(dMatch[2]) }
+    if (dMatch) return { lat: parseFloat(dMatch[1]!), lng: parseFloat(dMatch[2]!) }
     return null
   }, [form.mapsUrl])
+
+  async function handlePhotoUpload(files: FileList | null) {
+    if (!files || files.length === 0) return
+    setUploading(true)
+    setPhotoError(null)
+    const supabase = createClient()
+    try {
+      for (const file of Array.from(files)) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const path = `properties/${Date.now()}-${safeName}`
+        const { error: upErr } = await supabase.storage.from('property-images').upload(path, file)
+        if (upErr) throw new Error(`"${file.name}": ${upErr.message}`)
+        const { data: pub } = supabase.storage.from('property-images').getPublicUrl(path)
+        setPhotos((prev) => [...prev, pub.publicUrl])
+      }
+    } catch (e) {
+      setPhotoError(e instanceof Error ? e.message : 'Error al subir')
+    } finally {
+      setUploading(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
 
   function handleTitleChange(value: string) {
     set('title', value)
@@ -147,7 +174,7 @@ export default function NuevaPropiedad() {
       mapsUrl: str(form.mapsUrl),
       active: form.active,
       featured: form.featured,
-      photos: [],
+      photos,
     }
 
     try {
@@ -346,6 +373,48 @@ export default function NuevaPropiedad() {
           )}
           {form.mapsUrl && !mapCoords && (
             <p className="text-xs text-amber-600">No se pudo parsear lat/lng del link. Verifica que sea un link directo de Google Maps (no acortado).</p>
+          )}
+        </Section>
+
+        <Section title="Fotos">
+          {photoError && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{photoError}</p>
+          )}
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors bg-[#18140D] text-[#C9A96E] hover:bg-[#2E2820]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              {uploading ? 'Subiendo…' : 'Subir fotos'}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                disabled={uploading}
+                onChange={(e) => handlePhotoUpload(e.target.files)}
+              />
+            </label>
+            {photos.length > 0 && (
+              <span className="text-xs text-[#8C7B68]">{photos.length} foto(s)</span>
+            )}
+          </div>
+          {photos.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+              {photos.map((url, i) => (
+                <div key={i} className="relative group rounded-lg overflow-hidden border border-[#E5DDD5]">
+                  <img src={url} alt={`Foto ${i + 1}`} className="w-full h-24 object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setPhotos((prev) => prev.filter((_, j) => j !== i))}
+                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </Section>
 
