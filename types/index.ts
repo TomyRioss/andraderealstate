@@ -37,8 +37,8 @@ export interface Property {
   features: string[]
   active: boolean
   featured: boolean
-  createdAt: string
-  updatedAt: string
+  createdAt: string | Date
+  updatedAt: string | Date
 }
 
 export interface ContactFormEntry {
@@ -52,8 +52,8 @@ export interface ContactFormEntry {
   status: LeadStatus
   notes?: string | null
   active: boolean
-  createdAt: string
-  updatedAt: string
+  createdAt: string | Date
+  updatedAt: string | Date
 }
 
 export interface Testimonial {
@@ -64,8 +64,8 @@ export interface Testimonial {
   content: string
   status: TestimonialStatus
   active: boolean
-  createdAt: string
-  updatedAt: string
+  createdAt: string | Date
+  updatedAt: string | Date
 }
 
 export interface PaginatedResponse<T> {
