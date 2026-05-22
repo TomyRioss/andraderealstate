@@ -3,8 +3,8 @@
 import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
 interface Props {
-  priceMXN?: number | null
-  priceUSD?: number | null
+  priceMXN?: number | null | undefined
+  priceUSD?: number | null | undefined
   priceVisible: boolean
   sizeLg?: boolean
 }
