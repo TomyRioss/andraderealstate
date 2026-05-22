@@ -3,13 +3,12 @@ export const dynamic = 'force-dynamic'
 import PropertyCard from '@/components/properties/PropertyCard'
 import PropertyFilters from '@/components/properties/PropertyFilters'
 import Pagination from '@/components/properties/Pagination'
-import type { PaginatedResponse, Property } from '@/types'
+import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 interface PageProps {
   searchParams: Promise<Record<string, string>>
 }
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export default async function PropiedadesPage({ searchParams }: PageProps) {
   const params = await searchParams
@@ -26,39 +25,37 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
   } = params
 
   const limit = 12
-  const qs = new URLSearchParams()
-  qs.set('limit', String(limit))
-  qs.set('page', page)
-  if (contractType) qs.set('contractType', contractType)
-  if (category) qs.set('category', category)
-  if (city) qs.set('city', city)
-  if (minPrice) qs.set('minPrice', minPrice)
-  if (maxPrice) qs.set('maxPrice', maxPrice)
-  if (bedrooms) qs.set('bedrooms', bedrooms)
-  if (search) qs.set('search', search)
+  const currentPage = Math.max(1, Number(page) || 1)
 
-  let result: PaginatedResponse<Property> = {
-    data: [],
-    total: 0,
-    page: 1,
-    limit,
-    totalPages: 0,
+  const where: Prisma.PropertyWhereInput = { active: true }
+  if (contractType) where.contractType = contractType as never
+  if (category) where.category = category as never
+  if (city) where.city = { contains: city, mode: 'insensitive' }
+  if (bedrooms) where.bedrooms = { gte: parseInt(bedrooms, 10) }
+  if (minPrice || maxPrice) {
+    where.priceMXN = {}
+    if (minPrice) (where.priceMXN as Prisma.FloatNullableFilter).gte = parseFloat(minPrice)
+    if (maxPrice) (where.priceMXN as Prisma.FloatNullableFilter).lte = parseFloat(maxPrice)
+  }
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
+      { city: { contains: search, mode: 'insensitive' } },
+    ]
   }
 
-  try {
-    const res = await fetch(`${SITE_URL}/api/properties?${qs.toString()}`, {
-      cache: 'no-store',
-    })
-    if (res.ok) {
-      result = await res.json()
-    }
-  } catch {
-    // fetch failed — empty state shown below
-  }
+  const [data, total] = await Promise.all([
+    prisma.property.findMany({
+      where,
+      skip: (currentPage - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.property.count({ where }),
+  ])
 
-  const currentPage = Number(page) || 1
-
-  // searchParams without 'page' for Pagination component
+  const totalPages = Math.ceil(total / limit)
   const { page: _p, ...filtersOnly } = params
 
   return (
@@ -76,7 +73,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
           search={search ?? undefined}
         />
 
-        {result.data.length === 0 ? (
+        {data.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-gray-500 space-y-2">
             <p className="text-lg font-medium">Sin resultados</p>
             <p className="text-sm">Intenta ajustar los filtros.</p>
@@ -84,10 +81,10 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
         ) : (
           <>
             <p className="text-sm text-gray-500">
-              {result.total} propiedad{result.total !== 1 ? 'es' : ''} encontrada{result.total !== 1 ? 's' : ''}
+              {total} propiedad{total !== 1 ? 'es' : ''} encontrada{total !== 1 ? 's' : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {result.data.map(property => (
+              {data.map(property => (
                 <PropertyCard
                   key={property.id}
                   id={property.id}
@@ -113,7 +110,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
 
         <Pagination
           page={currentPage}
-          totalPages={result.totalPages}
+          totalPages={totalPages}
           basePath="/propiedades"
           searchParams={filtersOnly}
         />
