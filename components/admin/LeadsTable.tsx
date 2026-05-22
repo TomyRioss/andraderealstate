@@ -90,7 +90,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
     }
   }
 
-  const fmtDate = (d: string) =>
+  const fmtDate = (d: string | Date) =>
     new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 
   return (

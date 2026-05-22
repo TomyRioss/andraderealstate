@@ -8,7 +8,7 @@ interface TestimonialsSectionProps {
   testimonials: Testimonial[]
 }
 
-function timeAgo(dateStr: string): string {
+function timeAgo(dateStr: string | Date): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const mins = Math.floor(diff / 60000)
   const hours = Math.floor(mins / 60)

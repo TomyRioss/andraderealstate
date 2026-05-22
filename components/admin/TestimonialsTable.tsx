@@ -87,7 +87,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
   }
 
   const stars = (n: number) => '★'.repeat(Math.max(0, Math.min(5, n))) + '☆'.repeat(Math.max(0, 5 - n))
-  const fmtDate = (d: string) =>
+  const fmtDate = (d: string | Date) =>
     new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
   const truncate = (s: string, max = 80) => s.length > max ? s.slice(0, max) + '…' : s
 
