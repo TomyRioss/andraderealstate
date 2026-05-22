@@ -36,7 +36,7 @@ export default function ContactFormSidebar() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <h3 className="font-semibold text-[#1e3a5f]">Contactar</h3>
+      <h3 className="font-semibold text-[#18140D]">Contactar</h3>
 
       {status === 'success' && (
         <div className="bg-stone-100 border border-stone-300 text-stone-700 rounded px-3 py-2 text-sm">
@@ -51,41 +51,41 @@ export default function ContactFormSidebar() {
       )}
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Teléfono *</label>
+        <label className="block text-xs font-medium text-[#8C7B6B] mb-1">Teléfono *</label>
         <input
           type="tel"
           required
           value={phone}
           onChange={e => setPhone(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/40"
+          className="w-full border border-[#D4C4A8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#B07030]/40"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+        <label className="block text-xs font-medium text-[#8C7B6B] mb-1">Email *</label>
         <input
           type="email"
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/40"
+          className="w-full border border-[#D4C4A8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#B07030]/40"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Mensaje</label>
+        <label className="block text-xs font-medium text-[#8C7B6B] mb-1">Mensaje</label>
         <textarea
           value={message}
           onChange={e => setMessage(e.target.value)}
           rows={3}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]/40 resize-none"
+          className="w-full border border-[#D4C4A8] rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#B07030]/40 resize-none"
         />
       </div>
 
       <Button
         type="submit"
         disabled={status === 'loading'}
-        className="bg-[#1e3a5f] hover:bg-[#152d4a] text-white w-full"
+        className="bg-[#18140D] hover:bg-[#0D0906] text-white w-full"
       >
         {status === 'loading' ? 'Enviando...' : 'Enviar consulta'}
       </Button>

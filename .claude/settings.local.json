@@ -40,7 +40,10 @@
       "Bash(del \"C:\\\\Users\\\\Pc\\\\Desktop\\\\andrade_realstate\\\\middleware.ts\")",
       "Bash(git rm *)",
       "Skill(commit-commands:commit-push-pr)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "PowerShell(git push *)",
+      "PowerShell(gh pr create --title \"feat: refine monochrome UI across properties components\" --body $body)",
+      "PowerShell(git *)"
     ]
   }
 }
