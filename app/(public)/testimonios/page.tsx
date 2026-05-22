@@ -121,7 +121,7 @@ export default function TestimoniosPage() {
                 <div key={t.id} className="bg-white rounded-xl p-6 flex flex-col gap-4" style={{ border: '1px solid #E8E0D5' }}>
                   <div className="flex items-center justify-between">
                     <StarRating rating={Math.max(0, Math.min(5, t.rating))} />
-                    <span className="text-[10px] text-[#B0A090]">{timeAgo(t.createdAt)}</span>
+                    <span className="text-[10px] text-[#B0A090]">{timeAgo(typeof t.createdAt === 'string' ? t.createdAt : t.createdAt.toISOString())}</span>
                   </div>
                   <p className="text-[#3D342A] text-sm leading-relaxed flex-1">&ldquo;{t.content}&rdquo;</p>
                   <div className="flex items-center gap-3 pt-2 border-t border-[#F0EAE0]">
