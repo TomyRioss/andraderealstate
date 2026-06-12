@@ -27,6 +27,30 @@ Follow MVC pattern. Use modular components. Max 500 lines per component — spli
 ## Unknown Problems
 Search the web (Stack Overflow, Reddit, GitHub Issues, docs) before attempting a solution to unfamiliar problems.
 
+## Color Palette — InmoHub
+
+Always use these CSS variables. Never hardcode color values.
+
+```css
+:root {
+  --color-anchor: #0D3B66;  /* Primary text, titles, nav, logo, dark hero bg */
+  --color-mid:    #1A5F9E;  /* CTA buttons, active interactive elements */
+  --color-soft:   #4A7BA7;  /* Secondary text, metadata, captions, dates */
+  --color-mist:   #AED6F1;  /* Borders and separators ONLY — never as text */
+  --color-ice:    #E8F4FD;  /* Card/input/section backgrounds */
+  --color-white:  #FFFFFF;  /* Dominant page background (80%+ viewport) */
+}
+```
+
+Rules:
+- `--color-white`: default `body` background
+- `--color-anchor`: dark bg with white text (hero/banner), or text on light bg
+- `--color-mid`: CTA buttons; hover → `--color-anchor`
+- `--color-soft`: secondary text only (≥18px or bold for WCAG AA on white)
+- `--color-mist`: borders/separators only — **never** as text color
+- `--color-ice`: alternate section/card/input backgrounds
+- State colors (error/success/warning/info) not defined — define separately before use
+
 ## Skills
 
 | Task | Skill | Model |

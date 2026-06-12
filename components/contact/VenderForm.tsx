@@ -14,10 +14,28 @@ const MAX_SIZE_MB = 20
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 const inputCls =
-  'w-full border border-[#e5e7eb] rounded-xl px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:border-[#C9A96E] focus:ring-1 focus:ring-[#C9A96E] transition bg-white'
-const labelCls = 'block text-sm font-medium text-[#18140D] mb-1'
+  'w-full border border-[#AED6F1] rounded-xl px-4 py-3 text-sm text-[#0D3B66] focus:outline-none focus:border-[#1A5F9E] focus:ring-1 focus:ring-[#1A5F9E] transition bg-white placeholder:text-[#4A7BA7]'
+const labelCls = 'block text-sm font-medium text-[#0D3B66] mb-1'
+
+type Mode = 'vender' | 'alquilar'
+
+const modeConfig: Record<Mode, { title: string; subtitle: string; apiType: string; btnLabel: string }> = {
+  vender: {
+    title: 'Quiero vender',
+    subtitle: 'Cargá tu propiedad y te contactamos sin cargo.',
+    apiType: 'SELL',
+    btnLabel: 'Publicar propiedad',
+  },
+  alquilar: {
+    title: 'Quiero alquilar',
+    subtitle: 'Publicá tu propiedad en alquiler y te contactamos.',
+    apiType: 'RENT_LISTING',
+    btnLabel: 'Publicar alquiler',
+  },
+}
 
 export default function VenderForm() {
+  const [mode, setMode] = useState<Mode>('vender')
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
@@ -28,6 +46,14 @@ export default function VenderForm() {
   const [banner, setBanner] = useState<Banner | null>(null)
   const [photoError, setPhotoError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+
+  const cfg = modeConfig[mode]
+
+  function handleModeChange(m: Mode) {
+    setMode(m)
+    setBanner(null)
+    setPhotoError(null)
+  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPhotoError(null)
@@ -84,7 +110,7 @@ export default function VenderForm() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'SELL', name, phone, email, address, message, photos: photoPaths }),
+        body: JSON.stringify({ type: cfg.apiType, name, phone, email, address, message, photos: photoPaths }),
       })
 
       if (res.status === 201) {
@@ -110,9 +136,27 @@ export default function VenderForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#e5e7eb] p-8 max-w-xl w-full mx-auto">
-      <h2 className="text-xl font-black text-[#18140D] mb-1">Quiero vender</h2>
-      <p className="text-sm text-[#8C7B68] mb-6">Cargá tu propiedad y te contactamos sin cargo.</p>
+    <div className="bg-white rounded-2xl shadow-sm border border-[#AED6F1] p-8 max-w-xl w-full mx-auto">
+      {/* Toggle */}
+      <div className="flex rounded-xl border border-[#AED6F1] overflow-hidden mb-6">
+        {(['vender', 'alquilar'] as Mode[]).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => handleModeChange(m)}
+            className={`flex-1 py-2.5 text-sm font-semibold transition-colors capitalize ${
+              mode === m
+                ? 'bg-[#0D3B66] text-white'
+                : 'bg-white text-[#4A7BA7] hover:text-[#0D3B66]'
+            }`}
+          >
+            {m.charAt(0).toUpperCase() + m.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <h2 className="text-xl font-black text-[#0D3B66] mb-1">{cfg.title}</h2>
+      <p className="text-sm text-[#4A7BA7] mb-6">{cfg.subtitle}</p>
 
       {banner && (
         <div
@@ -183,7 +227,7 @@ export default function VenderForm() {
         <div>
           <label className={labelCls}>
             Fotos{' '}
-            <span className="text-gray-400 font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
+            <span className="text-[#4A7BA7] font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
           </label>
           <input
             ref={fileRef}
@@ -191,11 +235,11 @@ export default function VenderForm() {
             accept="image/*"
             multiple
             onChange={handleFileChange}
-            className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#18140D] file:text-[#C9A96E] hover:file:bg-[#2E2820] cursor-pointer"
+            className="w-full text-sm text-[#4A7BA7] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#0D3B66] file:text-white hover:file:bg-[#1A5F9E] cursor-pointer"
           />
           {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
           {files.length > 0 && !photoError && (
-            <p className="mt-1 text-xs text-gray-400">{files.length} foto(s) seleccionada(s)</p>
+            <p className="mt-1 text-xs text-[#4A7BA7]">{files.length} foto(s) seleccionada(s)</p>
           )}
         </div>
 
@@ -213,9 +257,9 @@ export default function VenderForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#18140D] hover:bg-[#2E2820] disabled:opacity-60 text-[#C9A96E] font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#0D3B66] hover:bg-[#1A5F9E] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
-          {loading ? 'Enviando...' : 'Publicar propiedad'}
+          {loading ? 'Enviando...' : cfg.btnLabel}
         </Button>
       </form>
     </div>

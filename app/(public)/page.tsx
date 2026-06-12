@@ -9,7 +9,7 @@ import JsonLd from '@/components/landing/JsonLd'
 import { prisma } from '@/lib/prisma'
 
 export default async function LandingPage() {
-  const [saleProps, rentProps, devProps, testimonials] = await Promise.all([
+  const [saleProps, rentProps, devProps, testimonials, heroProps] = await Promise.all([
     prisma.property.findMany({
       where: { active: true, featured: true, contractType: 'SALE' },
       take: 6,
@@ -30,12 +30,18 @@ export default async function LandingPage() {
       take: 6,
       orderBy: { createdAt: 'desc' },
     }),
+    prisma.property.findMany({
+      where: { active: true, NOT: { photos: { isEmpty: true } } },
+      take: 5,
+      orderBy: [{ featured: 'desc' }, { createdAt: 'desc' }],
+      select: { id: true, title: true, photos: true, priceMXN: true, city: true, state: true, slug: true },
+    }),
   ])
 
   return (
     <>
       <JsonLd />
-      <Hero />
+      <Hero properties={heroProps} />
       <PropertiesSection title="Propiedades en Venta" properties={saleProps} />
       <PropertiesSection title="Propiedades en Renta" properties={rentProps} />
       <PropertiesSection title="Desarrollos" properties={devProps} />

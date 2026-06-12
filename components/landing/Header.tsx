@@ -38,17 +38,17 @@ export default function Header() {
   const { currency, toggle } = useCurrency()
 
   return (
-    <header className="sticky top-0 z-50 bg-[#18140D]/95 backdrop-blur-sm border-b border-[#2E2820]">
+    <header className="sticky top-0 z-50 bg-[#0D3B66]/95 backdrop-blur-sm border-b border-[#AED6F1]/20">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
             src="/andrade_realstate_logo.png"
             alt="Andrade & Co Real Estate"
-            width={260}
-            height={80}
-            className="h-16 w-auto"
-            style={{ filter: 'brightness(0) invert(1)' }}
+            width={240}
+            height={64}
+            className="h-16"
+            style={{ filter: 'brightness(0) invert(1)', width: 'auto' }}
             priority
           />
         </Link>
@@ -64,7 +64,7 @@ export default function Header() {
             >
               <Link
                 href={item.href}
-                className="flex items-center gap-1 text-base font-normal text-[#D4C8B8] hover:text-[#B07030] hover:underline underline-offset-4 transition-colors tracking-wide py-1"
+                className="flex items-center gap-1 text-base font-normal text-white hover:text-[#AED6F1] hover:underline underline-offset-4 transition-colors tracking-wide py-1"
               >
                 {item.label}
                 {item.children && (
@@ -78,17 +78,19 @@ export default function Header() {
               </Link>
 
               {item.children && openDropdown === item.label && (
-                <div className="absolute top-full left-0 mt-1 w-44 bg-[#1E1910] border border-[#2E2820] rounded-lg shadow-xl py-1 z-50">
+                <div className="absolute top-full left-0 w-44 pt-2 z-50">
+                <div className="bg-[#0D3B66] border border-[#AED6F1]/20 rounded-lg shadow-xl py-1">
                   {item.children.map((child) => (
                     <Link
                       key={child.href}
                       href={child.href}
-                      className="block px-4 py-2.5 text-sm text-[#C4B49E] hover:text-white hover:bg-[#2E2820] transition-colors"
+                      className="block px-4 py-2.5 text-sm text-[#AED6F1] hover:text-white hover:bg-[#1A5F9E] transition-colors"
                       onClick={() => setOpenDropdown(null)}
                     >
                       {child.label}
                     </Link>
                   ))}
+                </div>
                 </div>
               )}
             </div>
@@ -98,24 +100,24 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {/* Currency toggle */}
           <div className="flex flex-col items-center gap-0.5">
-            <span className="text-[9px] tracking-[0.2em] uppercase text-[#A89880] font-semibold">Moneda</span>
+            <span className="text-[9px] tracking-[0.2em] uppercase text-[#AED6F1] font-semibold">Moneda</span>
             <button
               onClick={toggle}
-              className="flex items-center rounded-full border border-[#3A3028] bg-[#1E1910] p-0.5"
+              className="flex items-center rounded-full border border-[#AED6F1]/40 bg-[#0D3B66] p-0.5"
               aria-label="Cambiar moneda"
             >
               <span className={`rounded-full px-3 py-1 text-xs font-semibold tracking-widest transition-all ${
-                currency === 'MXN' ? 'bg-[#B07030] text-white' : 'text-[#6B5E4E] hover:text-[#A89880]'
+                currency === 'MXN' ? 'bg-[#1A5F9E] text-white' : 'text-[#AED6F1]/60 hover:text-[#AED6F1]'
               }`}>MXN</span>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold tracking-widest transition-all ${
-                currency === 'USD' ? 'bg-[#B07030] text-white' : 'text-[#6B5E4E] hover:text-[#A89880]'
+                currency === 'USD' ? 'bg-[#1A5F9E] text-white' : 'text-[#AED6F1]/60 hover:text-[#AED6F1]'
               }`}>USD</span>
             </button>
           </div>
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden text-[#D4C8B8] leading-none p-1"
+            className="md:hidden text-white leading-none p-1"
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="Menu"
           >
@@ -130,13 +132,13 @@ export default function Header() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-[#18140D] border-t border-[#2E2820] px-6 py-5 flex flex-col gap-1">
+        <div className="md:hidden bg-[#0D3B66] border-t border-[#AED6F1]/20 px-6 py-5 flex flex-col gap-1">
           {navItems.map((item) => (
             <div key={item.href}>
               <div className="flex items-center justify-between">
                 <Link
                   href={item.href}
-                  className="py-2.5 text-base font-normal text-[#D4C8B8] hover:text-[#B07030] transition-colors tracking-wide"
+                  className="py-2.5 text-base font-normal text-white hover:text-[#AED6F1] transition-colors tracking-wide"
                   onClick={() => { if (!item.children) setMenuOpen(false) }}
                 >
                   {item.label}
@@ -144,7 +146,7 @@ export default function Header() {
                 {item.children && (
                   <button
                     onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                    className="text-[#6B5E4E] hover:text-[#D4C8B8] p-2 transition-colors"
+                    className="text-[#AED6F1]/50 hover:text-white p-2 transition-colors"
                   >
                     <svg
                       width="10" height="6" viewBox="0 0 10 6" fill="none"
@@ -156,12 +158,12 @@ export default function Header() {
                 )}
               </div>
               {item.children && openDropdown === item.label && (
-                <div className="pl-4 pb-2 flex flex-col gap-0.5 border-l border-[#2E2820] ml-1">
+                <div className="pl-4 pb-2 flex flex-col gap-0.5 border-l border-[#AED6F1]/20 ml-1">
                   {item.children.map((child) => (
                     <Link
                       key={child.href}
                       href={child.href}
-                      className="py-2 text-sm text-[#8C7B68] hover:text-[#D4C8B8] transition-colors"
+                      className="py-2 text-sm text-[#AED6F1] hover:text-white transition-colors"
                       onClick={() => { setMenuOpen(false); setOpenDropdown(null) }}
                     >
                       {child.label}
