@@ -164,7 +164,7 @@ export default function Hero({ properties = [] }: { properties?: HeroProperty[] 
                       }}
                     >
                       <Image
-                        src={prop.photos[0]}
+                        src={prop.photos[0] ?? ''}
                         alt={prop.title}
                         fill
                         className="object-cover"
