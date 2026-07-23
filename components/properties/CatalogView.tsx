@@ -1,4 +1,4 @@
-import PropertyCard from '@/components/properties/PropertyCard'
+﻿import PropertyCard from '@/components/properties/PropertyCard'
 import PropertyFilters, { CategoryOption } from '@/components/properties/PropertyFilters'
 import Pagination from '@/components/properties/Pagination'
 import type { PaginatedResponse, Property } from '@/types'
@@ -68,27 +68,27 @@ export default async function CatalogView({
   const { page: _p, ...filtersOnly } = searchParams
 
   return (
-    <main className="min-h-screen bg-[#F7F3EE]">
+    <main className="bg-[#1A1810]">
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-6">
         {/* Breadcrumb */}
         {breadcrumb && (
-          <nav className="flex items-center gap-2 text-xs text-[#A89880]">
+          <nav className="flex items-center gap-2 text-xs text-[#D4AF6B]">
             {breadcrumb.map((crumb, i) => (
               <span key={crumb.href} className="flex items-center gap-2">
                 {i > 0 && <span>/</span>}
-                <Link href={crumb.href} className="hover:text-[#B07030] transition-colors">
+                <Link href={crumb.href} className="hover:text-[#D4AF6B] transition-colors">
                   {crumb.label}
                 </Link>
               </span>
             ))}
             <span>/</span>
-            <span className="text-[#18140D] font-medium">{title}</span>
+            <span className="text-[#F5EDD8] font-medium">{title}</span>
           </nav>
         )}
 
         {/* Title */}
         <h1
-          className="text-4xl md:text-5xl text-[#18140D] leading-tight"
+          className="text-4xl md:text-5xl text-[#F5EDD8] leading-tight"
           style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
         >
           {title}
@@ -108,13 +108,13 @@ export default async function CatalogView({
         />
 
         {result.data.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-[#A89880] space-y-2">
+          <div className="flex flex-col items-center justify-center py-24 text-[#D4AF6B] space-y-2">
             <p className="text-lg font-medium">Sin resultados</p>
             <p className="text-sm">Intenta ajustar los filtros.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-[#A89880]">
+            <p className="text-sm text-[#D4AF6B]">
               {result.total} propiedad{result.total !== 1 ? 'es' : ''} encontrada{result.total !== 1 ? 's' : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

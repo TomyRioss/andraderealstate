@@ -27,29 +27,28 @@ Follow MVC pattern. Use modular components. Max 500 lines per component — spli
 ## Unknown Problems
 Search the web (Stack Overflow, Reddit, GitHub Issues, docs) before attempting a solution to unfamiliar problems.
 
-## Color Palette — InmoHub
+## Color Palette — Grupo Chalita ("Dorado elegante")
 
-Always use these CSS variables. Never hardcode color values.
+Source of truth: `docs/manual_marca_andrade_co.md`. Always use CSS variables. Never hardcode hex values. Dark mode.
 
 ```css
 :root {
-  --color-anchor: #0D3B66;  /* Primary text, titles, nav, logo, dark hero bg */
-  --color-mid:    #1A5F9E;  /* CTA buttons, active interactive elements */
-  --color-soft:   #4A7BA7;  /* Secondary text, metadata, captions, dates */
-  --color-mist:   #AED6F1;  /* Borders and separators ONLY — never as text */
-  --color-ice:    #E8F4FD;  /* Card/input/section backgrounds */
-  --color-white:  #FFFFFF;  /* Dominant page background (80%+ viewport) */
+  --bg:       #111009;  /* fondo base — page background, superficies grandes */
+  --surface:  #1A1810;  /* un nivel por encima del fondo — separa bloques de contenido */
+  --border:  #2E2A18;  /* divisiones sutiles — líneas, separadores, bordes de bajo contraste */
+  --muted:    #7A6845;  /* texto de baja jerarquía — metadatos, labels secundarios, placeholders */
+  --accent2: #B8912A;  /* acento de apoyo — badges, hovers suaves */
+  --accent:   #D4AF6B;  /* acento principal — UNA acción prioritaria por vista */
+  --text:     #F5EDD8;  /* texto principal — máximo contraste */
 }
 ```
 
 Rules:
-- `--color-white`: default `body` background
-- `--color-anchor`: dark bg with white text (hero/banner), or text on light bg
-- `--color-mid`: CTA buttons; hover → `--color-anchor`
-- `--color-soft`: secondary text only (≥18px or bold for WCAG AA on white)
-- `--color-mist`: borders/separators only — **never** as text color
-- `--color-ice`: alternate section/card/input backgrounds
-- State colors (error/success/warning/info) not defined — define separately before use
+- `--accent`: reservado para una sola acción prioritaria por vista, no diluir usándolo en más de un elemento
+- `--accent` sobre fondo oscuro da 9.21:1 (AAA) — se puede usar en texto de cualquier tamaño
+- `--muted`: nunca en texto crítico
+- `hover`/`focus`/`disabled` no definidos en la fuente — cualquier variante derivada es extrapolación, no dato de marca confirmado
+- Fonts: `'General Sans'` for headings (H1–H3), `'Poppins'` for body/UI
 
 ## Skills
 

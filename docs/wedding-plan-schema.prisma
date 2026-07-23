@@ -1,0 +1,196 @@
+// Reemplazar el contenido completo de prisma/schema.prisma por este archivo.
+// No lo apliqué yo directamente (restricción: no toco prisma/DB) — copialo vos y
+// corré `npx prisma migrate dev --name wedding_plan` (o `db push` si preferís) cuando estés listo.
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------- Modelos existentes (reales, reconstruidos desde el código en uso) ----------
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Property {
+  id             String       @id @default(cuid())
+  title          String
+  slug           String       @unique
+  description    String
+  address        String
+  city           String
+  state          String
+  zipCode        String?
+  lat            Float?
+  lng            Float?
+  contractType   ContractType
+  category       Category
+  priceMXN       Float?
+  priceUSD       Float?
+  priceVisible   Boolean      @default(true)
+  bedrooms       Int?
+  bathrooms      Int?
+  halfBaths      Int?
+  parkingSpots   Int?
+  areaSqm        Float?
+  landAreaSqm    Float?
+  floors         Int?
+  yearBuilt      Int?
+  photos         String[]
+  videoUrl       String?
+  mapsUrl        String?
+  whatsapp       String?
+  amenities      String[]
+  features       String[]
+  active         Boolean      @default(true)
+  featured       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+enum ContractType {
+  SALE
+  RENT
+  DEVELOPMENT
+}
+
+enum Category {
+  HOUSE
+  APARTMENT
+  LAND
+  COMMERCIAL
+  DEVELOPMENT_PROJECT
+  OTHER
+}
+
+model ContactForm {
+  id        String     @id @default(cuid())
+  type      FormType
+  name      String?
+  phone     String
+  email     String?
+  address   String?
+  photos    String[]
+  status    LeadStatus @default(PENDING)
+  notes     String?
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum FormType {
+  BUY
+  SELL
+  MANAGE
+}
+
+enum LeadStatus {
+  PENDING
+  CONTACTED
+  CLOSED
+  DISCARDED
+}
+
+model Testimonial {
+  id        String            @id @default(cuid())
+  author    String
+  location  String?
+  rating    Int
+  content   String
+  status    TestimonialStatus
+  active    Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ---------- Modelos nuevos: Wedding Plan ----------
+
+enum WeddingCategorySlug {
+  TOLDOS
+  MOBILIARIO
+  CRISTALERIA
+  MANTELERIA
+  CATERING
+  PISTAS_DE_BAILE
+}
+
+model WeddingCategory {
+  id        String              @id @default(cuid())
+  slug      WeddingCategorySlug @unique
+  name      String
+  icon      String
+  order     Int                 @default(0)
+  items     WeddingItem[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model WeddingItem {
+  id          String             @id @default(cuid())
+  categoryId  String
+  category    WeddingCategory    @relation(fields: [categoryId], references: [id])
+  subcategory String?
+  name        String
+  description String
+  imageUrl    String
+  price       Float
+  unitLabel   String
+  active      Boolean            @default(true)
+  order       Int                @default(0)
+  quoteItems  WeddingQuoteItem[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+enum WeddingQuoteStatus {
+  PENDING
+  CONTACTED
+  CLOSED
+  DISCARDED
+}
+
+model WeddingQuote {
+  id        String             @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  status    WeddingQuoteStatus @default(PENDING)
+  notes     String?
+  items     WeddingQuoteItem[]
+  total     Float
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model WeddingQuoteItem {
+  id         String       @id @default(cuid())
+  quoteId    String
+  quote      WeddingQuote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       WeddingItem  @relation(fields: [itemId], references: [id])
+  quantity   Int          @default(1)
+  priceAtAdd Float
+}

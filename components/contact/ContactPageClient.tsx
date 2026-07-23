@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -9,8 +9,8 @@ interface Banner {
 }
 
 const inputCls =
-  'w-full border border-[#AED6F1] rounded-xl px-4 py-3 text-sm text-[#0D3B66] focus:outline-none focus:border-[#1A5F9E] focus:ring-1 focus:ring-[#1A5F9E] transition bg-white placeholder:text-[#4A7BA7]'
-const labelCls = 'block text-sm font-medium text-[#0D3B66] mb-1'
+  'w-full border border-[#2E2A18] rounded-xl px-4 py-3 text-sm text-[#F5EDD8] focus:outline-none focus:border-[#B8912A] focus:ring-1 focus:ring-[#B8912A] transition bg-[#1A1810] placeholder:text-[#7A6845]'
+const labelCls = 'block text-sm font-medium text-[#F5EDD8] mb-1'
 
 export default function ContactPageClient() {
   const [name, setName] = useState('')
@@ -52,7 +52,7 @@ export default function ContactPageClient() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#AED6F1] p-8 max-w-xl w-full mx-auto">
+    <div className="bg-[#1A1810] rounded-2xl shadow-sm border border-[#2E2A18] p-8 max-w-xl w-full mx-auto">
       {banner && (
         <div
           className={`mb-5 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2 ${
@@ -137,7 +137,7 @@ export default function ContactPageClient() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#0D3B66] hover:bg-[#1A5F9E] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#111009] hover:bg-[#B8912A] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : 'Enviar consulta'}
         </Button>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
@@ -17,16 +17,16 @@ export default function PriceDisplay({ priceMXN, priceUSD, priceVisible, sizeLg 
   const { currency } = useCurrency()
 
   if (!priceVisible) {
-    return <p className="text-sm text-[#8C7B6B] italic">Precio a consultar</p>
+    return <p className="text-sm text-[#7A6845] italic">Precio a consultar</p>
   }
 
   const price = currency === 'USD' ? priceUSD : priceMXN
   if (price == null) return null
 
   return (
-    <p className={`font-bold text-[#B07030] ${sizeLg ? 'text-3xl' : 'text-2xl'}`}>
+    <p className={`font-bold text-[#D4AF6B] ${sizeLg ? 'text-3xl' : 'text-2xl'}`}>
       {formatPrice(price, currency)}{' '}
-      <span className={`font-normal text-[#8C7B6B] ${sizeLg ? 'text-base' : 'text-sm'}`}>{currency}</span>
+      <span className={`font-normal text-[#7A6845] ${sizeLg ? 'text-base' : 'text-sm'}`}>{currency}</span>
     </p>
   )
 }

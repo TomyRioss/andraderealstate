@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef } from 'react'
 
@@ -55,14 +55,14 @@ export default function PropertyMap({ lat, lng, mapsUrl }: Props) {
   }, [lat, lng, mapsUrl])
 
   return (
-    <div className="relative rounded-xl overflow-hidden border border-[#E5DDD5]">
+    <div className="relative rounded-xl overflow-hidden border border-[#2E2A18]">
       <div ref={ref} className="w-full h-64" />
       {mapsUrl && (
         <a
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white shadow border border-[#E5DDD5] text-[#18140D] hover:bg-[#FAF8F5] transition-colors"
+          className="absolute bottom-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#1A1810] shadow border border-[#2E2A18] text-[#F5EDD8] hover:bg-[#FAF8F5] transition-colors"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>

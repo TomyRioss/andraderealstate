@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -48,7 +48,7 @@ export default function Pagination({ page, totalPages, basePath, searchParams }:
         size="sm"
         disabled={page <= 1}
         onClick={() => goTo(page - 1)}
-        className="text-[#1e3a5f] border-[#1e3a5f] disabled:opacity-40"
+        className="text-[#F5EDD8] border-[#111009] disabled:opacity-40"
       >
         Anterior
       </Button>
@@ -66,8 +66,8 @@ export default function Pagination({ page, totalPages, basePath, searchParams }:
             onClick={() => goTo(p as number)}
             className={
               p === page
-                ? 'bg-[#1e3a5f] text-white border-[#1e3a5f]'
-                : 'text-[#1e3a5f] border-[#1e3a5f] hover:bg-[#1e3a5f] hover:text-white'
+                ? 'bg-[#111009] text-white border-[#111009]'
+                : 'text-[#F5EDD8] border-[#111009] hover:bg-[#111009] hover:text-white'
             }
           >
             {p}
@@ -80,7 +80,7 @@ export default function Pagination({ page, totalPages, basePath, searchParams }:
         size="sm"
         disabled={page >= totalPages}
         onClick={() => goTo(page + 1)}
-        className="text-[#1e3a5f] border-[#1e3a5f] disabled:opacity-40"
+        className="text-[#F5EDD8] border-[#111009] disabled:opacity-40"
       >
         Siguiente
       </Button>

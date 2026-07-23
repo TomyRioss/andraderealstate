@@ -8,103 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Property {
-  id           String       @id @default(cuid())
-  title        String
-  slug         String       @unique
-  description  String
-  address      String
-  city         String
-  state        String
-  zipCode      String?
-  lat          Float?
-  lng          Float?
-  contractType ContractType
-  category     Category
-  priceMXN     Float?
-  priceUSD     Float?
-  priceVisible Boolean      @default(true)
-  bedrooms     Int?
-  bathrooms    Int?
-  halfBaths    Int?
-  parkingSpots Int?
-  areaSqm      Float?
-  landAreaSqm  Float?
-  floors       Int?
-  yearBuilt    Int?
-  photos       String[]
-  videoUrl     String?
-  mapsUrl      String?
-  whatsapp     String?
-  amenities    String[]
-  features     String[]
-  active       Boolean      @default(true)
-  featured     Boolean      @default(false)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-model ContactForm {
-  id        String     @id @default(cuid())
-  type      FormType
-  name      String?
-  phone     String
-  email     String
-  address   String?
-  photos    String[]
-  status    LeadStatus @default(PENDING)
-  notes     String?
-  active    Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
-
-model Testimonial {
-  id        String            @id @default(cuid())
-  author    String
-  location  String?
-  rating    Int
-  content   String
-  status    TestimonialStatus @default(PENDING)
-  active    Boolean           @default(true)
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-}
-
-enum ContractType {
-  SALE
-  RENT
-  DEVELOPMENT
-}
-
-enum Category {
-  HOUSE
-  APARTMENT
-  LAND
-  COMMERCIAL
-  DEVELOPMENT_PROJECT
-  OTHER
-}
-
-enum FormType {
-  BUY
-  SELL
-  MANAGE
-}
-
-enum LeadStatus {
-  PENDING
-  CONTACTED
-  CLOSED
-  DISCARDED
-}
-
-enum TestimonialStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -119,3 +22,105 @@ enum Role {
   ADMIN
   SUPER_ADMIN
 }
+
+model Category {
+  id       String     @id @default(cuid())
+  name     String
+  slug     String     @unique
+  icon     String?
+  image    String?
+  active   Boolean    @default(true)
+  order    Int        @default(0)
+
+  subcategories Subcategory[]
+  products      Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subcategory {
+  id     String @id @default(cuid())
+  name   String
+  slug   String
+  order  Int    @default(0)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([categoryId, slug])
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  mainImage   String?
+  images      String[]
+  active      Boolean   @default(true)
+  featured    Boolean   @default(false)
+  order       Int       @default(0)
+
+  categoryId String
+  category   Category  @relation(fields: [categoryId], references: [id])
+
+  subcategoryId String?
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+
+  variants   ProductVariant[]
+  quoteItems WeddingQuoteItem[]
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  images      String[]
+  active      Boolean  @default(true)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum WeddingQuoteStatus {
+  PENDING
+  CONTACTED
+  CLOSED
+  DISCARDED
+}
+
+model WeddingQuote {
+  id        String             @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  status    WeddingQuoteStatus @default(PENDING)
+  notes     String?
+  items     WeddingQuoteItem[]
+  total     Float
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model WeddingQuoteItem {
+  id         String       @id @default(cuid())
+  quoteId    String
+  quote      WeddingQuote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  itemId     String
+  item       Product      @relation(fields: [itemId], references: [id])
+  quantity   Int          @default(1)
+  priceAtAdd Float
+}
+

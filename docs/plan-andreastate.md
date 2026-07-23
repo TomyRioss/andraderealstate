@@ -1,4 +1,4 @@
-# Plan de acción — Andrade Real Estate
+# Plan de acción — Grupo Chalita
 **Stack:** Next.js 16 · React 19 · Tailwind v4 · TypeScript · Supabase · Prisma ORM  
 **Deadline:** 8 días · Mercado objetivo: México (versátil para LATAM)
 
@@ -26,7 +26,7 @@ Extraída del archivo de referencia proporcionado. No inventar ni sustituir.
 ## Estructura de carpetas
 
 ```
-andrade_realstate/
+grupo_chalita/
 ├── app/
 │   ├── (public)/
 │   │   ├── page.tsx                    # Landing
@@ -93,7 +93,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
 NEXT_PUBLIC_MAPBOX_TOKEN=
 
 # App
-NEXT_PUBLIC_SITE_URL=https://andraderealestate.com
+NEXT_PUBLIC_SITE_URL=https://grupochalita.com
 NEXT_PUBLIC_DEFAULT_WHATSAPP=521XXXXXXXXXX   # fallback si propiedad no tiene número propio
 ```
 
@@ -486,7 +486,7 @@ Estado:              activa, destacada
 export async function generateMetadata({ params }): Promise<Metadata> {
   const property = await getProperty(params.id)
   return {
-    title: `${property.title} | Andrade Real Estate`,
+    title: `${property.title} | Grupo Chalita`,
     description: property.description.slice(0, 160),
     openGraph: {
       title: property.title,
@@ -542,7 +542,7 @@ JSON-LD en landing:
 {
   '@context': 'https://schema.org',
   '@type': 'RealEstateAgent',
-  name: 'Andrade Real Estate',
+  name: 'Grupo Chalita',
   url: process.env.NEXT_PUBLIC_SITE_URL,
   logo: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.svg`,
   address: { '@type': 'PostalAddress', addressCountry: 'MX' },

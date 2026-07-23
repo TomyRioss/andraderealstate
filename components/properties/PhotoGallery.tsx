@@ -13,7 +13,7 @@ export default function PhotoGallery({ photos, title }: Props) {
 
   if (!photos.length) {
     return (
-      <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded-lg text-gray-400">
+      <div className="w-full h-64 bg-[#1A1810] flex items-center justify-center rounded-lg text-[#7A6845]">
         Sin fotos disponibles
       </div>
     )
@@ -22,7 +22,7 @@ export default function PhotoGallery({ photos, title }: Props) {
   return (
     <div className="flex flex-col gap-3">
       {/* Main photo */}
-      <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden bg-gray-100">
+      <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden bg-[#1A1810]">
         <Image
           src={photos[active] as string}
           alt={`${title} - foto ${active + 1}`}

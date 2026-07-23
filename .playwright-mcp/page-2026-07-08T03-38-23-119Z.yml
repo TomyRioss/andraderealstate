@@ -1,0 +1,23 @@
+- generic [ref=f1e1]:
+  - main [ref=f1e2]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e6]: Grupo Chalita
+      - generic [ref=f1e7]:
+        - heading "Bienvenido" [level=1] [ref=f1e8]
+        - paragraph [ref=f1e9]: Accedé al panel de administración
+      - generic [ref=f1e10]:
+        - generic [ref=f1e11]:
+          - generic [ref=f1e12]: Correo electrónico
+          - textbox "Correo electrónico" [active] [ref=f1e13]:
+            - /placeholder: admin@ejemplo.com
+        - generic [ref=f1e14]:
+          - generic [ref=f1e15]: Contraseña
+          - generic [ref=f1e16]:
+            - textbox "Contraseña" [ref=f1e17]:
+              - /placeholder: ••••••••
+            - button [ref=f1e18]:
+              - img [ref=f1e19]
+        - button "Iniciar sesión" [ref=f1e22] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f1e28] [cursor=pointer]:
+    - img [ref=f1e29]
+  - alert [ref=f1e32]

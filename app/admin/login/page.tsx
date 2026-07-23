@@ -1,8 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import Image from 'next/image'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -32,7 +31,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex" style={{ backgroundColor: '#E8F4FD' }}>
+    <main className="min-h-screen flex" style={{ backgroundColor: '#1A1810' }}>
       {/* Left panel */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 flex-shrink-0 px-14 py-14 relative overflow-hidden">
         <div
@@ -41,16 +40,10 @@ export default function AdminLoginPage() {
         />
         <div
           className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, rgba(13,59,102,0.85) 0%, rgba(13,59,102,0.55) 50%, rgba(13,59,102,0.92) 100%)' }}
+          style={{ background: 'linear-gradient(to bottom, rgba(14, 10, 18,0.85) 0%, rgba(14, 10, 18,0.55) 50%, rgba(14, 10, 18,0.92) 100%)' }}
         />
         <div className="relative flex-1 flex items-center justify-center">
-          <Image
-            src="/andrade_realstate_logo.png"
-            alt="Andrade & Co Real Estate"
-            width={240}
-            height={104}
-            className="brightness-[1.8]"
-          />
+          <span className="text-white text-3xl font-semibold tracking-wide">Grupo Chalita</span>
         </div>
       </div>
 
@@ -58,21 +51,16 @@ export default function AdminLoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
 
-          {/* Mobile logo */}
+          {/* Mobile brand */}
           <div className="lg:hidden mb-10 flex justify-center">
-            <Image
-              src="/andrade_realstate_logo.png"
-              alt="Andrade & Co Real Estate"
-              width={140}
-              height={60}
-            />
+            <span className="text-2xl font-semibold tracking-wide" style={{ color: '#F5EDD8' }}>Grupo Chalita</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-light mb-2" style={{ color: '#0D3B66', fontFamily: 'Georgia, serif' }}>
+            <h1 className="text-3xl font-light mb-2" style={{ color: '#F5EDD8', fontFamily: 'Georgia, serif' }}>
               Bienvenido
             </h1>
-            <p className="text-sm" style={{ color: '#4A7BA7' }}>
+            <p className="text-sm" style={{ color: '#7A6845' }}>
               Accedé al panel de administración
             </p>
           </div>
@@ -80,7 +68,7 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#4A7BA7' }}>
+              <label htmlFor="email" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#7A6845' }}>
                 Correo electrónico
               </label>
               <input
@@ -91,15 +79,15 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@ejemplo.com"
                 className="w-full px-4 py-3 text-sm rounded-lg outline-none transition-all"
-                style={{ backgroundColor: '#E8F4FD', border: '1px solid #AED6F1', color: '#0D3B66' }}
-                onFocus={(e) => { e.target.style.borderColor = '#1A5F9E'; e.target.style.boxShadow = '0 0 0 3px rgba(26,95,158,0.12)' }}
-                onBlur={(e) => { e.target.style.borderColor = '#AED6F1'; e.target.style.boxShadow = 'none' }}
+                style={{ backgroundColor: '#1A1810', border: '1px solid #D4AF6B', color: '#F5EDD8' }}
+                onFocus={(e) => { e.target.style.borderColor = '#B8912A'; e.target.style.boxShadow = '0 0 0 3px rgba(24,44,78,0.12)' }}
+                onBlur={(e) => { e.target.style.borderColor = '#D4AF6B'; e.target.style.boxShadow = 'none' }}
               />
             </div>
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="password" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#4A7BA7' }}>
+              <label htmlFor="password" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#7A6845' }}>
                 Contraseña
               </label>
               <div className="relative">
@@ -111,15 +99,15 @@ export default function AdminLoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full px-4 py-3 pr-11 text-sm rounded-lg outline-none transition-all"
-                  style={{ backgroundColor: '#E8F4FD', border: '1px solid #AED6F1', color: '#0D3B66' }}
-                  onFocus={(e) => { e.target.style.borderColor = '#1A5F9E'; e.target.style.boxShadow = '0 0 0 3px rgba(26,95,158,0.12)' }}
-                  onBlur={(e) => { e.target.style.borderColor = '#AED6F1'; e.target.style.boxShadow = 'none' }}
+                  style={{ backgroundColor: '#1A1810', border: '1px solid #D4AF6B', color: '#F5EDD8' }}
+                  onFocus={(e) => { e.target.style.borderColor = '#B8912A'; e.target.style.boxShadow = '0 0 0 3px rgba(24,44,78,0.12)' }}
+                  onBlur={(e) => { e.target.style.borderColor = '#D4AF6B'; e.target.style.boxShadow = 'none' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-60"
-                  style={{ color: '#4A7BA7' }}
+                  style={{ color: '#7A6845' }}
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -147,11 +135,11 @@ export default function AdminLoginPage() {
               disabled={loading}
               className="w-full py-3.5 text-sm font-semibold tracking-[0.08em] uppercase rounded-lg transition-all duration-200 mt-1 text-white"
               style={{
-                backgroundColor: loading ? '#AED6F1' : '#0D3B66',
+                backgroundColor: loading ? '#D4AF6B' : '#111009',
                 cursor: loading ? 'not-allowed' : 'pointer',
               }}
-              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#1A5F9E' }}
-              onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#0D3B66' }}
+              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#B8912A' }}
+              onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#111009' }}
             >
               {loading ? 'Verificando...' : 'Iniciar sesión'}
             </button>

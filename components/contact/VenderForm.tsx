@@ -1,8 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
 
 interface Banner {
   type: 'success' | 'error'
@@ -14,8 +13,8 @@ const MAX_SIZE_MB = 20
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 const inputCls =
-  'w-full border border-[#AED6F1] rounded-xl px-4 py-3 text-sm text-[#0D3B66] focus:outline-none focus:border-[#1A5F9E] focus:ring-1 focus:ring-[#1A5F9E] transition bg-white placeholder:text-[#4A7BA7]'
-const labelCls = 'block text-sm font-medium text-[#0D3B66] mb-1'
+  'w-full border border-[#2E2A18] rounded-xl px-4 py-3 text-sm text-[#F5EDD8] focus:outline-none focus:border-[#B8912A] focus:ring-1 focus:ring-[#B8912A] transition bg-[#1A1810] placeholder:text-[#7A6845]'
+const labelCls = 'block text-sm font-medium text-[#F5EDD8] mb-1'
 
 type Mode = 'vender' | 'alquilar'
 
@@ -91,20 +90,21 @@ export default function VenderForm() {
 
     setLoading(true)
     try {
-      const supabase = createClient()
-      const photoPaths: string[] = []
+      let photoPaths: string[] = []
 
-      for (const file of files) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-        const path = `${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('contact-uploads').upload(path, file)
-        if (error) {
-          setBanner({ type: 'error', message: `Error subiendo "${file.name}": ${error.message}` })
+      if (files.length > 0) {
+        const uploadData = new FormData()
+        uploadData.append('folder', 'contact-uploads')
+        files.forEach((file) => uploadData.append('files', file))
+        const uploadRes = await fetch('/api/upload', { method: 'POST', body: uploadData })
+        if (!uploadRes.ok) {
+          const data = await uploadRes.json().catch(() => ({}))
+          setBanner({ type: 'error', message: data?.error ?? 'Error subiendo fotos.' })
           setLoading(false)
           return
         }
-        const { data: pub } = supabase.storage.from('contact-uploads').getPublicUrl(path)
-        photoPaths.push(pub.publicUrl)
+        const uploadJson = await uploadRes.json()
+        photoPaths = uploadJson.urls
       }
 
       const res = await fetch('/api/contact', {
@@ -136,9 +136,9 @@ export default function VenderForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#AED6F1] p-8 max-w-xl w-full mx-auto">
+    <div className="bg-[#1A1810] rounded-2xl shadow-sm border border-[#2E2A18] p-8 max-w-xl w-full mx-auto">
       {/* Toggle */}
-      <div className="flex rounded-xl border border-[#AED6F1] overflow-hidden mb-6">
+      <div className="flex rounded-xl border border-[#2E2A18] overflow-hidden mb-6">
         {(['vender', 'alquilar'] as Mode[]).map((m) => (
           <button
             key={m}
@@ -146,8 +146,8 @@ export default function VenderForm() {
             onClick={() => handleModeChange(m)}
             className={`flex-1 py-2.5 text-sm font-semibold transition-colors capitalize ${
               mode === m
-                ? 'bg-[#0D3B66] text-white'
-                : 'bg-white text-[#4A7BA7] hover:text-[#0D3B66]'
+                ? 'bg-[#111009] text-white'
+                : 'bg-[#1A1810] text-[#7A6845] hover:text-[#F5EDD8]'
             }`}
           >
             {m.charAt(0).toUpperCase() + m.slice(1)}
@@ -155,8 +155,8 @@ export default function VenderForm() {
         ))}
       </div>
 
-      <h2 className="text-xl font-black text-[#0D3B66] mb-1">{cfg.title}</h2>
-      <p className="text-sm text-[#4A7BA7] mb-6">{cfg.subtitle}</p>
+      <h2 className="text-xl font-black text-[#F5EDD8] mb-1">{cfg.title}</h2>
+      <p className="text-sm text-[#7A6845] mb-6">{cfg.subtitle}</p>
 
       {banner && (
         <div
@@ -227,7 +227,7 @@ export default function VenderForm() {
         <div>
           <label className={labelCls}>
             Fotos{' '}
-            <span className="text-[#4A7BA7] font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
+            <span className="text-[#7A6845] font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
           </label>
           <input
             ref={fileRef}
@@ -235,11 +235,11 @@ export default function VenderForm() {
             accept="image/*"
             multiple
             onChange={handleFileChange}
-            className="w-full text-sm text-[#4A7BA7] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#0D3B66] file:text-white hover:file:bg-[#1A5F9E] cursor-pointer"
+            className="w-full text-sm text-[#7A6845] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#111009] file:text-white hover:file:bg-[#B8912A] cursor-pointer"
           />
           {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
           {files.length > 0 && !photoError && (
-            <p className="mt-1 text-xs text-[#4A7BA7]">{files.length} foto(s) seleccionada(s)</p>
+            <p className="mt-1 text-xs text-[#7A6845]">{files.length} foto(s) seleccionada(s)</p>
           )}
         </div>
 
@@ -257,7 +257,7 @@ export default function VenderForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#0D3B66] hover:bg-[#1A5F9E] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#111009] hover:bg-[#B8912A] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : cfg.btnLabel}
         </Button>

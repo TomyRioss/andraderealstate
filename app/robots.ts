@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: '/admin/',
       },
     ],
-    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://andraderealestate.com'}/sitemap.xml`,
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://grupochalita.com'}/sitemap.xml`,
   }
 }

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -117,16 +117,16 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {/* Action bar */}
       <div className="px-6 mb-4 flex items-center justify-between">
         <span className="text-sm text-slate-500">{users.length} usuario{users.length !== 1 ? 's' : ''}</span>
-        <Button onClick={openCreate} className="bg-[#18140D] text-[#C9A96E] hover:bg-[#2a231a]">
+        <Button onClick={openCreate} className="bg-[#111009] text-[#D4AF6B] hover:bg-[#2a231a]">
           + Nuevo usuario
         </Button>
       </div>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto bg-white w-full">
+      <div className="hidden md:block overflow-x-auto bg-[#1A1810] w-full">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#18140D] text-[#C9A96E]">
+            <tr className="bg-[#111009] text-[#D4AF6B]">
               {['Nombre', 'Email', 'Rol', 'Creado', 'Acciones'].map(h => (
                 <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>
               ))}
@@ -134,7 +134,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
           </thead>
           <tbody>
             {users.map((u, i) => (
-              <tr key={u.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+              <tr key={u.id} className={i % 2 === 0 ? 'bg-[#1A1810]' : 'bg-[#111009]'}>
                 <td className="px-4 py-3 font-medium text-slate-800">{u.name ?? '—'}</td>
                 <td className="px-4 py-3 text-slate-600">{u.email}</td>
                 <td className="px-4 py-3">
@@ -169,7 +169,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {/* Mobile cards */}
       <div className="md:hidden flex flex-col gap-3 px-4">
         {users.map(u => (
-          <div key={u.id} className="bg-white rounded-xl shadow p-4 flex flex-col gap-2">
+          <div key={u.id} className="bg-[#1A1810] rounded-xl shadow p-4 flex flex-col gap-2">
             <div className="flex justify-between items-start">
               <div>
                 <div className="font-semibold text-slate-800">{u.name ?? '—'}</div>
@@ -196,7 +196,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {/* Create / Edit Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={closeModal}>
-          <div className="w-full max-w-md rounded-2xl p-6 shadow-xl bg-white" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-md rounded-2xl p-6 shadow-xl bg-[#1A1810]" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-5 text-slate-800">
               {modal === 'create' ? 'Nuevo usuario' : 'Editar usuario'}
             </h2>
@@ -204,7 +204,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-500">Nombre</label>
                 <input
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#D4AF6B]"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="Nombre completo"
@@ -215,7 +215,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
                 <input
                   required
                   type="email"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#D4AF6B]"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                   placeholder="email@ejemplo.com"
@@ -228,7 +228,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
                 <input
                   required={modal === 'create'}
                   type="password"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#D4AF6B]"
                   value={form.password}
                   onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                   placeholder="••••••••"
@@ -249,7 +249,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
               )}
               <div className="flex justify-end gap-3 mt-2">
                 <Button type="button" variant="outline" onClick={closeModal}>Cancelar</Button>
-                <Button type="submit" disabled={loading} className="bg-[#18140D] text-[#C9A96E] hover:bg-[#2a231a]">
+                <Button type="submit" disabled={loading} className="bg-[#111009] text-[#D4AF6B] hover:bg-[#2a231a]">
                   {loading ? 'Guardando...' : 'Guardar'}
                 </Button>
               </div>
@@ -261,7 +261,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {/* Delete confirm */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setDeleteTarget(null)}>
-          <div className="w-full max-w-sm rounded-2xl p-6 shadow-xl bg-white" onClick={e => e.stopPropagation()}>
+          <div className="w-full max-w-sm rounded-2xl p-6 shadow-xl bg-[#1A1810]" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold mb-2 text-slate-800">Eliminar usuario</h2>
             <p className="text-sm mb-5 text-slate-600">
               ¿Confirmás que querés eliminar a <strong>{deleteTarget.name ?? deleteTarget.email}</strong>? Esta acción no se puede deshacer.

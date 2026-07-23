@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -126,11 +126,11 @@ export default function PropertyFilters({
     push({ [field]: value })
   }
 
-  const inputCls = 'border border-[#E0D9CF] bg-white rounded-lg px-3 py-2 text-sm text-[#18140D] outline-none focus:ring-2 focus:ring-[#B07030] placeholder:text-[#A89880]'
-  const labelCls = 'text-xs font-medium text-[#8C7B68] mb-1'
+  const inputCls = 'border border-[#2E2A18] bg-[#1A1810] rounded-lg px-3 py-2 text-sm text-[#F5EDD8] outline-none focus:ring-2 focus:ring-[#D4AF6B] placeholder:text-[#D4AF6B]'
+  const labelCls = 'text-xs font-medium text-[#7A6845] mb-1'
 
   return (
-    <div className="w-full bg-white border border-[#E8E2D9] rounded-xl p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-3 md:items-end">
+    <div className="w-full bg-[#1A1810] border border-[#2E2A18] rounded-xl p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-3 md:items-end">
       {/* Search */}
       <div className="flex flex-col flex-1 min-w-[160px]">
         <label className={labelCls}>Buscar</label>
@@ -232,7 +232,7 @@ export default function PropertyFilters({
       <div className="flex items-end">
         <Button
           variant="outline"
-          className="border-[#E8E2D9] text-[#5C5047] hover:bg-[#18140D] hover:text-white hover:border-[#18140D] text-sm"
+          className="border-[#2E2A18] text-[#111009] hover:bg-[#111009] hover:text-white hover:border-[#111009] text-sm"
           onClick={() => {
             setSearchVal('')
             setCityVal('')

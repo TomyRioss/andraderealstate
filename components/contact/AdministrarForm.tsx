@@ -1,8 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
 
 interface Banner {
   type: 'success' | 'error'
@@ -14,8 +13,8 @@ const MAX_SIZE_MB = 20
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 const inputCls =
-  'w-full border border-[#D4C4A8] rounded-xl px-4 py-3 text-sm text-[#18140D] focus:outline-none focus:border-[#B07030] focus:ring-1 focus:ring-[#B07030] transition bg-white placeholder:text-[#A89880]'
-const labelCls = 'block text-sm font-medium text-[#18140D] mb-1'
+  'w-full border border-[#2E2A18] rounded-xl px-4 py-3 text-sm text-[#F5EDD8] focus:outline-none focus:border-[#2E2A18] focus:ring-1 focus:ring-[#D4AF6B] transition bg-[#1A1810] placeholder:text-[#D4AF6B]'
+const labelCls = 'block text-sm font-medium text-[#F5EDD8] mb-1'
 
 export default function AdministrarForm() {
   const [nombre, setNombre] = useState('')
@@ -55,20 +54,21 @@ export default function AdministrarForm() {
 
     setLoading(true)
     try {
-      const supabase = createClient()
-      const photoPaths: string[] = []
+      let photoPaths: string[] = []
 
-      for (const file of files) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-        const path = `manage-${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('contact-uploads').upload(path, file)
-        if (error) {
-          setBanner({ type: 'error', message: `Error subiendo "${file.name}": ${error.message}` })
+      if (files.length > 0) {
+        const uploadData = new FormData()
+        uploadData.append('folder', 'contact-uploads')
+        files.forEach((file) => uploadData.append('files', file))
+        const uploadRes = await fetch('/api/upload', { method: 'POST', body: uploadData })
+        if (!uploadRes.ok) {
+          const data = await uploadRes.json().catch(() => ({}))
+          setBanner({ type: 'error', message: data?.error ?? 'Error subiendo fotos.' })
           setLoading(false)
           return
         }
-        const { data: pub } = supabase.storage.from('contact-uploads').getPublicUrl(path)
-        photoPaths.push(pub.publicUrl)
+        const uploadJson = await uploadRes.json()
+        photoPaths = uploadJson.urls
       }
 
       const res = await fetch('/api/contact', {
@@ -107,11 +107,11 @@ export default function AdministrarForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#E8DFD0] p-8 max-w-xl w-full mx-auto">
-      <h2 className="text-xl font-bold text-[#18140D] mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+    <div className="bg-[#1A1810] rounded-2xl shadow-sm border border-[#2E2A18] p-8 max-w-xl w-full mx-auto">
+      <h2 className="text-xl font-bold text-[#F5EDD8] mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
         Quiero administrar mi propiedad
       </h2>
-      <p className="text-sm text-[#8C7B6B] mb-6">
+      <p className="text-sm text-[#7A6845] mb-6">
         Completá el formulario y un vendedor te contactará por WhatsApp.
       </p>
 
@@ -172,7 +172,7 @@ export default function AdministrarForm() {
 
         <div>
           <label className={labelCls}>
-            Correo electrónico <span className="text-[#A89880] font-normal">(opcional)</span>
+            Correo electrónico <span className="text-[#D4AF6B] font-normal">(opcional)</span>
           </label>
           <input
             type="email"
@@ -198,7 +198,7 @@ export default function AdministrarForm() {
         <div>
           <label className={labelCls}>
             Fotos del inmueble{' '}
-            <span className="text-[#A89880] font-normal">(opcional · máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
+            <span className="text-[#D4AF6B] font-normal">(opcional · máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
           </label>
           <input
             ref={fileRef}
@@ -206,18 +206,18 @@ export default function AdministrarForm() {
             accept="image/*"
             multiple
             onChange={handleFileChange}
-            className="w-full text-sm text-[#8C7B6B] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#B07030] file:text-white hover:file:bg-[#9A6028] cursor-pointer"
+            className="w-full text-sm text-[#7A6845] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#D4AF6B] file:text-white hover:file:bg-[#9A6028] cursor-pointer"
           />
           {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
           {files.length > 0 && !photoError && (
-            <p className="mt-1 text-xs text-[#A89880]">{files.length} foto(s) seleccionada(s)</p>
+            <p className="mt-1 text-xs text-[#D4AF6B]">{files.length} foto(s) seleccionada(s)</p>
           )}
         </div>
 
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#B07030] hover:bg-[#9A6028] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#D4AF6B] hover:bg-[#9A6028] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : 'Solicitar administración'}
         </Button>

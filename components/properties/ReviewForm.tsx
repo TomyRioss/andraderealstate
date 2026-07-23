@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -42,7 +42,7 @@ export default function ReviewForm({ propertyId: _propertyId }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <h3 className="font-semibold text-[#1e3a5f] text-lg">Dejar una reseña</h3>
+      <h3 className="font-semibold text-[#F5EDD8] text-lg">Dejar una reseña</h3>
 
       {status === 'success' && (
         <div className="bg-[#10b981]/10 border border-[#10b981] text-[#10b981] rounded-lg px-4 py-3 text-sm">
@@ -57,28 +57,28 @@ export default function ReviewForm({ propertyId: _propertyId }: Props) {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+        <label className="block text-sm font-medium text-[#F5EDD8] mb-1">Nombre *</label>
         <input
           type="text"
           required
           value={author}
           onChange={e => setAuthor(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
+          className="w-full border border-[#2E2A18] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
+        <label className="block text-sm font-medium text-[#F5EDD8] mb-1">Ubicación</label>
         <input
           type="text"
           value={location}
           onChange={e => setLocation(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
+          className="w-full border border-[#2E2A18] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981]"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Calificación *</label>
+        <label className="block text-sm font-medium text-[#F5EDD8] mb-1">Calificación *</label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map(star => (
             <button
@@ -95,21 +95,21 @@ export default function ReviewForm({ propertyId: _propertyId }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Comentario * (mín. 10 caracteres)</label>
+        <label className="block text-sm font-medium text-[#F5EDD8] mb-1">Comentario * (mín. 10 caracteres)</label>
         <textarea
           required
           minLength={10}
           value={content}
           onChange={e => setContent(e.target.value)}
           rows={4}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981] resize-none"
+          className="w-full border border-[#2E2A18] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#10b981] resize-none"
         />
       </div>
 
       <Button
         type="submit"
         disabled={status === 'loading'}
-        className="bg-[#1e3a5f] hover:bg-[#152d4a] text-white"
+        className="bg-[#111009] hover:bg-[#152d4a] text-white"
       >
         {status === 'loading' ? 'Enviando...' : 'Enviar reseña'}
       </Button>

@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+﻿import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import type { Property } from '@/types'
 import PhotoGallery from '@/components/properties/PhotoGallery'
@@ -22,10 +22,10 @@ async function fetchProperty(id: string): Promise<Property | null> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const property = await fetchProperty(id)
-  if (!property) return { title: 'Propiedad no encontrada | Andrade Real Estate' }
+  if (!property) return { title: 'Propiedad no encontrada | Grupo Chalita' }
 
   return {
-    title: `${property.title} | Andrade Real Estate`,
+    title: `${property.title} | Grupo Chalita`,
     description: property.description.slice(0, 160),
     openGraph: {
       images: property.photos[0] ? [property.photos[0]] : [],
@@ -122,16 +122,16 @@ export default async function PropertyDetailPage({ params }: Props) {
 
               {/* Features */}
               {features.length > 0 && (
-                <div className="border border-[#D4C4A8] rounded-lg overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-3 border-b border-[#D4C4A8] bg-[#F0EBE0]">
-                    <svg className="w-4 h-4 text-[#8C7B6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                    <h2 className="font-semibold text-[#18140D] text-base">Características del Inmueble</h2>
+                <div className="border border-[#2E2A18] rounded-lg overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-[#2E2A18] bg-[#1A1810]">
+                    <svg className="w-4 h-4 text-[#7A6845]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    <h2 className="font-semibold text-[#F5EDD8] text-base">Características del Inmueble</h2>
                   </div>
-                  <div className="divide-y divide-[#D4C4A8]">
+                  <div className="divide-y divide-[#2E2A18]">
                     {features.map(f => (
                       <div key={f.label} className="flex justify-between items-center px-4 py-3">
-                        <span className="text-sm text-[#8C7B6B]">{f.label}</span>
-                        <span className="text-sm font-medium text-[#B07030]">{f.value}</span>
+                        <span className="text-sm text-[#7A6845]">{f.label}</span>
+                        <span className="text-sm font-medium text-[#D4AF6B]">{f.value}</span>
                       </div>
                     ))}
                   </div>
@@ -141,10 +141,10 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Amenities */}
               {property.amenities.length > 0 && (
                 <div>
-                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Amenidades</h2>
+                  <h2 className="font-semibold text-[#F5EDD8] text-lg mb-3">Amenidades</h2>
                   <div className="flex flex-wrap gap-2">
                     {property.amenities.map(a => (
-                      <span key={a} className="bg-[#EDE5D8] rounded-full px-3 py-1 text-sm text-[#8C7B6B]">
+                      <span key={a} className="bg-[#1A1810] rounded-full px-3 py-1 text-sm text-[#7A6845]">
                         {a}
                       </span>
                     ))}
@@ -155,10 +155,10 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Features list */}
               {property.features.length > 0 && (
                 <div>
-                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Extras</h2>
+                  <h2 className="font-semibold text-[#F5EDD8] text-lg mb-3">Extras</h2>
                   <div className="flex flex-wrap gap-2">
                     {property.features.map(f => (
-                      <span key={f} className="bg-[#EDE5D8] rounded-full px-3 py-1 text-sm text-[#8C7B6B]">
+                      <span key={f} className="bg-[#1A1810] rounded-full px-3 py-1 text-sm text-[#7A6845]">
                         {f}
                       </span>
                     ))}
@@ -168,18 +168,18 @@ export default async function PropertyDetailPage({ params }: Props) {
 
               {/* Description */}
               <div>
-                <h2 className="font-semibold text-[#18140D] text-lg mb-2">Descripción</h2>
-                <p className="text-[#8C7B6B] text-sm leading-relaxed whitespace-pre-line">{property.description}</p>
+                <h2 className="font-semibold text-[#F5EDD8] text-lg mb-2">Descripción</h2>
+                <p className="text-[#7A6845] text-sm leading-relaxed whitespace-pre-line">{property.description}</p>
               </div>
 
               {/* Map */}
               {(property.lat != null && property.lng != null) || property.address ? (
                 <div>
-                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Ubicación</h2>
+                  <h2 className="font-semibold text-[#F5EDD8] text-lg mb-3">Ubicación</h2>
                   {property.lat != null && property.lng != null ? (
                     <PropertyMap lat={property.lat} lng={property.lng} title={property.title} />
                   ) : (
-                    <div className="rounded-xl overflow-hidden border border-[#D4C4A8]">
+                    <div className="rounded-xl overflow-hidden border border-[#2E2A18]">
                       <iframe
                         title="Ubicación en Google Maps"
                         width="100%"
@@ -198,7 +198,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 mt-2 text-sm text-[#B07030] hover:underline"
+                    className="inline-flex items-center gap-1.5 mt-2 text-sm text-[#D4AF6B] hover:underline"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     Ver en Google Maps
@@ -209,7 +209,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Video */}
               {property.videoUrl && (
                 <div>
-                  <h2 className="font-semibold text-[#18140D] text-lg mb-3">Video</h2>
+                  <h2 className="font-semibold text-[#F5EDD8] text-lg mb-3">Video</h2>
                   <VideoPlayer videoUrl={property.videoUrl} />
                 </div>
               )}
@@ -217,7 +217,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Mobile: contact before reviews */}
               <div className="md:hidden flex flex-col gap-4">
                 <WhatsAppButton phone={property.whatsapp ?? null} title={property.title} url={pageUrl} />
-                <div className="border border-[#D4C4A8] rounded-lg p-4">
+                <div className="border border-[#2E2A18] rounded-lg p-4">
                   <ContactFormSidebar />
                 </div>
               </div>
@@ -229,7 +229,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               <div className="sticky top-6 flex flex-col gap-4">
                 <DesktopHeader property={property} />
                 <WhatsAppButton phone={property.whatsapp ?? null} title={property.title} url={pageUrl} />
-                <div className="border border-[#D4C4A8] rounded-lg p-4">
+                <div className="border border-[#2E2A18] rounded-lg p-4">
                   <ContactFormSidebar />
                 </div>
               </div>
@@ -246,15 +246,15 @@ function MobileHeader({ property }: { property: Property }) {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-2 flex-wrap">
-        <span className="text-xs bg-[#18140D] text-white px-2 py-0.5 rounded">
+        <span className="text-xs bg-[#111009] text-white px-2 py-0.5 rounded">
           {CONTRACT_LABELS[property.contractType] ?? property.contractType}
         </span>
-        <span className="text-xs bg-[#EDE5D8] text-[#8C7B6B] px-2 py-0.5 rounded">
+        <span className="text-xs bg-[#1A1810] text-[#7A6845] px-2 py-0.5 rounded">
           {CATEGORY_LABELS[property.category] ?? property.category}
         </span>
       </div>
-      <h1 className="text-xl font-bold text-[#18140D]">{property.title}</h1>
-      <p className="text-sm text-[#8C7B6B]">{property.address}, {property.city}, {property.state}</p>
+      <h1 className="text-xl font-bold text-[#F5EDD8]">{property.title}</h1>
+      <p className="text-sm text-[#7A6845]">{property.address}, {property.city}, {property.state}</p>
       <PriceDisplay priceMXN={property.priceMXN} priceUSD={property.priceUSD} priceVisible={property.priceVisible} />
     </div>
   )
@@ -264,15 +264,15 @@ function DesktopHeader({ property }: { property: Property }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2 flex-wrap">
-        <span className="text-xs bg-[#18140D] text-white px-2 py-0.5 rounded">
+        <span className="text-xs bg-[#111009] text-white px-2 py-0.5 rounded">
           {CONTRACT_LABELS[property.contractType] ?? property.contractType}
         </span>
-        <span className="text-xs bg-[#EDE5D8] text-[#8C7B6B] px-2 py-0.5 rounded">
+        <span className="text-xs bg-[#1A1810] text-[#7A6845] px-2 py-0.5 rounded">
           {CATEGORY_LABELS[property.category] ?? property.category}
         </span>
       </div>
-      <h1 className="text-2xl font-bold text-[#18140D]">{property.title}</h1>
-      <p className="text-sm text-[#8C7B6B]">{property.address}, {property.city}, {property.state}</p>
+      <h1 className="text-2xl font-bold text-[#F5EDD8]">{property.title}</h1>
+      <p className="text-sm text-[#7A6845]">{property.address}, {property.city}, {property.state}</p>
       <PriceDisplay priceMXN={property.priceMXN} priceUSD={property.priceUSD} priceVisible={property.priceVisible} sizeLg />
     </div>
   )

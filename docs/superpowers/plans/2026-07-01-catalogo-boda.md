@@ -12,8 +12,8 @@
 
 - No Prisma/DB changes of any kind — data is static TS, no migrations, no schema edits.
 - TailwindCSS only, no raw CSS, never touch `globals.css`.
-- Color palette (project "Violeta lujo"): bg `#0E0A12`, surface `#160F1F`, border `#2A1D35`, muted `#6A5070`, accent2 `#7B4F80`, accent `#9B6FA0`, text `#EDE0F5`. Use hex literals directly in Tailwind classes (e.g. `bg-[#160F1F]`), matching `components/properties/PropertyCard.tsx`.
-- `--accent` (`#9B6FA0`) reserved for exactly one priority action per view — don't apply it to more than one element per page.
+- Color palette (project "Violeta lujo"): bg `#111009`, surface `#1A1810`, border `#2E2A18`, muted `#7A6845`, accent2 `#B8912A`, accent `#D4AF6B`, text `#F5EDD8`. Use hex literals directly in Tailwind classes (e.g. `bg-[#1A1810]`), matching `components/properties/PropertyCard.tsx`.
+- `--accent` (`#D4AF6B`) reserved for exactly one priority action per view — don't apply it to more than one element per page.
 - Mobile-first responsive: base styles for mobile, `md:`/`lg:` breakpoints for desktop.
 - No custom SVG unless explicitly requested — use `lucide-react` icons only.
 - Max 500 lines per component file — split if exceeded.
@@ -327,13 +327,13 @@ export default function CategoryCard({ category }: { category: WeddingCategory }
 
   return (
     <Link href={`/catalogo/${category.slug}`} className="group block">
-      <div className="bg-[#160F1F] rounded-xl border border-[#2A1D35] p-6 flex flex-col items-center gap-4 text-center hover:border-[#9B6FA0]/50 hover:-translate-y-1 transition-all duration-300">
-        <div className="w-14 h-14 rounded-full bg-[#7B4F80]/10 border border-[#7B4F80]/20 flex items-center justify-center group-hover:bg-[#7B4F80]/20 transition-all">
-          <Icon className="w-6 h-6 text-[#9B6FA0]" strokeWidth={1.5} />
+      <div className="bg-[#1A1810] rounded-xl border border-[#2E2A18] p-6 flex flex-col items-center gap-4 text-center hover:border-[#D4AF6B]/50 hover:-translate-y-1 transition-all duration-300">
+        <div className="w-14 h-14 rounded-full bg-[#B8912A]/10 border border-[#B8912A]/20 flex items-center justify-center group-hover:bg-[#B8912A]/20 transition-all">
+          <Icon className="w-6 h-6 text-[#D4AF6B]" strokeWidth={1.5} />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-[#EDE0F5] tracking-wide">{category.name}</h3>
-          <p className="text-xs text-[#6A5070] mt-1">{category.items.length} productos</p>
+          <h3 className="text-sm font-semibold text-[#F5EDD8] tracking-wide">{category.name}</h3>
+          <p className="text-xs text-[#7A6845] mt-1">{category.items.length} productos</p>
         </div>
       </div>
     </Link>
@@ -392,7 +392,7 @@ import type { WeddingItem } from '@/lib/wedding-catalog-data'
 
 export default function CatalogItemCard({ item }: { item: WeddingItem }) {
   return (
-    <div className="bg-[#160F1F] rounded-xl overflow-hidden border border-[#2A1D35] hover:border-[#9B6FA0]/40 transition-all duration-300">
+    <div className="bg-[#1A1810] rounded-xl overflow-hidden border border-[#2E2A18] hover:border-[#D4AF6B]/40 transition-all duration-300">
       <div className="relative w-full aspect-[4/3] overflow-hidden">
         <Image
           src={item.imageUrl}
@@ -403,13 +403,13 @@ export default function CatalogItemCard({ item }: { item: WeddingItem }) {
         />
       </div>
       <div className="p-5">
-        <h3 className="text-sm font-semibold text-[#EDE0F5] leading-snug mb-1.5">{item.name}</h3>
-        <p className="text-xs text-[#6A5070] mb-3 line-clamp-2">{item.description}</p>
-        <div className="flex items-baseline justify-between border-t border-[#2A1D35] pt-3">
-          <span className="text-lg font-semibold text-[#9B6FA0]">
+        <h3 className="text-sm font-semibold text-[#F5EDD8] leading-snug mb-1.5">{item.name}</h3>
+        <p className="text-xs text-[#7A6845] mb-3 line-clamp-2">{item.description}</p>
+        <div className="flex items-baseline justify-between border-t border-[#2E2A18] pt-3">
+          <span className="text-lg font-semibold text-[#D4AF6B]">
             {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(item.price)}
           </span>
-          <span className="text-xs text-[#6A5070] tracking-wide">{item.unitLabel}</span>
+          <span className="text-xs text-[#7A6845] tracking-wide">{item.unitLabel}</span>
         </div>
       </div>
     </div>
@@ -443,8 +443,8 @@ export default function SubcategoryTabs({ subcategories, active, onChange }: Sub
             onClick={() => onChange(option)}
             className={`px-4 py-2 rounded-full text-xs font-medium tracking-wide uppercase border transition-all ${
               isActive
-                ? 'bg-[#9B6FA0] text-[#0E0A12] border-[#9B6FA0]'
-                : 'border-[#2A1D35] text-[#6A5070] hover:text-[#EDE0F5] hover:border-[#7B4F80]/50'
+                ? 'bg-[#D4AF6B] text-[#111009] border-[#D4AF6B]'
+                : 'border-[#2E2A18] text-[#7A6845] hover:text-[#F5EDD8] hover:border-[#B8912A]/50'
             }`}
           >
             {option}
@@ -493,13 +493,13 @@ export const metadata: Metadata = {
 
 export default function CatalogoPage() {
   return (
-    <main className="min-h-screen bg-[#0E0A12] px-4 md:px-20 pt-32 pb-24">
+    <main className="min-h-screen bg-[#111009] px-4 md:px-20 pt-32 pb-24">
       <div className="max-w-[1440px] mx-auto">
         <div className="flex flex-col gap-4 mb-12">
-          <span className="text-[#9B6FA0] text-xs font-semibold tracking-[0.3em] uppercase">
+          <span className="text-[#D4AF6B] text-xs font-semibold tracking-[0.3em] uppercase">
             Catálogo
           </span>
-          <h1 className="font-semibold text-3xl md:text-5xl text-[#EDE0F5] leading-tight">
+          <h1 className="font-semibold text-3xl md:text-5xl text-[#F5EDD8] leading-tight">
             Elegí los rubros para tu evento
           </h1>
         </div>
@@ -616,16 +616,16 @@ export default async function CategoriaPage({
   }
 
   return (
-    <main className="min-h-screen bg-[#0E0A12] px-4 md:px-20 pt-32 pb-24">
+    <main className="min-h-screen bg-[#111009] px-4 md:px-20 pt-32 pb-24">
       <div className="max-w-[1440px] mx-auto">
         <Link
           href="/catalogo"
-          className="inline-flex items-center gap-2 text-xs text-[#6A5070] hover:text-[#EDE0F5] transition-colors mb-8 uppercase tracking-wide"
+          className="inline-flex items-center gap-2 text-xs text-[#7A6845] hover:text-[#F5EDD8] transition-colors mb-8 uppercase tracking-wide"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver al catálogo
         </Link>
-        <h1 className="font-semibold text-3xl md:text-5xl text-[#EDE0F5] leading-tight mb-10">
+        <h1 className="font-semibold text-3xl md:text-5xl text-[#F5EDD8] leading-tight mb-10">
           {category.name}
         </h1>
         <CategoryDetailClient category={category} />

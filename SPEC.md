@@ -1,4 +1,4 @@
-# SPEC — Andrade Real Estate
+# SPEC — Grupo Chalita
 
 ## §G Goal
 

@@ -74,13 +74,13 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
         />
 
         {data.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-500 space-y-2">
+          <div className="flex flex-col items-center justify-center py-20 text-[#7A6845] space-y-2">
             <p className="text-lg font-medium">Sin resultados</p>
             <p className="text-sm">Intenta ajustar los filtros.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#7A6845]">
               {total} propiedad{total !== 1 ? 'es' : ''} encontrada{total !== 1 ? 's' : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

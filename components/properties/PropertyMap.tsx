@@ -11,7 +11,7 @@ export default function PropertyMap({ lat, lng, title }: Props) {
 
   if (!apiKey) {
     return (
-      <div className="w-full h-[350px] bg-gray-100 flex items-center justify-center rounded-lg text-gray-500">
+      <div className="w-full h-[350px] bg-[#1A1810] flex items-center justify-center rounded-lg text-[#7A6845]">
         Mapa no disponible
       </div>
     )

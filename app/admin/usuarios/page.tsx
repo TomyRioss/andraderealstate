@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+﻿import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import UsersTable from '@/components/admin/UsersTable'
@@ -18,7 +18,7 @@ export default async function UsuariosPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="px-6 py-5">
-        <h1 className="text-3xl font-light" style={{ color: '#18140D', fontFamily: 'Georgia, serif' }}>Usuarios</h1>
+        <h1 className="text-3xl font-light" style={{ color: '#F5EDD8', fontFamily: 'Georgia, serif' }}>Usuarios</h1>
       </div>
       <UsersTable
         users={users.map(u => ({ ...u, createdAt: u.createdAt.toISOString() }))}

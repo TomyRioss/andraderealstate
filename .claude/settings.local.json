@@ -44,7 +44,30 @@
       "PowerShell(git push *)",
       "PowerShell(gh pr create --title \"feat: refine monochrome UI across properties components\" --body $body)",
       "PowerShell(git *)",
-      "Bash(git merge *)"
+      "Bash(git merge *)",
+      "Bash(perl -i -pe 's/rgba\\\\\\(14, 10, 18,0\\\\.12\\\\\\)/rgba\\(14,10,18,0.12\\)/g' components/properties/PropertyCard.tsx)",
+      "Bash(perl -i -pe \"s/border-gray-300/border-[#2A1D35]/g; s/bg-gray-50/bg-[#160F1F]/g\" \"app/admin/propiedades/[id]/page.tsx\")",
+      "Bash(perl -i -pe \"s/bg-slate-50/bg-[#0E0A12]/g\" components/admin/LeadsTable.tsx components/admin/PropertiesTable.tsx components/admin/TestimonialsTable.tsx components/admin/UsersTable.tsx)",
+      "Bash(perl -i -pe \"s/border-\\\\[#e5e7eb\\\\]/border-[#2A1D35]/g; s/text-\\\\[#0f172a\\\\]/text-[#EDE0F5]/g\" components/contact/ComprarForm.tsx)",
+      "Bash(perl -i -pe \"s/border-\\\\[#E0D9CF\\\\]/border-[#2A1D35]/g\" components/properties/PropertyFilters.tsx)",
+      "Bash(perl -i -pe \"s/border-gray-300/border-[#2A1D35]/g\" components/properties/ReviewForm.tsx)",
+      "Bash(perl -i -pe \"s/text-gray-700/text-[#EDE0F5]/g; s/text-gray-600/text-[#9B6FA0]/g\" \"app/admin/propiedades/[id]/page.tsx\" components/properties/ReviewForm.tsx)",
+      "Bash(perl -i -pe \"s/bg-gray-100/bg-[#160F1F]/g; s/text-gray-400/text-[#6A5070]/g; s/text-gray-500/text-[#6A5070]/g\" components/properties/PhotoGallery.tsx components/properties/PropertyMap.tsx \"app/\\(public\\)/propiedades/page.tsx\" \"app/admin/propiedades/[id]/page.tsx\")",
+      "Bash(perl -i -pe \"s/border: '1px solid #E8E0D5'/border: '1px solid #2A1D35'/g\" \"app/\\(public\\)/testimonios/page.tsx\")",
+      "Bash(node -e \"const l=require\\('lucide-react'\\); console.log\\(Object.keys\\(l\\).filter\\(k=>/facebook|instagram|whatsapp/i.test\\(k\\)\\)\\)\")",
+      "Bash(find prisma *)",
+      "Bash(grep -n \"^model\\\\|subcateg\\\\|category\\\\|Category\" prisma/schema.prisma)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Get-CimInstance *)",
+      "Bash(npx eslint *)",
+      "Skill(impeccable:impeccable)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_resize",
+      "Bash(rm \"app/api/wedding/categories/route.ts\")",
+      "Bash(rmdir \"app/api/wedding/categories\")"
     ]
   }
 }
