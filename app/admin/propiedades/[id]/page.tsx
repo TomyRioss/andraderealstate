@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { createStorageClient } from '@/lib/storage'
 import type { ContractType, Category, Property } from '@/types'
 
 interface FormState {
@@ -98,16 +98,16 @@ export default function EditPropiedad() {
     if (!files || files.length === 0) return
     setUploading(true)
     setError(null)
-    const supabase = createClient()
+    const storage = createStorageClient()
     try {
       for (const file of Array.from(files)) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
         const path = `properties/${Date.now()}-${safeName}`
-        const { error: upErr } = await supabase.storage
+        const { error: upErr } = await storage
           .from('property-images')
           .upload(path, file)
         if (upErr) throw new Error(upErr.message)
-        const { data: pub } = supabase.storage.from('property-images').getPublicUrl(path)
+        const { data: pub } = storage.from('property-images').getPublicUrl(path)
         setPhotos(prev => [...prev, pub.publicUrl])
       }
     } catch (e) {
@@ -173,16 +173,16 @@ export default function EditPropiedad() {
     }
   }
 
-  const inputCls = 'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] bg-white'
-  const labelCls = 'block text-xs font-semibold text-gray-600 mb-1'
-  const sectionCls = 'bg-gray-50 rounded-lg p-4 space-y-4'
+  const inputCls = 'w-full border border-slate-300 rounded-md px-3 py-2 text-sm text-[#0D1A2D] focus:outline-none focus:ring-2 focus:ring-[#0D1A2D] bg-white'
+  const labelCls = 'block text-xs font-medium text-slate-600 mb-1'
+  const sectionCls = 'bg-white border border-slate-200 rounded-xl p-5 space-y-4'
 
   if (loading) return <div className="flex items-center justify-center h-64 text-gray-500 text-sm">Cargando...</div>
   if (!form) return <div className="flex items-center justify-center h-64 text-red-500 text-sm">{error ?? 'Error'}</div>
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#1e3a5f] mb-6">Editar Propiedad</h1>
+      <h1 className="font-heading text-3xl font-medium text-[#0D1A2D] mb-6">Editar propiedad</h1>
 
       {error && (
         <div className="mb-4 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
@@ -193,7 +193,7 @@ export default function EditPropiedad() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic info */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Información básica</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Información básica</h2>
           <div>
             <label className={labelCls}>Título *</label>
             <input className={inputCls} value={form.title} onChange={e => set('title', e.target.value)} required />
@@ -223,6 +223,7 @@ export default function EditPropiedad() {
                 <option value="LAND">Terreno</option>
                 <option value="COMMERCIAL">Comercial</option>
                 <option value="DEVELOPMENT_PROJECT">Proyecto</option>
+                <option value="VACATION_STAY">Estancia vacacional</option>
                 <option value="OTHER">Otro</option>
               </select>
             </div>
@@ -231,7 +232,7 @@ export default function EditPropiedad() {
 
         {/* Price */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Precio</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Precio</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div>
               <label className={labelCls}>Precio MXN</label>
@@ -242,7 +243,7 @@ export default function EditPropiedad() {
               <input className={inputCls} type="number" min="0" value={form.priceUSD} onChange={e => set('priceUSD', e.target.value)} />
             </div>
             <div className="flex items-end gap-2 col-span-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
                 <input type="checkbox" checked={form.priceVisible} onChange={e => set('priceVisible', e.target.checked)} className="rounded" />
                 Precio visible
               </label>
@@ -252,7 +253,7 @@ export default function EditPropiedad() {
 
         {/* Location */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Ubicación</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Ubicación</h2>
           <div>
             <label className={labelCls}>Dirección *</label>
             <input className={inputCls} value={form.address} onChange={e => set('address', e.target.value)} required />
@@ -275,7 +276,7 @@ export default function EditPropiedad() {
 
         {/* Details */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Detalles</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Detalles</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {([
               ['bedrooms', 'Recámaras'],
@@ -297,7 +298,7 @@ export default function EditPropiedad() {
 
         {/* Amenities & Features */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Amenidades y características</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Amenidades y características</h2>
           <div>
             <label className={labelCls}>Amenidades (separadas por coma)</label>
             <input className={inputCls} value={form.amenities} onChange={e => set('amenities', e.target.value)} placeholder="Alberca, Gimnasio, Jardín" />
@@ -310,10 +311,10 @@ export default function EditPropiedad() {
 
         {/* Media */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Multimedia</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Multimedia</h2>
           <div>
             <label className={labelCls}>Fotos</label>
-            <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors bg-[#18140D] text-[#C9A96E] hover:bg-[#2E2820]">
+            <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-opacity bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
@@ -331,7 +332,7 @@ export default function EditPropiedad() {
                       onClick={() => removePhoto(p)}
                       className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      ✕
+                      ?
                     </button>
                   </div>
                 ))}
@@ -346,17 +347,17 @@ export default function EditPropiedad() {
 
         {/* Contact & Status */}
         <div className={sectionCls}>
-          <h2 className="text-sm font-bold text-[#1e3a5f]">Contacto y estado</h2>
+          <h2 className="font-heading text-sm font-medium text-[#0D1A2D]">Contacto y estado</h2>
           <div>
             <label className={labelCls}>WhatsApp</label>
             <input className={inputCls} value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)} placeholder="+52 55 0000 0000" />
           </div>
           <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
               <input type="checkbox" checked={form.active} onChange={e => set('active', e.target.checked)} className="rounded" />
               Activa
             </label>
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
               <input type="checkbox" checked={form.featured} onChange={e => set('featured', e.target.checked)} className="rounded" />
               Destacada
             </label>
@@ -367,7 +368,7 @@ export default function EditPropiedad() {
           <Button type="button" variant="outline" onClick={() => router.push('/admin/propiedades')}>
             Cancelar
           </Button>
-          <Button type="submit" disabled={saving || uploading} className="bg-[#1e3a5f] text-white hover:bg-[#16305a]">
+          <Button type="submit" disabled={saving || uploading} className="bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80">
             {saving ? 'Guardando...' : 'Guardar cambios'}
           </Button>
         </div>

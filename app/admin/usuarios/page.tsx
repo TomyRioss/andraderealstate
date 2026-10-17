@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { pb } from '@/lib/pocketbase'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import UsersTable from '@/components/admin/UsersTable'
@@ -7,10 +7,13 @@ export default async function UsuariosPage() {
   const session = await auth()
   if (!session?.user) redirect('/admin/login')
 
-  const users = await prisma.user.findMany({
-    select: { id: true, name: true, email: true, role: true, createdAt: true },
-    orderBy: { createdAt: 'desc' },
-  })
+  const users = await pb.collection('admins').getFullList<{
+    id: string
+    name: string | null
+    email: string
+    role: 'ADMIN' | 'SUPER_ADMIN'
+    createdAt: string | Date
+  }>({ sort: '-createdAt', fields: 'id,name,email,role,createdAt' })
 
   const sessionRole = (session.user as { role?: string }).role ?? 'ADMIN'
   const sessionId = (session.user as { id?: string }).id ?? ''
@@ -18,10 +21,10 @@ export default async function UsuariosPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="px-6 py-5">
-        <h1 className="text-3xl font-light" style={{ color: '#18140D', fontFamily: 'Georgia, serif' }}>Usuarios</h1>
+        <h1 className="font-heading text-3xl font-medium text-[#0D1A2D]">Usuarios</h1>
       </div>
       <UsersTable
-        users={users.map(u => ({ ...u, createdAt: u.createdAt.toISOString() }))}
+        users={users.map((u) => ({ ...u, createdAt: new Date(u.createdAt).toISOString() }))}
         sessionRole={sessionRole}
         sessionId={sessionId}
       />

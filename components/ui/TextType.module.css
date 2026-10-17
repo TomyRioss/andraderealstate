@@ -1,0 +1,32 @@
+.root {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.content {
+  display: inline;
+}
+
+.cursor {
+  display: inline-block;
+  margin-left: 0.25rem;
+  opacity: 1;
+}
+
+.cursorHidden {
+  display: none;
+}
+
+.reducedMotionText {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animatedText {
+    display: none;
+  }
+
+  .reducedMotionText {
+    display: inline;
+  }
+}

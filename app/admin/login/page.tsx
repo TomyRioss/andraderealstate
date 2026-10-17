@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex" style={{ backgroundColor: '#E8F4FD' }}>
+    <main className="min-h-screen flex bg-slate-50">
       {/* Left panel */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 flex-shrink-0 px-14 py-14 relative overflow-hidden">
         <div
@@ -41,16 +41,18 @@ export default function AdminLoginPage() {
         />
         <div
           className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, rgba(13,59,102,0.85) 0%, rgba(13,59,102,0.55) 50%, rgba(13,59,102,0.92) 100%)' }}
+          style={{ background: 'linear-gradient(to bottom, rgba(13,26,45,0.85) 0%, rgba(13,26,45,0.55) 50%, rgba(13,26,45,0.92) 100%)' }}
         />
         <div className="relative flex-1 flex items-center justify-center">
-          <Image
-            src="/andrade_realstate_logo.png"
-            alt="Andrade & Co Real Estate"
-            width={240}
-            height={104}
-            className="brightness-[1.8]"
-          />
+          <div className="h-[104px] w-60 overflow-hidden">
+            <Image
+              src="/andrade_realstate_logo.png"
+              alt="Andrade & Co Real Estate"
+              width={240}
+              height={160}
+              className="h-auto w-60 -translate-y-7"
+            />
+          </div>
         </div>
       </div>
 
@@ -59,67 +61,72 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-sm">
 
           {/* Mobile logo */}
-          <div className="lg:hidden mb-10 flex justify-center">
-            <Image
-              src="/andrade_realstate_logo.png"
-              alt="Andrade & Co Real Estate"
-              width={140}
-              height={60}
-            />
+          <div className="lg:hidden mb-10 flex justify-center rounded-xl bg-[#0D1A2D] px-6 py-5">
+            <div className="h-10 w-[140px] overflow-hidden">
+              <Image
+                src="/andrade_realstate_logo.png"
+                alt="Andrade & Co Real Estate"
+                width={140}
+                height={94}
+                className="h-[94px] w-[140px] -translate-y-[26px] object-cover"
+              />
+            </div>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-light mb-2" style={{ color: '#0D3B66', fontFamily: 'Georgia, serif' }}>
+            <h1 className="font-heading text-3xl font-medium mb-2 text-[#0D1A2D]">
               Bienvenido
             </h1>
-            <p className="text-sm" style={{ color: '#4A7BA7' }}>
-              Accedé al panel de administración
+            <p className="text-sm" style={{ color: '#525252' }}>
+              Accede al panel de administración
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#4A7BA7' }}>
+              <label htmlFor="email" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#525252' }}>
                 Correo electrónico
               </label>
               <input
                 id="email"
                 type="email"
+                autoComplete="username"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@ejemplo.com"
                 className="w-full px-4 py-3 text-sm rounded-lg outline-none transition-all"
-                style={{ backgroundColor: '#E8F4FD', border: '1px solid #AED6F1', color: '#0D3B66' }}
-                onFocus={(e) => { e.target.style.borderColor = '#1A5F9E'; e.target.style.boxShadow = '0 0 0 3px rgba(26,95,158,0.12)' }}
-                onBlur={(e) => { e.target.style.borderColor = '#AED6F1'; e.target.style.boxShadow = 'none' }}
+                style={{ backgroundColor: '#F8F8F8', border: '1px solid #B3B3B3', color: '#0D1A2D' }}
+                onFocus={(e) => { e.target.style.borderColor = '#0D1A2D'; e.target.style.boxShadow = '0 0 0 3px rgba(13,26,45,0.12)' }}
+                onBlur={(e) => { e.target.style.borderColor = '#B3B3B3'; e.target.style.boxShadow = 'none' }}
               />
             </div>
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="password" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#4A7BA7' }}>
+              <label htmlFor="password" className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: '#525252' }}>
                 Contraseña
               </label>
               <div className="relative">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full px-4 py-3 pr-11 text-sm rounded-lg outline-none transition-all"
-                  style={{ backgroundColor: '#E8F4FD', border: '1px solid #AED6F1', color: '#0D3B66' }}
-                  onFocus={(e) => { e.target.style.borderColor = '#1A5F9E'; e.target.style.boxShadow = '0 0 0 3px rgba(26,95,158,0.12)' }}
-                  onBlur={(e) => { e.target.style.borderColor = '#AED6F1'; e.target.style.boxShadow = 'none' }}
+                  style={{ backgroundColor: '#F8F8F8', border: '1px solid #B3B3B3', color: '#0D1A2D' }}
+                  onFocus={(e) => { e.target.style.borderColor = '#0D1A2D'; e.target.style.boxShadow = '0 0 0 3px rgba(13,26,45,0.12)' }}
+                  onBlur={(e) => { e.target.style.borderColor = '#B3B3B3'; e.target.style.boxShadow = 'none' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-60"
-                  style={{ color: '#4A7BA7' }}
+                  style={{ color: '#525252' }}
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -145,13 +152,14 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 text-sm font-semibold tracking-[0.08em] uppercase rounded-lg transition-all duration-200 mt-1 text-white"
+              className="w-full py-3.5 text-sm font-semibold tracking-[0.08em] uppercase rounded-lg transition-all duration-200 mt-1"
               style={{
-                backgroundColor: loading ? '#AED6F1' : '#0D3B66',
+                backgroundColor: loading ? '#B3B3B3' : '#0D1A2D',
+                color: loading ? '#0D1A2D' : '#B3B3B3',
                 cursor: loading ? 'not-allowed' : 'pointer',
               }}
-              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#1A5F9E' }}
-              onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#0D3B66' }}
+              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#0D1A2D' }}
+              onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#0D1A2D' }}
             >
               {loading ? 'Verificando...' : 'Iniciar sesión'}
             </button>

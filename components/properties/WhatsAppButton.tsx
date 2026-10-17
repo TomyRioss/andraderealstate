@@ -1,6 +1,7 @@
 'use client'
 
 import { buildWhatsappLink } from '@/lib/whatsapp'
+import { FaWhatsapp } from 'react-icons/fa'
 
 interface Props {
   phone?: string | null
@@ -23,8 +24,9 @@ export default function WhatsAppButton({ phone, title, url }: Props) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center w-full py-4 bg-[#16a34a] text-white font-semibold text-base"
+          className="flex items-center justify-center gap-2 w-full py-4 bg-[#16a34a] text-white font-semibold text-base"
         >
+          <FaWhatsapp aria-hidden="true" className="h-5 w-5 shrink-0" />
           Consultar por WhatsApp
         </a>
       </div>
@@ -34,8 +36,9 @@ export default function WhatsAppButton({ phone, title, url }: Props) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="hidden md:flex items-center justify-center w-full py-3 px-4 bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold rounded-lg transition-colors"
+        className="hidden md:flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold rounded-lg transition-colors"
       >
+        <FaWhatsapp aria-hidden="true" className="h-5 w-5 shrink-0" />
         Consultar por WhatsApp
       </a>
     </>

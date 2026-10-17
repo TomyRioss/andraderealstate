@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { createStorageClient } from '@/lib/storage'
 
 interface Banner {
   type: 'success' | 'error'
@@ -14,8 +14,8 @@ const MAX_SIZE_MB = 20
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 const inputCls =
-  'w-full border border-[#D4C4A8] rounded-xl px-4 py-3 text-sm text-[#18140D] focus:outline-none focus:border-[#B07030] focus:ring-1 focus:ring-[#B07030] transition bg-white placeholder:text-[#A89880]'
-const labelCls = 'block text-sm font-medium text-[#18140D] mb-1'
+  'w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-[#0D1A2D] focus:outline-none focus:border-[#0D1A2D] focus:ring-1 focus:ring-[#0D1A2D] transition bg-white placeholder:text-neutral-500'
+const labelCls = 'block text-sm font-medium text-[#0D1A2D] mb-1'
 
 export default function AdministrarForm() {
   const [nombre, setNombre] = useState('')
@@ -55,19 +55,19 @@ export default function AdministrarForm() {
 
     setLoading(true)
     try {
-      const supabase = createClient()
+      const storage = createStorageClient()
       const photoPaths: string[] = []
 
       for (const file of files) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
         const path = `manage-${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('contact-uploads').upload(path, file)
+        const { error } = await storage.from('contact-uploads').upload(path, file)
         if (error) {
           setBanner({ type: 'error', message: `Error subiendo "${file.name}": ${error.message}` })
           setLoading(false)
           return
         }
-        const { data: pub } = supabase.storage.from('contact-uploads').getPublicUrl(path)
+        const { data: pub } = storage.from('contact-uploads').getPublicUrl(path)
         photoPaths.push(pub.publicUrl)
       }
 
@@ -85,7 +85,7 @@ export default function AdministrarForm() {
       })
 
       if (res.status === 201) {
-        setBanner({ type: 'success', message: 'Solicitud enviada. Un vendedor te contactará por WhatsApp pronto.' })
+        setBanner({ type: 'success', message: 'Solicitud enviada. Nuestro equipo te contactará por WhatsApp.' })
         setNombre('')
         setApellido('')
         setPhone('')
@@ -95,11 +95,11 @@ export default function AdministrarForm() {
         if (fileRef.current) fileRef.current.value = ''
       } else {
         const data = await res.json().catch(() => ({}))
-        setBanner({ type: 'error', message: data?.error ?? 'Error al enviar. Intentalo de nuevo.' })
+        setBanner({ type: 'error', message: data?.error ?? 'No se pudo enviar la solicitud. Inténtalo de nuevo.' })
         console.error('[AdministrarForm] API error:', data)
       }
     } catch (err) {
-      setBanner({ type: 'error', message: 'Error de red. Intentalo de nuevo.' })
+      setBanner({ type: 'error', message: 'No fue posible conectar. Inténtalo de nuevo.' })
       console.error('[AdministrarForm] fetch error:', err)
     } finally {
       setLoading(false)
@@ -107,12 +107,12 @@ export default function AdministrarForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#E8DFD0] p-8 max-w-xl w-full mx-auto">
-      <h2 className="text-xl font-bold text-[#18140D] mb-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-        Quiero administrar mi propiedad
+    <div className="bg-white rounded-2xl shadow-sm border border-[#CCCCCC] p-8 max-w-xl w-full mx-auto">
+      <h2 className="font-display text-xl font-semibold text-[#0D1A2D] mb-1">
+        Solicitar administración de propiedad
       </h2>
-      <p className="text-sm text-[#8C7B6B] mb-6">
-        Completá el formulario y un vendedor te contactará por WhatsApp.
+      <p className="text-sm text-[#525252] mb-6">
+        Completa el formulario para recibir asesoría sobre la administración de tu propiedad.
       </p>
 
       {banner && (
@@ -172,7 +172,7 @@ export default function AdministrarForm() {
 
         <div>
           <label className={labelCls}>
-            Correo electrónico <span className="text-[#A89880] font-normal">(opcional)</span>
+            Correo electrónico <span className="text-neutral-600 font-normal">(opcional)</span>
           </label>
           <input
             type="email"
@@ -198,7 +198,7 @@ export default function AdministrarForm() {
         <div>
           <label className={labelCls}>
             Fotos del inmueble{' '}
-            <span className="text-[#A89880] font-normal">(opcional · máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
+            <span className="text-neutral-600 font-normal">(opcional · máx. {MAX_FILES} archivos, {MAX_SIZE_MB} MB por archivo)</span>
           </label>
           <input
             ref={fileRef}
@@ -206,18 +206,18 @@ export default function AdministrarForm() {
             accept="image/*"
             multiple
             onChange={handleFileChange}
-            className="w-full text-sm text-[#8C7B6B] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#B07030] file:text-white hover:file:bg-[#9A6028] cursor-pointer"
+            className="w-full text-sm text-neutral-700 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#0D1A2D] file:text-white hover:file:bg-[#0D1A2D]/90 cursor-pointer"
           />
           {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
           {files.length > 0 && !photoError && (
-            <p className="mt-1 text-xs text-[#A89880]">{files.length} foto(s) seleccionada(s)</p>
+            <p className="mt-1 text-xs text-neutral-600">{files.length} foto(s) seleccionada(s)</p>
           )}
         </div>
 
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#B07030] hover:bg-[#9A6028] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#0D1A2D] hover:bg-[#0D1A2D]/90 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : 'Solicitar administración'}
         </Button>

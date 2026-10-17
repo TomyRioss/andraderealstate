@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { ContactFormEntry, LeadStatus } from '@/types'
@@ -105,7 +105,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold text-slate-800">Fotos del lead</h2>
+              <h2 className="font-heading font-medium text-[#0D1A2D]">Fotos del lead</h2>
               <button onClick={() => setPhotoModal(null)} className="text-slate-400 hover:text-slate-600 text-xl">✕</button>
             </div>
             <div className="grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
@@ -127,13 +127,13 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
       <div className="px-6 mb-4 flex gap-2">
         <button
           onClick={() => setTab('active')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'active' ? 'bg-[#18140D] text-[#C9A96E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'active' ? 'bg-[#0D1A2D] text-[#B3B3B3]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
         >
           Activos <span className="ml-1 opacity-70">({leads.length})</span>
         </button>
         <button
           onClick={() => setTab('archived')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'archived' ? 'bg-[#18140D] text-[#C9A96E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'archived' ? 'bg-[#0D1A2D] text-[#B3B3B3]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
         >
           Archivados <span className="ml-1 opacity-70">({archived.length})</span>
         </button>
@@ -143,7 +143,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
       <div className="hidden md:block overflow-x-auto bg-white w-full">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#18140D] text-[#C9A96E]">
+            <tr className="bg-[#0D1A2D] text-[#B3B3B3]">
               {['Nombre', 'Tipo', 'Email', 'Teléfono', 'Fecha', 'Status', 'Notas', 'Acciones'].map((h) => (
                 <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>
               ))}
@@ -181,7 +181,7 @@ export default function LeadsTable({ leads: initial, archived: initialArchived }
                       defaultValue={lead.notes || ''}
                       rows={2}
                       onBlur={(e) => saveNotes(lead.id, e.target.value)}
-                      className="w-full min-w-[140px] text-xs border border-slate-200 rounded p-1 resize-none focus:outline-none focus:ring-1 focus:ring-[#C9A96E]"
+                      className="w-full min-w-[140px] text-xs border border-slate-200 rounded p-1 resize-none focus:outline-none focus:ring-1 focus:ring-[#B3B3B3]"
                       placeholder="Notas..."
                     />
                   )}

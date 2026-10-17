@@ -3,8 +3,9 @@ export const dynamic = 'force-dynamic'
 import PropertyCard from '@/components/properties/PropertyCard'
 import PropertyFilters from '@/components/properties/PropertyFilters'
 import Pagination from '@/components/properties/Pagination'
-import { prisma } from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { listProperties } from '@/lib/pocketbase-data'
+import { filterProperties, sortByCreatedAtDescending } from '@/lib/property-search'
+import type { Property } from '@/types'
 
 interface PageProps {
   searchParams: Promise<Record<string, string>>
@@ -27,41 +28,33 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
   const limit = 12
   const currentPage = Math.max(1, Number(page) || 1)
 
-  const where: Prisma.PropertyWhereInput = { active: true }
-  if (contractType) where.contractType = contractType as never
-  if (category) where.category = category as never
-  if (city) where.city = { contains: city, mode: 'insensitive' }
-  if (bedrooms) where.bedrooms = { gte: parseInt(bedrooms, 10) }
-  if (minPrice || maxPrice) {
-    where.priceMXN = {}
-    if (minPrice) (where.priceMXN as Prisma.FloatNullableFilter).gte = parseFloat(minPrice)
-    if (maxPrice) (where.priceMXN as Prisma.FloatNullableFilter).lte = parseFloat(maxPrice)
+  const numeric = (value?: string) => {
+    if (!value) return undefined
+    const parsed = Number.parseFloat(value)
+    return Number.isFinite(parsed) ? parsed : undefined
   }
-  if (search) {
-    where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } },
-      { city: { contains: search, mode: 'insensitive' } },
-    ]
-  }
-
-  const [data, total] = await Promise.all([
-    prisma.property.findMany({
-      where,
-      skip: (currentPage - 1) * limit,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-    }),
-    prisma.property.count({ where }),
-  ])
+  const requestedBedrooms = bedrooms ? Number.parseInt(bedrooms, 10) : undefined
+  const filtered = filterProperties(await listProperties(), {
+    activeOnly: true,
+    contractType,
+    category,
+    city,
+    search,
+    minBedrooms: requestedBedrooms !== undefined && Number.isFinite(requestedBedrooms) ? requestedBedrooms : undefined,
+    minPrice: numeric(minPrice),
+    maxPrice: numeric(maxPrice),
+  })
+  const ordered = sortByCreatedAtDescending(filtered)
+  const total = ordered.length
+  const data = ordered.slice((currentPage - 1) * limit, currentPage * limit)
 
   const totalPages = Math.ceil(total / limit)
   const { page: _p, ...filtersOnly } = params
 
   return (
-    <main className="min-h-screen bg-[#f5f4f0]">
+    <main className="min-h-screen bg-[#F5F5F5]">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-neutral-900">Propiedades</h1>
+        <h1 className="font-display text-2xl md:text-3xl font-bold text-[#0D1A2D]">Propiedades</h1>
 
         <PropertyFilters
           contractType={contractType ?? undefined}
@@ -84,7 +77,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
               {total} propiedad{total !== 1 ? 'es' : ''} encontrada{total !== 1 ? 's' : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.map(property => (
+              {data.map((property: Property) => (
                 <PropertyCard
                   key={property.id}
                   id={property.id}
@@ -94,6 +87,7 @@ export default async function PropiedadesPage({ searchParams }: PageProps) {
                   state={property.state}
                   contractType={property.contractType}
                   category={property.category}
+                  whatsapp={property.whatsapp ?? null}
                   priceMXN={property.priceMXN ?? null}
                   priceUSD={property.priceUSD ?? null}
                   priceVisible={property.priceVisible}

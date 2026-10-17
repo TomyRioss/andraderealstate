@@ -8,7 +8,7 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 
 ## §C Constraints
 
-- C1. Stack locked: Next.js 16 · React 19 · Tailwind v4 · TypeScript · Supabase · Prisma ORM
+- C1. Stack locked: Next.js 16 · React 19 · Tailwind v4 · TypeScript · PocketBase · NextAuth
 - C2. Tailwind v4 — no `tailwind.config.js`, tokens via `@theme {}` in CSS
 - C3. No raw CSS — Tailwind only, never touch `globals.css` for custom styles (use `@theme` block)
 - C4. shadcn/ui for all pre-built components
@@ -32,18 +32,18 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 - I.api.testimonials — `GET/POST /api/testimonials` · `PUT/DELETE /api/testimonials/[id]`
 - I.supabase.auth — Supabase Auth email+password (admin only, no public register)
 - I.supabase.storage — bucket `property-images` (public) · `contact-uploads` (private)
-- I.prisma — models: Property · ContactForm · Testimonial + enums
+- I.pocketbase — collections: properties · contact_forms · testimonials · admins · uploads
 - I.middleware — protects `/admin/*` except `/admin/login`
 - I.sitemap — `app/sitemap.ts` dynamic, all active properties
-- I.env — `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_ANON_KEY` · `SUPABASE_SERVICE_ROLE_KEY` · `DATABASE_URL` · `DIRECT_URL` · `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` · `NEXT_PUBLIC_SITE_URL` · `NEXT_PUBLIC_DEFAULT_WHATSAPP`
+- I.env — `POCKETBASE_URL` or `NEXT_PUBLIC_POCKETBASE_URL` · `NEXT_PUBLIC_SITE_URL` · `NEXT_PUBLIC_DEFAULT_WHATSAPP`
 
 ---
 
 ## §V Invariants
 
 - V1. Every API route that mutates data checks admin session before executing
-- V2. `DATABASE_URL` uses pgbouncer pooler (port 6543); `DIRECT_URL` used only for migrations
-- V3. Prisma singleton in `lib/prisma.ts` — one instance per process
+- V2. PocketBase URL comes from `POCKETBASE_URL` or `NEXT_PUBLIC_POCKETBASE_URL`
+- V3. PocketBase client lives in `lib/pocketbase.ts`; app data uses PocketBase collections
 - V4. Slug auto-generated from title on create, editable by admin, unique
 - V5. Price always stored in MXN; USD conversion never persisted
 - V6. Property map renders only when `lat` AND `lng` are non-null
@@ -54,6 +54,12 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 - V11. WhatsApp link falls back to `NEXT_PUBLIC_DEFAULT_WHATSAPP` if property has no `whatsapp`
 - V12. File upload: max 10 files · max 5MB each · bucket `contact-uploads`
 - V13. Admin users created only via Supabase dashboard — no public signup route exists
+- V14. ∀ `<Image src="/x">` → matching localPatterns entry
+- V15. ∀ query `{where,select}` → filter original row before projection
+- V16. Transient PocketBase read failure → retry ×3, then last good snapshot or `[]`; no public page 500
+- V17. Slug generation strips Unicode combining marks after NFD normalization
+- V18. Login reads `admins` via server-only authenticated PocketBase client; missing server credentials fail closed; expired auth renews; concurrent authentication deduplicated
+- V19. Dev watcher ignores `.playwright-cli` & `dogfood-output`; source watching & default exclusions preserved
 
 ---
 
@@ -66,8 +72,8 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 | T3  | x      | Add Poppins font via next/font/google | C12 |
 | T4  | x      | Configure Tailwind v4 @theme tokens (colors, radius, shadows) | C2,C13 |
 | T5  | x      | Install shadcn/ui + configure | C4 |
-| T6  | x      | Write Prisma schema (Property, ContactForm, Testimonial + enums) | I.prisma,V2 |
-| T7  | x      | lib/prisma.ts singleton | V3 |
+| T6  | x      | Configure PocketBase collections and fields | I.pocketbase,V2 |
+| T7  | x      | PocketBase client and resilient collection reads | V3,V16 |
 | T8  | x      | lib/supabase/client.ts + server.ts | I.supabase.auth |
 | T9  | x      | lib/currency.ts formatPrice MXN/USD | V5 |
 | T10 | x      | lib/whatsapp.ts buildWhatsappLink | V11 |
@@ -116,3 +122,9 @@ Build real estate web app for MX market: public catalog+detail+contact, admin CR
 
 | id | date | cause | fix |
 |----|------|-------|-----|
+| B1 | 2026-10-10 | `/hero-building.png` absent from `images.localPatterns` | V14 |
+| B2 | 2026-10-10 | selection removed `active` before adapter filter | V15 |
+| B3 | 2026-10-10 | PocketBase ECONNABORTED escaped SSR; legacy PB shim hid direct collection access | V16 |
+| B4 | 2026-10-10 | slug regex range invalid at runtime | V17 |
+| B5 | 2026-10-14 | login queried private `admins` anonymously; PocketBase 403 masked as invalid credentials | V18 |
+| B6 | 2026-10-14 | browser QA logs triggered webpack rebuild; HMR logs retriggered watcher indefinitely | V19 |

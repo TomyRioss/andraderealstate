@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { createStorageClient } from '@/lib/storage'
 
 interface Banner {
   type: 'success' | 'error'
@@ -14,21 +14,21 @@ const MAX_SIZE_MB = 20
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 const inputCls =
-  'w-full border border-[#AED6F1] rounded-xl px-4 py-3 text-sm text-[#0D3B66] focus:outline-none focus:border-[#1A5F9E] focus:ring-1 focus:ring-[#1A5F9E] transition bg-white placeholder:text-[#4A7BA7]'
-const labelCls = 'block text-sm font-medium text-[#0D3B66] mb-1'
+  'w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-[#0D1A2D] focus:outline-none focus:border-[#0D1A2D] focus:ring-1 focus:ring-[#0D1A2D] transition bg-white placeholder:text-neutral-500'
+const labelCls = 'block text-sm font-medium text-[#0D1A2D] mb-1'
 
 type Mode = 'vender' | 'alquilar'
 
 const modeConfig: Record<Mode, { title: string; subtitle: string; apiType: string; btnLabel: string }> = {
   vender: {
     title: 'Quiero vender',
-    subtitle: 'Cargá tu propiedad y te contactamos sin cargo.',
+    subtitle: 'Comparte los datos de tu propiedad para recibir orientación.',
     apiType: 'SELL',
     btnLabel: 'Publicar propiedad',
   },
   alquilar: {
     title: 'Quiero alquilar',
-    subtitle: 'Publicá tu propiedad en alquiler y te contactamos.',
+    subtitle: 'Comparte los datos de tu propiedad para analizar las opciones de renta.',
     apiType: 'RENT_LISTING',
     btnLabel: 'Publicar alquiler',
   },
@@ -91,19 +91,19 @@ export default function VenderForm() {
 
     setLoading(true)
     try {
-      const supabase = createClient()
+      const storage = createStorageClient()
       const photoPaths: string[] = []
 
       for (const file of files) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
         const path = `${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('contact-uploads').upload(path, file)
+        const { error } = await storage.from('contact-uploads').upload(path, file)
         if (error) {
           setBanner({ type: 'error', message: `Error subiendo "${file.name}": ${error.message}` })
           setLoading(false)
           return
         }
-        const { data: pub } = supabase.storage.from('contact-uploads').getPublicUrl(path)
+        const { data: pub } = storage.from('contact-uploads').getPublicUrl(path)
         photoPaths.push(pub.publicUrl)
       }
 
@@ -124,11 +124,11 @@ export default function VenderForm() {
         if (fileRef.current) fileRef.current.value = ''
       } else {
         const data = await res.json().catch(() => ({}))
-        setBanner({ type: 'error', message: data?.error ?? 'Error al enviar. Intentalo de nuevo.' })
+        setBanner({ type: 'error', message: data?.error ?? 'No se pudo enviar la información. Inténtalo de nuevo.' })
         console.error('[VenderForm] API error:', data)
       }
     } catch (err) {
-      setBanner({ type: 'error', message: 'Error de red. Intentalo de nuevo.' })
+      setBanner({ type: 'error', message: 'No fue posible conectar. Inténtalo de nuevo.' })
       console.error('[VenderForm] fetch error:', err)
     } finally {
       setLoading(false)
@@ -136,9 +136,9 @@ export default function VenderForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#AED6F1] p-8 max-w-xl w-full mx-auto">
+    <div className="bg-white rounded-2xl shadow-sm border border-[#B3B3B3] p-8 max-w-xl w-full mx-auto">
       {/* Toggle */}
-      <div className="flex rounded-xl border border-[#AED6F1] overflow-hidden mb-6">
+      <div className="flex rounded-xl border border-[#B3B3B3] overflow-hidden mb-6">
         {(['vender', 'alquilar'] as Mode[]).map((m) => (
           <button
             key={m}
@@ -146,8 +146,8 @@ export default function VenderForm() {
             onClick={() => handleModeChange(m)}
             className={`flex-1 py-2.5 text-sm font-semibold transition-colors capitalize ${
               mode === m
-                ? 'bg-[#0D3B66] text-white'
-                : 'bg-white text-[#4A7BA7] hover:text-[#0D3B66]'
+                ? 'bg-[#0D1A2D] text-white'
+                : 'bg-white text-[#525252] hover:text-[#0D1A2D]'
             }`}
           >
             {m.charAt(0).toUpperCase() + m.slice(1)}
@@ -155,8 +155,8 @@ export default function VenderForm() {
         ))}
       </div>
 
-      <h2 className="text-xl font-black text-[#0D3B66] mb-1">{cfg.title}</h2>
-      <p className="text-sm text-[#4A7BA7] mb-6">{cfg.subtitle}</p>
+      <h2 className="font-display text-xl font-semibold text-[#0D1A2D] mb-1">{cfg.title}</h2>
+      <p className="text-sm text-[#525252] mb-6">{cfg.subtitle}</p>
 
       {banner && (
         <div
@@ -227,7 +227,7 @@ export default function VenderForm() {
         <div>
           <label className={labelCls}>
             Fotos{' '}
-            <span className="text-[#4A7BA7] font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
+            <span className="text-[#525252] font-normal">(máx. {MAX_FILES} archivos, {MAX_SIZE_MB}MB c/u)</span>
           </label>
           <input
             ref={fileRef}
@@ -235,11 +235,11 @@ export default function VenderForm() {
             accept="image/*"
             multiple
             onChange={handleFileChange}
-            className="w-full text-sm text-[#4A7BA7] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#0D3B66] file:text-white hover:file:bg-[#1A5F9E] cursor-pointer"
+            className="w-full text-sm text-[#525252] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#0D1A2D] file:text-white hover:file:bg-[#0D1A2D]/90 cursor-pointer"
           />
           {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
           {files.length > 0 && !photoError && (
-            <p className="mt-1 text-xs text-[#4A7BA7]">{files.length} foto(s) seleccionada(s)</p>
+            <p className="mt-1 text-xs text-[#525252]">{files.length} foto(s) seleccionada(s)</p>
           )}
         </div>
 
@@ -257,7 +257,7 @@ export default function VenderForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#0D3B66] hover:bg-[#1A5F9E] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#0D1A2D] hover:bg-[#0D1A2D]/90 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : cfg.btnLabel}
         </Button>

@@ -1,4 +1,4 @@
-import PropertyCard from '@/components/properties/PropertyCard'
+﻿import PropertyCard from '@/components/properties/PropertyCard'
 import PropertyFilters, { CategoryOption } from '@/components/properties/PropertyFilters'
 import Pagination from '@/components/properties/Pagination'
 import type { PaginatedResponse, Property } from '@/types'
@@ -14,6 +14,7 @@ const CATEGORIES_RENTA: CategoryOption[] = [
   { value: 'HOUSE', label: 'Casa' },
   { value: 'APARTMENT', label: 'Departamento' },
   { value: 'COMMERCIAL', label: 'Oficina' },
+  { value: 'VACATION_STAY', label: 'Estancia vacacional' },
 ]
 
 function getAllowedCategories(contractType?: string): CategoryOption[] | undefined {
@@ -68,28 +69,27 @@ export default async function CatalogView({
   const { page: _p, ...filtersOnly } = searchParams
 
   return (
-    <main className="min-h-screen bg-[#F7F3EE]">
+    <main className="min-h-screen bg-[#F5F5F5]">
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-6">
         {/* Breadcrumb */}
         {breadcrumb && (
-          <nav className="flex items-center gap-2 text-xs text-[#A89880]">
+          <nav className="flex items-center gap-2 text-xs text-[#525252]">
             {breadcrumb.map((crumb, i) => (
               <span key={crumb.href} className="flex items-center gap-2">
                 {i > 0 && <span>/</span>}
-                <Link href={crumb.href} className="hover:text-[#B07030] transition-colors">
+                <Link href={crumb.href} className="hover:text-[#0D1A2D] transition-colors">
                   {crumb.label}
                 </Link>
               </span>
             ))}
             <span>/</span>
-            <span className="text-[#18140D] font-medium">{title}</span>
+            <span className="text-[#0D1A2D] font-medium">{title}</span>
           </nav>
         )}
 
         {/* Title */}
         <h1
-          className="text-4xl md:text-5xl text-[#18140D] leading-tight"
-          style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
+          className="font-display text-4xl md:text-5xl text-[#0D1A2D] leading-tight"
         >
           {title}
         </h1>
@@ -108,13 +108,13 @@ export default async function CatalogView({
         />
 
         {result.data.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-[#A89880] space-y-2">
+          <div className="flex flex-col items-center justify-center py-24 text-[#525252] space-y-2">
             <p className="text-lg font-medium">Sin resultados</p>
             <p className="text-sm">Intenta ajustar los filtros.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-[#A89880]">
+            <p className="text-sm text-[#525252]">
               {result.total} propiedad{result.total !== 1 ? 'es' : ''} encontrada{result.total !== 1 ? 's' : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -128,6 +128,7 @@ export default async function CatalogView({
                   state={p.state}
                   contractType={p.contractType}
                   category={p.category}
+                  whatsapp={p.whatsapp ?? null}
                   priceMXN={p.priceMXN ?? null}
                   priceUSD={p.priceUSD ?? null}
                   priceVisible={p.priceVisible}

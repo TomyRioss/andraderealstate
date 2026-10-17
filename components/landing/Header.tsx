@@ -1,179 +1,272 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState, useSyncExternalStore } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useCurrency } from '@/lib/contexts/CurrencyContext'
 
-interface NavChild { label: string; href: string }
-interface NavItem { label: string; href: string; children?: NavChild[] }
+interface NavChild {
+  label: string
+  href: string
+  external?: boolean
+  target?: '_blank'
+}
 
-const navItems: NavItem[] = [
-  { label: 'Inicio', href: '/' },
-  {
-    label: 'Venta',
-    href: '/propiedades/venta',
-    children: [
-      { label: 'Casas', href: '/propiedades/venta/casas' },
-      { label: 'Departamentos', href: '/propiedades/venta/departamentos' },
-      { label: 'Terrenos', href: '/propiedades/venta/terrenos' },
-    ],
-  },
-  {
-    label: 'Renta',
-    href: '/propiedades/renta',
-    children: [
-      { label: 'Casas', href: '/propiedades/renta/casas' },
-      { label: 'Departamentos', href: '/propiedades/renta/departamentos' },
-      { label: 'Oficinas', href: '/propiedades/renta/oficinas' },
-    ],
-  },
-  { label: 'Desarrollos', href: '/propiedades/desarrollos' },
-  { label: 'Contacto', href: '/contacto' },
-]
+interface NavItem {
+  label: string
+  href: string
+  children?: NavChild[]
+}
+
+function getNavItems(): NavItem[] {
+  return [
+    { label: 'Inicio', href: '/' },
+    {
+      label: 'Propiedades',
+      href: '/propiedades',
+      children: [
+        { label: 'Renta', href: '/vender' },
+        { label: 'Venta', href: '/comprar' },
+        { label: 'Estancias vacacionales', href: '/propiedades?category=VACATION_STAY' },
+        { label: 'Administrar', href: '/administrar' },
+      ],
+    },
+    {
+      label: 'Desarrollos',
+      href: '/propiedades?contractType=DEVELOPMENT',
+    },
+    {
+      label: 'Contacto',
+      href: '/contacto',
+      children: [
+        {
+          label: 'WhatsApp',
+          href: 'https://api.whatsapp.com/message/52PNLUOHBGDLH1?autoload=1&app_absent=0',
+          external: true,
+          target: '_blank',
+        },
+        { label: 'Email', href: 'mailto:rentasysolucionnes@gmail.com', external: true },
+        { label: 'Reseñas', href: '/testimonios' },
+      ],
+    },
+  ]
+}
+
+function Chevron({ expanded = false }: { expanded?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`mb-1 inline-block h-2 w-2 rotate-45 border-b border-r border-current transition-transform ${expanded ? 'rotate-[225deg]' : ''}`}
+    />
+  )
+}
+
+function NavChildLink({
+  child,
+  className,
+  onClick,
+}: {
+  child: NavChild
+  className: string
+  onClick: () => void
+}) {
+  if (child.external) {
+    return (
+      <a
+        href={child.href}
+        target={child.target}
+        rel={child.target === '_blank' ? 'noopener noreferrer' : undefined}
+        className={className}
+        onClick={onClick}
+      >
+        {child.label}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={child.href} className={className} onClick={onClick}>
+      {child.label}
+    </Link>
+  )
+}
+
+function subscribeToScroll(callback: () => void) {
+  window.addEventListener('scroll', callback, { passive: true })
+  return () => window.removeEventListener('scroll', callback)
+}
+
+function subscribeToNothing() {
+  return () => {}
+}
+
+function getScrollSnapshot() {
+  return window.scrollY > 36
+}
+
+function getUnscrolledSnapshot() {
+  return false
+}
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const { currency, toggle } = useCurrency()
+  const pathname = usePathname()
+  const isLandingPage = pathname === '/'
+  const isScrolled = useSyncExternalStore(
+    isLandingPage ? subscribeToScroll : subscribeToNothing,
+    isLandingPage ? getScrollSnapshot : getUnscrolledSnapshot,
+    getUnscrolledSnapshot,
+  )
+  const navItems = getNavItems()
+
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0D3B66]/95 backdrop-blur-sm border-b border-[#AED6F1]/20">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center">
+    <header
+      className={`sticky top-0 z-50 border-b text-white transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-out motion-reduce:transition-none ${
+        isLandingPage
+          ? isScrolled
+            ? 'border-[#B3B3B3]/40 bg-[#0D1A2D]/95 shadow-sm backdrop-blur-sm'
+            : 'border-transparent bg-transparent shadow-none'
+          : 'border-[#B3B3B3] bg-[#0D1A2D]'
+      } ${isLandingPage ? '-mb-20 md:-mb-[88px]' : ''}`}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-6 py-3">
+        <Link
+          href="/"
+          aria-label="Andrade & Co Real Estate, inicio"
+          className="flex h-14 w-32 shrink-0 items-center overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3] md:h-16 md:w-52"
+        >
           <Image
             src="/andrade_realstate_logo.png"
             alt="Andrade & Co Real Estate"
             width={240}
-            height={64}
-            className="h-16"
-            style={{ filter: 'brightness(0) invert(1)', width: 'auto' }}
+            height={160}
+            className="h-auto w-32 -translate-y-3 md:w-52 md:translate-y-0"
             priority
           />
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav aria-label="Navegación principal" className="hidden items-center gap-5 lg:flex xl:gap-7">
           {navItems.map((item) => (
             <div
               key={item.href}
-              className="relative group"
+              className="group relative flex items-center gap-1"
               onMouseEnter={() => item.children && setOpenDropdown(item.label)}
               onMouseLeave={() => setOpenDropdown(null)}
             >
               <Link
                 href={item.href}
-                className="flex items-center gap-1 text-base font-normal text-white hover:text-[#AED6F1] hover:underline underline-offset-4 transition-colors tracking-wide py-1"
+                className="py-3 text-sm font-medium text-white transition-colors hover:text-[#B3B3B3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3]"
               >
                 {item.label}
-                {item.children && (
-                  <svg
-                    width="10" height="6" viewBox="0 0 10 6" fill="none"
-                    className={`transition-transform duration-200 ${openDropdown === item.label ? 'rotate-180' : ''}`}
-                  >
-                    <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
               </Link>
+              {item.children && (
+                <button
+                  type="button"
+                  aria-label={`${openDropdown === item.label ? 'Cerrar' : 'Abrir'} opciones de ${item.label}`}
+                  aria-expanded={openDropdown === item.label}
+                  onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                  className="flex h-9 w-6 items-center justify-center text-[#B3B3B3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3]"
+                >
+                  <Chevron expanded={openDropdown === item.label} />
+                </button>
+              )}
 
               {item.children && openDropdown === item.label && (
-                <div className="absolute top-full left-0 w-44 pt-2 z-50">
-                <div className="bg-[#0D3B66] border border-[#AED6F1]/20 rounded-lg shadow-xl py-1">
-                  {item.children.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      className="block px-4 py-2.5 text-sm text-[#AED6F1] hover:text-white hover:bg-[#1A5F9E] transition-colors"
-                      onClick={() => setOpenDropdown(null)}
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
+                <div className="absolute left-0 top-full z-50 max-h-[70vh] w-52 overflow-y-auto border border-[#B3B3B3]/70 bg-[#0D1A2D] py-1 shadow-[0_8px_24px_rgba(13,26,45,0.24)]">
+                  <div className="divide-y divide-[#B3B3B3]/30">
+                    {item.children.map((child) => (
+                      <NavChildLink
+                        key={child.href}
+                        child={child}
+                        className="block px-4 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:bg-[#B3B3B3] focus-visible:text-[#0D1A2D] focus-visible:outline-none"
+                        onClick={() => setOpenDropdown(null)}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          {/* Currency toggle */}
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="text-[9px] tracking-[0.2em] uppercase text-[#AED6F1] font-semibold">Moneda</span>
+        <div className="ml-auto flex items-center gap-4 lg:ml-0">
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-[#B3B3B3]">Moneda</span>
             <button
+              type="button"
               onClick={toggle}
-              className="flex items-center rounded-full border border-[#AED6F1]/40 bg-[#0D3B66] p-0.5"
-              aria-label="Cambiar moneda"
+              aria-label={`Cambiar moneda. Actual: ${currency}`}
+              aria-pressed={currency === 'USD'}
+              className="flex min-h-9 items-center border border-[#B3B3B3] p-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3]"
             >
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold tracking-widest transition-all ${
-                currency === 'MXN' ? 'bg-[#1A5F9E] text-white' : 'text-[#AED6F1]/60 hover:text-[#AED6F1]'
-              }`}>MXN</span>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold tracking-widest transition-all ${
-                currency === 'USD' ? 'bg-[#1A5F9E] text-white' : 'text-[#AED6F1]/60 hover:text-[#AED6F1]'
-              }`}>USD</span>
+              <span className={`px-2.5 py-1 text-xs font-semibold transition-colors ${currency === 'MXN' ? 'bg-[#B3B3B3] text-[#0D1A2D]' : 'text-white'}`}>
+                MXN
+              </span>
+              <span className={`px-2.5 py-1 text-xs font-semibold transition-colors ${currency === 'USD' ? 'bg-[#B3B3B3] text-[#0D1A2D]' : 'text-white'}`}>
+                USD
+              </span>
             </button>
           </div>
 
-          {/* Mobile hamburger */}
           <button
-            className="md:hidden text-white leading-none p-1"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label="Menu"
+            type="button"
+            className="flex h-11 w-11 flex-col items-center justify-center gap-[5px] text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3] lg:hidden"
+            onClick={() => setMenuOpen((previous) => !previous)}
+            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={menuOpen}
           >
-            {menuOpen ? (
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 1l16 16M17 1L1 17"/></svg>
-            ) : (
-              <svg width="20" height="14" viewBox="0 0 20 14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M0 1h20M0 7h20M0 13h20"/></svg>
-            )}
+            <span className={`h-px w-5 bg-current transition-transform ${menuOpen ? 'translate-y-[3px] rotate-45' : ''}`} />
+            {!menuOpen && <span className="h-px w-5 bg-current" />}
+            <span className={`h-px w-5 bg-current transition-transform ${menuOpen ? '-translate-y-[3px] -rotate-45' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-[#0D3B66] border-t border-[#AED6F1]/20 px-6 py-5 flex flex-col gap-1">
+        <nav aria-label="Navegación móvil" className="border-t border-[#B3B3B3] bg-[#0D1A2D] px-6 py-4 lg:hidden">
           {navItems.map((item) => (
-            <div key={item.href}>
+            <div key={item.href} className="border-b border-[#B3B3B3]/50 last:border-b-0">
               <div className="flex items-center justify-between">
                 <Link
                   href={item.href}
-                  className="py-2.5 text-base font-normal text-white hover:text-[#AED6F1] transition-colors tracking-wide"
-                  onClick={() => { if (!item.children) setMenuOpen(false) }}
+                  className="py-3 text-base font-medium text-white transition-colors hover:text-[#B3B3B3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B3B3B3]"
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
                 </Link>
                 {item.children && (
                   <button
+                    type="button"
                     onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                    className="text-[#AED6F1]/50 hover:text-white p-2 transition-colors"
+                    aria-label={`${openDropdown === item.label ? 'Cerrar' : 'Abrir'} opciones de ${item.label}`}
+                    aria-expanded={openDropdown === item.label}
+                    className="flex h-11 w-11 items-center justify-center text-[#B3B3B3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B3B3B3]"
                   >
-                    <svg
-                      width="10" height="6" viewBox="0 0 10 6" fill="none"
-                      className={`transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`}
-                    >
-                      <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+                    <Chevron expanded={openDropdown === item.label} />
                   </button>
                 )}
               </div>
               {item.children && openDropdown === item.label && (
-                <div className="pl-4 pb-2 flex flex-col gap-0.5 border-l border-[#AED6F1]/20 ml-1">
-                  {item.children.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      className="py-2 text-sm text-[#AED6F1] hover:text-white transition-colors"
-                      onClick={() => { setMenuOpen(false); setOpenDropdown(null) }}
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
+                <div className="mb-3 ml-2 max-h-[50vh] overflow-y-auto border-l border-[#B3B3B3] pl-4">
+                  <div className="divide-y divide-[#B3B3B3]/30">
+                    {item.children.map((child) => (
+                      <NavChildLink
+                        key={child.href}
+                        child={child}
+                        className="block py-3 text-sm text-[#B3B3B3] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B3B3B3]"
+                        onClick={() => { setMenuOpen(false); setOpenDropdown(null) }}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           ))}
-        </div>
+        </nav>
       )}
     </header>
   )

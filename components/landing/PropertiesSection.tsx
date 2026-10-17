@@ -8,152 +8,138 @@ import { Property } from '@/types'
 interface PropertiesSectionProps {
   title: string
   properties: Property[]
+  href?: string
 }
 
 function MobileCarousel({ properties }: { properties: Property[] }) {
   const [active, setActive] = useState(0)
+  const property = properties[active]
 
-  const prev = () => setActive((i) => (i - 1 + properties.length) % properties.length)
-  const next = () => setActive((i) => (i + 1) % properties.length)
-
-  const getOffset = (idx: number) => {
-    const diff = idx - active
-    if (diff === 0) return 0
-    if (diff === 1 || diff === -(properties.length - 1)) return 1
-    if (diff === -1 || diff === properties.length - 1) return -1
-    return diff > 0 ? 2 : -2
+  function move(direction: number) {
+    setActive((index) => (index + direction + properties.length) % properties.length)
   }
 
+  if (!property) return null
+
   return (
-    <div className="relative">
-      <div className="relative h-[480px] overflow-hidden">
-        {properties.map((p, idx) => {
-          const offset = getOffset(idx)
-          const isActive = offset === 0
-          const isAdjacent = Math.abs(offset) === 1
+    <div className="mx-auto max-w-md">
+      <PropertyCard
+        key={property.id}
+        id={property.id}
+        title={property.title}
+        slug={property.slug}
+        city={property.city}
+        state={property.state}
+        contractType={property.contractType}
+        category={property.category}
+        whatsapp={property.whatsapp ?? null}
+        priceMXN={property.priceMXN ?? null}
+        priceUSD={property.priceUSD ?? null}
+        priceVisible={property.priceVisible}
+        bedrooms={property.bedrooms ?? null}
+        bathrooms={property.bathrooms ?? null}
+        areaSqm={property.areaSqm ?? null}
+        photos={property.photos}
+        featured={property.featured}
+      />
 
-          return (
-            <div
-              key={p.id}
-              onClick={() => { if (!isActive) setActive(idx) }}
-              className="absolute top-0 transition-all duration-500 ease-in-out"
-              style={{
-                width: '75%',
-                left: '50%',
-                transform: `translateX(calc(-50% + ${offset * 82}%)) scale(${isActive ? 1 : 0.88})`,
-                opacity: isActive ? 1 : isAdjacent ? 0.45 : 0,
-                zIndex: isActive ? 10 : isAdjacent ? 5 : 0,
-                pointerEvents: isActive ? 'auto' : isAdjacent ? 'auto' : 'none',
-                cursor: isAdjacent ? 'pointer' : 'default',
-              }}
-            >
-              <PropertyCard
-                id={p.id}
-                title={p.title}
-                slug={p.slug}
-                city={p.city}
-                state={p.state}
-                contractType={p.contractType}
-                category={p.category}
-                priceMXN={p.priceMXN ?? null}
-                priceUSD={p.priceUSD ?? null}
-                priceVisible={p.priceVisible}
-                bedrooms={p.bedrooms ?? null}
-                bathrooms={p.bathrooms ?? null}
-                areaSqm={p.areaSqm ?? null}
-                photos={p.photos}
-                featured={p.featured}
-              />
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Dots */}
-      <div className="flex justify-center gap-2 mt-4">
-        {properties.map((_, idx) => (
+      {properties.length > 1 && (
+        <div className="mt-5 flex items-center justify-between">
           <button
-            key={idx}
-            onClick={() => setActive(idx)}
-            className={`rounded-full transition-all duration-300 ${idx === active ? 'w-6 h-2 bg-[#1A5F9E]' : 'w-2 h-2 bg-[#AED6F1]'}`}
-          />
-        ))}
-      </div>
-
-      {/* Arrow buttons */}
-      <button
-        onClick={prev}
-        className="absolute left-1 top-1/2 -translate-y-8 z-20 w-8 h-8 rounded-full bg-white border border-[#AED6F1] flex items-center justify-center text-[#0D3B66] shadow-sm hover:bg-[#E8F4FD] transition-colors"
-      >
-        ‹
-      </button>
-      <button
-        onClick={next}
-        className="absolute right-1 top-1/2 -translate-y-8 z-20 w-8 h-8 rounded-full bg-white border border-[#AED6F1] flex items-center justify-center text-[#0D3B66] shadow-sm hover:bg-[#E8F4FD] transition-colors"
-      >
-        ›
-      </button>
+            type="button"
+            onClick={() => move(-1)}
+            aria-label="Propiedad anterior"
+            className="flex h-11 w-11 items-center justify-center border border-[#B3B3B3] text-xl text-white transition-colors hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3]"
+          >
+            ‹
+          </button>
+          <div className="flex items-center gap-2" aria-label="Elegir propiedad">
+            {properties.map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(index)}
+                aria-label={`Mostrar propiedad ${index + 1}: ${item.title}`}
+                aria-current={index === active ? 'true' : undefined}
+                className={`h-1.5 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0D1A2D] ${
+                  index === active ? 'w-8 bg-white' : 'w-4 bg-[#B3B3B3]'
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => move(1)}
+            aria-label="Propiedad siguiente"
+            className="flex h-11 w-11 items-center justify-center border border-[#B3B3B3] text-xl text-white transition-colors hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3]"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
-export default function PropertiesSection({ title, properties }: PropertiesSectionProps) {
+export default function PropertiesSection({ title, properties, href = '/propiedades' }: PropertiesSectionProps) {
+  const sectionClasses = 'bg-[#0D1A2D] text-white'
+  const linkClasses = 'border-[#B3B3B3] text-white hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:outline-[#B3B3B3]'
+
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-px w-8 bg-[#1A5F9E]" />
-              <span className="text-[#1A5F9E] text-xs tracking-[0.25em] uppercase font-medium">Propiedades</span>
-            </div>
-            <h2
-              className="text-4xl md:text-5xl text-[#0D3B66] leading-tight"
-              style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
-            >
-              {title}
-            </h2>
-          </div>
+    <section className={`py-20 md:py-28 ${sectionClasses}`}>
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-10 flex flex-col gap-6 border-b border-current/30 pb-7 sm:flex-row sm:items-end sm:justify-between md:mb-12">
+          <h2 className="font-display max-w-3xl text-4xl font-medium leading-[1.05] tracking-[-0.03em] md:text-5xl lg:text-6xl">
+            {title}
+          </h2>
           <Link
-            href="/propiedades"
-            className="hidden md:flex items-center gap-2 text-sm text-[#4A7BA7] hover:text-[#0D3B66] font-medium transition-colors tracking-wide group"
+            href={href}
+            className={`inline-flex min-h-11 w-fit items-center border px-5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${linkClasses}`}
           >
-            Ver todas
-            <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+            Ver todas las propiedades <span aria-hidden="true" className="ml-3 text-lg">→</span>
           </Link>
         </div>
 
         {properties.length === 0 ? (
-          <div className="py-20 text-[#4A7BA7] text-center text-sm">
-            No hay propiedades disponibles en este momento.
+          <div className="flex flex-col items-start justify-between gap-6 border-b border-current/30 py-10 sm:flex-row sm:items-center">
+            <p className="max-w-xl text-base leading-7">
+              Aún no hay propiedades publicadas en esta categoría. Nuestro equipo puede orientarte sobre la operación que buscas.
+            </p>
+            <Link
+              href="/contacto"
+              className={`shrink-0 text-sm font-semibold underline decoration-current underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 ${
+                isRent ? 'focus-visible:outline-[#B3B3B3]' : 'focus-visible:outline-[#0D1A2D]'
+              }`}
+            >
+              Solicitar orientación
+            </Link>
           </div>
         ) : (
           <>
-            {/* Mobile: carousel */}
             <div className="lg:hidden">
               <MobileCarousel properties={properties} />
             </div>
 
-            {/* Desktop: grid */}
-            <div className="hidden lg:grid lg:grid-cols-3 gap-6">
-              {properties.map((p) => (
+            <div className="hidden gap-6 lg:grid lg:grid-cols-2 xl:grid-cols-3">
+              {properties.map((property) => (
                 <PropertyCard
-                  key={p.id}
-                  id={p.id}
-                  title={p.title}
-                  slug={p.slug}
-                  city={p.city}
-                  state={p.state}
-                  contractType={p.contractType}
-                  category={p.category}
-                  priceMXN={p.priceMXN ?? null}
-                  priceUSD={p.priceUSD ?? null}
-                  priceVisible={p.priceVisible}
-                  bedrooms={p.bedrooms ?? null}
-                  bathrooms={p.bathrooms ?? null}
-                  areaSqm={p.areaSqm ?? null}
-                  photos={p.photos}
-                  featured={p.featured}
+                  key={property.id}
+                  id={property.id}
+                  title={property.title}
+                  slug={property.slug}
+                  city={property.city}
+                  state={property.state}
+                  contractType={property.contractType}
+                  category={property.category}
+                  whatsapp={property.whatsapp ?? null}
+                  priceMXN={property.priceMXN ?? null}
+                  priceUSD={property.priceUSD ?? null}
+                  priceVisible={property.priceVisible}
+                  bedrooms={property.bedrooms ?? null}
+                  bathrooms={property.bathrooms ?? null}
+                  areaSqm={property.areaSqm ?? null}
+                  photos={property.photos}
+                  featured={property.featured}
                 />
               ))}
             </div>

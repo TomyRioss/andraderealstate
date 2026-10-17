@@ -41,7 +41,7 @@ export default function PhotoGallery({ photos, title }: Props) {
               key={i}
               onClick={() => setActive(i)}
               className={`relative flex-shrink-0 w-16 h-16 md:w-full md:h-16 rounded overflow-hidden border-2 transition-colors ${
-                i === active ? 'border-[#10b981]' : 'border-transparent'
+                i === active ? 'border-[#0D1A2D]' : 'border-transparent'
               }`}
             >
               <Image

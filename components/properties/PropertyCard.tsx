@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCurrency } from '@/lib/contexts/CurrencyContext'
+import { buildWhatsappLink } from '@/lib/whatsapp'
 
 interface PropertyCardProps {
   id: string
@@ -12,6 +13,7 @@ interface PropertyCardProps {
   state: string
   contractType: 'SALE' | 'RENT' | 'DEVELOPMENT'
   category: string
+  whatsapp?: string | null
   priceMXN?: number | null
   priceUSD?: number | null
   priceVisible: boolean
@@ -22,24 +24,13 @@ interface PropertyCardProps {
   featured: boolean
 }
 
-const contractLabel: Record<PropertyCardProps['contractType'], string> = {
-  SALE: 'Venta',
-  RENT: 'Renta',
-  DEVELOPMENT: 'Desarrollo',
-}
-
-const contractColor: Record<PropertyCardProps['contractType'], string> = {
-  SALE: 'bg-[#0D3B66] text-white',
-  RENT: 'bg-[#0D3B66] text-white',
-  DEVELOPMENT: 'bg-[#1A5F9E] text-white',
-}
-
 export default function PropertyCard({
   title,
   slug,
   city,
   state,
-  contractType,
+  category,
+  whatsapp,
   priceMXN,
   priceUSD,
   priceVisible,
@@ -47,78 +38,96 @@ export default function PropertyCard({
   bathrooms,
   areaSqm,
   photos,
-  featured,
 }: PropertyCardProps) {
   const { currency } = useCurrency()
+  const isVacationStay = category === 'VACATION_STAY'
+  const propertyUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/propiedades/${slug}`
+  const whatsappPhone = whatsapp || process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || '5213221682424'
+  const reservationMessage = `Hola, quiero consultar disponibilidad para reservar la estancia vacacional "${title}". Puedes ver más detalles aquí: ${propertyUrl}`
+  const reservationHref = isVacationStay
+    ? buildWhatsappLink(whatsappPhone, title, propertyUrl, reservationMessage)
+    : null
 
   const formattedPrice = (() => {
     if (!priceVisible) return 'Precio a consultar'
-    if (currency === 'USD') {
-      if (priceUSD != null) {
-        return 'USD $' + new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(priceUSD)
-      }
-      return 'USD ---'
+
+    if (currency === 'USD' && priceUSD != null) {
+      return `USD $${new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(priceUSD)}`
     }
-    if (priceMXN != null) {
-      return 'MXN $' + new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(priceMXN)
+    if (currency === 'MXN' && priceMXN != null) {
+      return `MXN $${new Intl.NumberFormat('es-MX', { maximumFractionDigits: 0 }).format(priceMXN)}`
     }
+
     return 'Precio a consultar'
   })()
 
   const specs = [
-    bedrooms != null ? `${bedrooms} hab` : null,
+    bedrooms != null ? `${bedrooms} hab.` : null,
     bathrooms != null ? `${bathrooms} baños` : null,
     areaSqm != null ? `${areaSqm} m²` : null,
-  ]
-    .filter(Boolean)
-    .join(' · ')
+  ].filter(Boolean)
 
   return (
-    <Link href={`/propiedades/${slug}`} className="group block">
-      <div className="bg-white rounded-xl overflow-hidden border border-[#AED6F1] hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(13,59,102,0.12)] transition-all duration-300">
-        {/* Image */}
-        <div className="relative w-full aspect-video overflow-hidden">
-          {photos.length > 0 ? (
+    <article className="flex h-full flex-col overflow-hidden border border-[#B3B3B3] bg-white text-[#0D1A2D]">
+      <Link
+        href={`/propiedades/${slug}`}
+        aria-label={`Ver propiedad: ${title}`}
+        className="group flex h-full flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D1A2D]"
+      >
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#B3B3B3]">
+          {photos[0] ? (
             <Image
-              src={photos[0] ?? ''}
+              src={photos[0]}
               alt={title}
               fill
-              sizes="(max-width:768px) 100vw, (max-width:1024px) 50vw, 33vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 90vw, (max-width: 1280px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
           ) : (
-            <div className="absolute inset-0 bg-[#E8F4FD] flex items-center justify-center">
-              <span className="text-[#4A7BA7] text-xs tracking-wide uppercase">Sin fotografía</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-[#B3B3B3] px-5 text-center text-sm font-medium text-[#0D1A2D]">
+              Fotografía no disponible
             </div>
           )}
-          <span className={`absolute top-3 left-3 rounded-full text-xs font-medium px-3 py-1 tracking-wider ${contractColor[contractType]}`}>
-            {contractLabel[contractType]}
-          </span>
-          {featured && (
-            <span className="absolute top-3 right-3 rounded-full bg-[#1A5F9E] text-white text-xs font-medium px-3 py-1 tracking-wide">
-              Destacado
-            </span>
-          )}
+
         </div>
 
-        {/* Body */}
-        <div className="p-5">
-          <p className="text-xs text-[#4A7BA7] font-medium uppercase tracking-[0.15em] mb-1.5">
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#0D1A2D]">
             {city}, {state}
           </p>
-          <h3 className="text-sm font-semibold text-[#0D3B66] leading-snug line-clamp-2 group-hover:text-[#1A5F9E] transition-colors mb-3">
+          {isVacationStay && (
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0D1A2D]">
+              Estancia vacacional
+            </p>
+          )}
+          <h3 className="font-display mt-2 line-clamp-2 text-xl font-medium leading-snug">
             {title}
           </h3>
-          <p className="text-xl font-semibold text-[#0D3B66] mb-3 tracking-tight font-sans">
+          <p className="mt-4 text-lg font-semibold tracking-tight sm:text-xl">
             {formattedPrice}
           </p>
-          {specs && (
-            <div className="border-t border-[#AED6F1] pt-3">
-              <p className="text-xs text-[#4A7BA7] tracking-wide">{specs}</p>
+
+          {specs.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-x-3 gap-y-1 border-t border-[#B3B3B3] pt-4 text-xs font-medium">
+              {specs.map((spec) => <span key={spec}>{spec}</span>)}
             </div>
           )}
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      {reservationHref && (
+        <div className="px-5 pb-5 sm:px-6 sm:pb-6">
+          <p className="mb-3 text-sm text-[#0D1A2D]">Reservas sujetas a disponibilidad.</p>
+          <a
+            href={reservationHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-12 items-center justify-center bg-[#0D1A2D] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D1A2D]"
+          >
+            Consultar disponibilidad por WhatsApp
+          </a>
+        </div>
+      )}
+    </article>
   )
 }

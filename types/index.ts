@@ -1,5 +1,5 @@
 export type ContractType = 'SALE' | 'RENT' | 'DEVELOPMENT'
-export type Category = 'HOUSE' | 'APARTMENT' | 'LAND' | 'COMMERCIAL' | 'DEVELOPMENT_PROJECT' | 'OTHER'
+export type Category = 'HOUSE' | 'APARTMENT' | 'LAND' | 'COMMERCIAL' | 'DEVELOPMENT_PROJECT' | 'VACATION_STAY' | 'OTHER'
 export type FormType = 'BUY' | 'SELL' | 'MANAGE'
 export type LeadStatus = 'PENDING' | 'CONTACTED' | 'CLOSED' | 'DISCARDED'
 export type TestimonialStatus = 'PENDING' | 'APPROVED' | 'REJECTED'

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { pb } from '@/lib/pocketbase'
+import { invalidatePocketBaseCollection, listTestimonials, withoutPocketBaseMetadata } from '@/lib/pocketbase-data'
+import { sortByCreatedAtDescending } from '@/lib/property-search'
 
 export async function GET() {
   try {
-    const data = await prisma.testimonial.findMany({
-      where: { status: 'APPROVED' },
-      orderBy: { createdAt: 'desc' },
-    })
+    const data = sortByCreatedAtDescending((await listTestimonials()).filter((testimonial) => testimonial.status === 'APPROVED'))
     return NextResponse.json({ data })
   } catch (err) {
     console.error('[GET /api/testimonials]', err)
@@ -30,17 +29,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Content min 10 chars' }, { status: 400 })
     }
 
-    const testimonial = await prisma.testimonial.create({
-      data: {
-        author: String(author).trim(),
-        location: location ?? null,
-        rating: ratingNum,
-        content: String(content).trim(),
-        status: 'PENDING',
-      },
+    const now = new Date().toISOString()
+    const testimonial = await pb.collection('testimonials').create({
+      author: String(author).trim(),
+      location: location ?? null,
+      rating: ratingNum,
+      content: String(content).trim(),
+      status: 'PENDING',
+      active: true,
+      createdAt: now,
+      updatedAt: now,
     })
 
-    return NextResponse.json(testimonial, { status: 201 })
+    invalidatePocketBaseCollection('testimonials')
+    return NextResponse.json(withoutPocketBaseMetadata(testimonial), { status: 201 })
   } catch (err) {
     console.error('[POST /api/testimonials]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 400 })

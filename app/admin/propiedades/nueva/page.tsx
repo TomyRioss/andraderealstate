@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { createStorageClient } from '@/lib/storage'
 import type { ContractType, Category } from '@/types'
 
 const PropertyMap = dynamic(() => import('@/components/ui/PropertyMap'), { ssr: false })
@@ -54,18 +54,18 @@ function toSlug(str: string) {
   return str
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 }
 
 const inputCls =
-  'w-full px-3 py-2 rounded-lg border border-[#E5DDD5] bg-[#FAF8F5] text-sm text-[#18140D] focus:outline-none focus:border-[#C9A96E] transition-colors'
+  'w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm text-[#0D1A2D] focus:outline-none focus:border-[#0D1A2D] transition-colors'
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-semibold uppercase tracking-widest text-[#8C7B68]">{label}</label>
+      <label className="text-xs font-semibold uppercase tracking-widest text-[#525252]">{label}</label>
       {children}
     </div>
   )
@@ -73,8 +73,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="bg-white rounded-xl border border-[#E5DDD5] p-6 flex flex-col gap-4">
-      <p className="text-xs font-semibold uppercase tracking-widest text-[#C9A96E]">{title}</p>
+    <section className="bg-white rounded-xl border border-[#CCCCCC] p-6 flex flex-col gap-4">
+      <p className="font-heading text-sm font-medium text-[#0D1A2D]">{title}</p>
       {children}
     </section>
   )
@@ -115,14 +115,14 @@ export default function NuevaPropiedad() {
     if (!files || files.length === 0) return
     setUploading(true)
     setPhotoError(null)
-    const supabase = createClient()
+    const storage = createStorageClient()
     try {
       for (const file of Array.from(files)) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
         const path = `properties/${Date.now()}-${safeName}`
-        const { error: upErr } = await supabase.storage.from('property-images').upload(path, file)
+        const { error: upErr } = await storage.from('property-images').upload(path, file)
         if (upErr) throw new Error(`"${file.name}": ${upErr.message}`)
-        const { data: pub } = supabase.storage.from('property-images').getPublicUrl(path)
+        const { data: pub } = storage.from('property-images').getPublicUrl(path)
         setPhotos((prev) => [...prev, pub.publicUrl])
       }
     } catch (e) {
@@ -202,14 +202,14 @@ export default function NuevaPropiedad() {
         <button
           type="button"
           onClick={() => router.push('/admin/propiedades')}
-          className="text-[#8C7B68] hover:text-[#C9A96E] transition-colors"
+          className="text-slate-600 hover:text-[#0D1A2D] transition-colors"
           aria-label="Volver"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M19 12H5M5 12l7 7M5 12l7-7" />
           </svg>
         </button>
-        <h1 className="text-3xl font-light" style={{ color: '#18140D', fontFamily: 'Georgia, serif' }}>
+        <h1 className="font-heading text-3xl font-medium text-[#0D1A2D]">
           Nueva propiedad
         </h1>
       </div>
@@ -285,6 +285,7 @@ export default function NuevaPropiedad() {
                 <option value="LAND">Terreno</option>
                 <option value="COMMERCIAL">Comercial</option>
                 <option value="DEVELOPMENT_PROJECT">Proyecto</option>
+                <option value="VACATION_STAY">Estancia vacacional</option>
                 <option value="OTHER">Otro</option>
               </select>
             </Field>
@@ -301,12 +302,12 @@ export default function NuevaPropiedad() {
               ['active', 'Activa'],
               ['featured', 'Destacada'],
             ] as [keyof FormState, string][]).map(([field, label]) => (
-              <label key={field} className="flex items-center gap-2 text-sm text-[#5C4F42] cursor-pointer">
+              <label key={field} className="flex items-center gap-2 text-sm text-[#0D1A2D] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form[field] as boolean}
                   onChange={(e) => set(field, e.target.checked)}
-                  className="accent-[#C9A96E]"
+                  className="accent-[#B3B3B3]"
                 />
                 {label}
               </label>
@@ -367,7 +368,7 @@ export default function NuevaPropiedad() {
           </Field>
           {mapCoords && (
             <div>
-              <p className="text-xs text-[#8C7B68] mb-2">Vista previa del mapa</p>
+              <p className="text-xs text-[#525252] mb-2">Vista previa del mapa</p>
               <PropertyMap lat={mapCoords.lat} lng={mapCoords.lng} mapsUrl={form.mapsUrl} />
             </div>
           )}
@@ -381,7 +382,7 @@ export default function NuevaPropiedad() {
             <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{photoError}</p>
           )}
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors bg-[#18140D] text-[#C9A96E] hover:bg-[#2E2820]">
+            <label className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-opacity bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
@@ -397,20 +398,20 @@ export default function NuevaPropiedad() {
               />
             </label>
             {photos.length > 0 && (
-              <span className="text-xs text-[#8C7B68]">{photos.length} foto(s)</span>
+              <span className="text-xs text-[#525252]">{photos.length} foto(s)</span>
             )}
           </div>
           {photos.length > 0 && (
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {photos.map((url, i) => (
-                <div key={i} className="relative group rounded-lg overflow-hidden border border-[#E5DDD5]">
+                <div key={i} className="relative group rounded-lg overflow-hidden border border-[#CCCCCC]">
                   <img src={url} alt={`Foto ${i + 1}`} className="w-full h-24 object-cover" />
                   <button
                     type="button"
                     onClick={() => setPhotos((prev) => prev.filter((_, j) => j !== i))}
                     className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    ✕
+                    ?
                   </button>
                 </div>
               ))}
@@ -425,7 +426,7 @@ export default function NuevaPropiedad() {
           <Button
             type="submit"
             disabled={saving}
-            className="bg-[#18140D] hover:bg-[#2E2820] text-[#C9A96E] font-semibold"
+            className="bg-[#0D1A2D] hover:opacity-80 text-[#B3B3B3] font-semibold"
           >
             {saving ? 'Guardando…' : 'Crear propiedad'}
           </Button>

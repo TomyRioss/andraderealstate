@@ -1,7 +1,7 @@
 import NextAuth, { CredentialsSignin } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
+import { getAdminPocketBase } from '@/lib/pocketbase-admin'
 import { authConfig } from '@/auth.config'
 
 class InvalidCredentials extends CredentialsSignin {
@@ -22,7 +22,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!email || !password) throw new InvalidCredentials()
 
-        const user = await prisma.user.findUnique({ where: { email } })
+        let user
+        try {
+          const pb = await getAdminPocketBase()
+          user = await pb.collection('admins').getFirstListItem(
+            pb.filter('email = {:email}', { email }),
+          )
+        } catch (error) {
+          if (!(error instanceof Error && 'status' in error && error.status === 404)) {
+            throw error
+          }
+          user = null
+        }
         if (!user) throw new InvalidCredentials()
 
         const isValid =

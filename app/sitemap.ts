@@ -1,13 +1,10 @@
 import type { MetadataRoute } from 'next'
-import { prisma } from '@/lib/prisma'
+import { listProperties } from '@/lib/pocketbase-data'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://andraderealestate.com'
 
-  const properties = await prisma.property.findMany({
-    where: { active: true },
-    select: { slug: true, updatedAt: true },
-  })
+  const properties = (await listProperties()).filter((property) => property.active)
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
@@ -15,9 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/contacto`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   ]
 
-  const propertyRoutes: MetadataRoute.Sitemap = properties.map(p => ({
+  const propertyRoutes: MetadataRoute.Sitemap = properties.map((p) => ({
     url: `${siteUrl}/propiedades/${p.slug}`,
-    lastModified: p.updatedAt,
+    lastModified: new Date(p.updatedAt),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))

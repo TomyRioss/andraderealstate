@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -9,8 +9,8 @@ interface Banner {
 }
 
 const inputCls =
-  'w-full border border-[#e5e7eb] rounded-xl px-4 py-3 text-sm text-[#0f172a] focus:outline-none focus:border-[#C9A96E] focus:ring-1 focus:ring-[#C9A96E] transition bg-white'
-const labelCls = 'block text-sm font-medium text-[#18140D] mb-1'
+  'w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-[#0D1A2D] focus:outline-none focus:border-[#0D1A2D] focus:ring-1 focus:ring-[#0D1A2D] transition bg-white'
+const labelCls = 'block text-sm font-medium text-[#0D1A2D] mb-1'
 
 export default function ComprarForm() {
   const [name, setName] = useState('')
@@ -38,11 +38,11 @@ export default function ComprarForm() {
         setMessage('')
       } else {
         const data = await res.json().catch(() => ({}))
-        setBanner({ type: 'error', message: data?.error ?? 'Error al enviar. Intentalo de nuevo.' })
+        setBanner({ type: 'error', message: data?.error ?? 'No se pudo enviar la consulta. Inténtalo de nuevo.' })
         console.error('[ComprarForm] API error:', data)
       }
     } catch (err) {
-      setBanner({ type: 'error', message: 'Error de red. Intentalo de nuevo.' })
+      setBanner({ type: 'error', message: 'No fue posible conectar. Inténtalo de nuevo.' })
       console.error('[ComprarForm] fetch error:', err)
     } finally {
       setLoading(false)
@@ -50,9 +50,9 @@ export default function ComprarForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#e5e7eb] p-8 max-w-xl w-full mx-auto">
-      <h2 className="text-xl font-black text-[#18140D] mb-1">Quiero comprar</h2>
-      <p className="text-sm text-[#8C7B68] mb-6">Dejanos tus datos y te asesoramos sin cargo.</p>
+    <div className="bg-white rounded-2xl shadow-sm border border-neutral-300 p-8 max-w-xl w-full mx-auto">
+      <h2 className="font-display text-xl font-semibold text-[#0D1A2D] mb-1">Solicitar asesoría de compra</h2>
+      <p className="text-sm text-neutral-700 mb-6">Comparte tus datos y preferencias para que podamos orientarte.</p>
 
       {banner && (
         <div
@@ -122,7 +122,7 @@ export default function ComprarForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#18140D] hover:bg-[#2E2820] disabled:opacity-60 text-[#C9A96E] font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#0D1A2D] hover:bg-[#0D1A2D]/90 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : 'Enviar consulta'}
         </Button>

@@ -1,10 +1,12 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { pb } from '@/lib/pocketbase'
+import { invalidatePocketBaseCollection, listProperties, withoutPocketBaseMetadata } from '@/lib/pocketbase-data'
+import { filterProperties, sortByCreatedAtDescending } from '@/lib/property-search'
 import { auth } from '@/auth'
 import { propertySchema } from '@/lib/validations/property'
-import { Prisma } from '@prisma/client'
+
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,39 +19,31 @@ export async function GET(req: NextRequest) {
     const maxPrice = searchParams.get('maxPrice')
     const bedrooms = searchParams.get('bedrooms')
     const featured = searchParams.get('featured')
-    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
-    const limit = Math.max(1, parseInt(searchParams.get('limit') ?? '12', 10))
-
-    const where: Prisma.PropertyWhereInput = { active: true }
-
-    if (contractType) where.contractType = contractType as never
-    if (category) where.category = category as never
-    if (city) where.city = { contains: city, mode: 'insensitive' }
-    if (featured !== null && featured !== undefined)
-      where.featured = featured === 'true'
-    if (bedrooms) where.bedrooms = parseInt(bedrooms, 10)
-    if (minPrice || maxPrice) {
-      where.priceMXN = {}
-      if (minPrice) (where.priceMXN as Prisma.FloatNullableFilter).gte = parseFloat(minPrice)
-      if (maxPrice) (where.priceMXN as Prisma.FloatNullableFilter).lte = parseFloat(maxPrice)
+    const positiveInteger = (value: string | null, fallback: number) => {
+      const parsed = Number.parseInt(value ?? '', 10)
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
     }
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { city: { contains: search, mode: 'insensitive' } },
-      ]
+    const numeric = (value: string | null) => {
+      if (!value) return undefined
+      const parsed = Number.parseFloat(value)
+      return Number.isFinite(parsed) ? parsed : undefined
     }
-
-    const [data, total] = await Promise.all([
-      prisma.property.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.property.count({ where }),
-    ])
+    const page = positiveInteger(searchParams.get('page'), 1)
+    const limit = positiveInteger(searchParams.get('limit'), 12)
+    const bedroomCount = bedrooms ? Number.parseInt(bedrooms, 10) : undefined
+    const filtered = sortByCreatedAtDescending(filterProperties(await listProperties(), {
+      activeOnly: true,
+      contractType,
+      category,
+      city,
+      search,
+      featured: featured === null ? undefined : featured === 'true',
+      bedrooms: bedroomCount !== undefined && Number.isFinite(bedroomCount) ? bedroomCount : undefined,
+      minPrice: numeric(minPrice),
+      maxPrice: numeric(maxPrice),
+    }))
+    const total = filtered.length
+    const data = filtered.slice((page - 1) * limit, page * limit)
 
     return NextResponse.json({
       data,
@@ -84,13 +78,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 })
     }
 
-    // exactOptionalPropertyTypes: convert undefined optionals to null for Prisma
-    const data = Object.fromEntries(
-      Object.entries(parsed.data).map(([k, v]) => [k, v === undefined ? null : v])
-    ) as Parameters<typeof prisma.property.create>[0]['data']
-
-    const property = await prisma.property.create({ data })
-    return NextResponse.json(property, { status: 201 })
+    const data = Object.fromEntries(Object.entries(parsed.data).filter(([, v]) => v !== undefined))
+    const now = new Date().toISOString()
+    const property = await pb.collection('properties').create({
+      ...data,
+      createdAt: data.createdAt ?? now,
+      updatedAt: data.updatedAt ?? now,
+    })
+    invalidatePocketBaseCollection('properties')
+    return NextResponse.json(withoutPocketBaseMetadata(property), { status: 201 })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json({ error: message }, { status: 500 })

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { pb } from '@/lib/pocketbase'
+import { invalidatePocketBaseCollection, withoutPocketBaseMetadata } from '@/lib/pocketbase-data'
 import { auth } from '@/auth'
 
 async function requireAdmin(): Promise<NextResponse | null> {
@@ -35,12 +36,10 @@ export async function PUT(
     if (content !== undefined) data.content = content
     if (active !== undefined) data.active = active
 
-    const updated = await prisma.testimonial.update({
-      where: { id },
-      data,
-    })
+    const updated = await pb.collection('testimonials').update(id, data)
+    invalidatePocketBaseCollection('testimonials')
 
-    return NextResponse.json(updated)
+    return NextResponse.json(withoutPocketBaseMetadata(updated))
   } catch (err) {
     console.error('[PUT /api/testimonials/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 400 })
@@ -56,7 +55,8 @@ export async function DELETE(
 
   try {
     const { id } = await params
-    await prisma.testimonial.delete({ where: { id } })
+    await pb.collection('testimonials').delete(id)
+    invalidatePocketBaseCollection('testimonials')
     return new NextResponse(null, { status: 204 })
   } catch (err) {
     console.error('[DELETE /api/testimonials/[id]]', err)

@@ -1,5 +1,5 @@
 # Plan de acción — Andrade Real Estate
-**Stack:** Next.js 16 · React 19 · Tailwind v4 · TypeScript · Supabase · Prisma ORM  
+**Stack:** Next.js 16 · React 19 · Tailwind v4 · TypeScript · PocketBase · NextAuth
 **Deadline:** 8 días · Mercado objetivo: México (versátil para LATAM)
 
 ---
@@ -58,7 +58,7 @@ andrade_realstate/
 │   ├── testimonials/                   # TestimonialCard, StarRating, TestimonialForm
 │   └── admin/                          # DataTable, ImageUploader, StatusBadge
 ├── lib/
-│   ├── prisma.ts                       # Singleton client
+│   ├── pocketbase.ts + pocketbase-data.ts  # Client and resilient reads
 │   ├── supabase/
 │   │   ├── client.ts                   # Browser client (auth + storage uploads)
 │   │   └── server.ts                   # Server client (SSR, Route Handlers)
@@ -67,7 +67,7 @@ andrade_realstate/
 │   └── validations/                    # Schemas Zod reutilizables
 ├── types/index.ts
 ├── middleware.ts                        # Protección rutas /admin/*
-├── prisma/schema.prisma
+├── PocketBase collections (managed in PocketBase)
 └── public/
     ├── logo.svg                         # Provisto por el cliente
     └── og-image.jpg
@@ -83,9 +83,9 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
-# Prisma — obligatorio usar DOS URLs distintas
-DATABASE_URL=postgresql://[user]:[pass]@[pooler].supabase.com:6543/postgres?pgbouncer=true
-DIRECT_URL=postgresql://[user]:[pass]@[db].supabase.com:5432/postgres
+# PocketBase
+POCKETBASE_URL=
+NEXT_PUBLIC_POCKETBASE_URL=
 
 # Mapas
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
@@ -97,143 +97,22 @@ NEXT_PUBLIC_SITE_URL=https://andraderealestate.com
 NEXT_PUBLIC_DEFAULT_WHATSAPP=521XXXXXXXXXX   # fallback si propiedad no tiene número propio
 ```
 
-> ⚠️ `DATABASE_URL` usa el pooler de Supabase (puerto 6543, pgbouncer=true). Sin esto, Next.js en Vercel agota el pool de conexiones de Postgres en minutos. `DIRECT_URL` se usa exclusivamente en `datasource` de Prisma para correr migraciones.
 
 ---
 
-## Schema Prisma
+## PocketBase collections
 
-```prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-// ─── Propiedades ────────────────────────────────────────────────
-
-model Property {
-  id           String       @id @default(cuid())
-  title        String
-  slug         String       @unique   // para URLs amigables y SEO
-  description  String
-  // Ubicación
-  address      String
-  city         String
-  state        String
-  zipCode      String?
-  lat          Float?
-  lng          Float?
-  // Clasificación
-  contractType ContractType
-  category     Category
-  // Precio (se almacena en MXN, la conversión es en frontend)
-  priceMXN     Float?
-  priceVisible Boolean      @default(true)
-  // Características
-  bedrooms     Int?
-  bathrooms    Int?
-  halfBaths    Int?
-  parkingSpots Int?
-  areaSqm      Float?
-  landAreaSqm  Float?
-  floors       Int?
-  yearBuilt    Int?
-  // Media
-  photos       String[]     // URLs de Supabase Storage
-  videoUrl     String?      // URL de video (YouTube embed o Supabase Storage)
-  // Contacto
-  whatsapp     String?      // Número específico de esta propiedad
-  // Amenities como array de strings (flexible, no enum)
-  amenities    String[]
-  features     String[]
-  // Control
-  active       Boolean      @default(true)
-  featured     Boolean      @default(false)  // destacada en landing
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-}
-
-// ─── Formulario de contacto (leads) ──────────────────────────────
-
-model ContactForm {
-  id        String     @id @default(cuid())
-  type      FormType
-  name      String?
-  phone     String
-  email     String
-  address   String?    // Solo SELL
-  photos    String[]   // Solo SELL — URLs de Supabase Storage
-  status    LeadStatus @default(PENDING)
-  notes     String?    // Notas internas del admin
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
-
-// ─── Testimonios ──────────────────────────────────────────────────
-
-model Testimonial {
-  id        String            @id @default(cuid())
-  author    String
-  location  String?           // Ciudad, colonia — opcional
-  rating    Int               // 1 a 5
-  content   String
-  status    TestimonialStatus @default(PENDING)  // moderación admin
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-}
-
-// ─── Enums ────────────────────────────────────────────────────────
-
-enum ContractType {
-  SALE
-  RENT
-  DEVELOPMENT
-}
-
-enum Category {
-  HOUSE
-  APARTMENT
-  LAND
-  COMMERCIAL
-  DEVELOPMENT_PROJECT
-  OTHER
-}
-
-enum FormType {
-  BUY
-  SELL
-}
-
-enum LeadStatus {
-  PENDING
-  CONTACTED
-  CLOSED
-  DISCARDED
-}
-
-enum TestimonialStatus {
-  PENDING    // recién enviado, invisible públicamente
-  APPROVED   // visible en landing y catálogo
-  REJECTED   // descartado por admin
-}
-```
-
-**Decisión sobre admins:** múltiples admins con el mismo nivel de acceso se manejan directamente con Supabase Auth — cualquier usuario con cuenta en el proyecto tiene acceso completo al panel. No se implementa tabla de roles. Si en el futuro se necesitan permisos distintos, se agrega un campo `role` en los metadatos del usuario de Supabase Auth sin cambiar el schema de Prisma.
+properties, contact_forms, testimonials, admins, and uploads are managed in PocketBase. App access goes through lib/pocketbase.ts and lib/pocketbase-data.ts.
 
 ---
 
-## Fase 0 — Setup · Día 1
+## Fase 0 — Setup
 
 - [ ] Configurar `ESLint`, `Prettier`, `tsconfig.json` estricto
 - [ ] Crear estructura de carpetas completa
 - [ ] Crear proyecto en Supabase, obtener credenciales
-- [ ] Configurar `.env.local` con las dos URLs de Prisma
-- [ ] `npx prisma init` → escribir schema completo → `npx prisma migrate dev --name init`
+- [ ] Configure .env.local with the PocketBase URL
+- [ ] Configure the PocketBase collections and fields
 - [ ] Verificar tablas en Supabase Dashboard
 - [ ] Crear buckets en Supabase Storage:
   - `property-images` — público (las fotos se sirven directamente)
@@ -243,22 +122,9 @@ enum TestimonialStatus {
   - `contact-uploads`: lectura y escritura solo con `service_role`
 - [ ] Crear los primeros usuarios admin en Supabase Auth (invitación por email)
 
-### Singleton Prisma client
+### PocketBase client
 
-```typescript
-// lib/prisma.ts
-import { PrismaClient } from '@prisma/client'
-
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({ log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'] })
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-```
-
----
+lib/pocketbase.ts configures the SDK; lib/pocketbase-data.ts provides retry, timeout, and stale-read fallback.
 
 ## Fase 1 — API base · Día 2–3
 
@@ -429,7 +295,7 @@ Las fotos del formulario de venta se suben directamente al bucket `contact-uploa
 
 ### Dashboard (/admin/dashboard)
 
-M�tricas en tarjetas:
+M�tricas en tarjetas:
 - Total propiedades activas
 - Leads pendientes de contactar
 - Testimonios en espera de moderación

@@ -27,29 +27,17 @@ Follow MVC pattern. Use modular components. Max 500 lines per component — spli
 ## Unknown Problems
 Search the web (Stack Overflow, Reddit, GitHub Issues, docs) before attempting a solution to unfamiliar problems.
 
-## Color Palette — InmoHub
+## Brand Manual — Andrade & Co Real Estate
 
-Always use these CSS variables. Never hardcode color values.
+Source of truth: original PDF `Manual Marca Andrade & Co Real State`; project summary: `docs/manual_marca_andrade_co.md`. If they conflict, follow the PDF.
 
-```css
-:root {
-  --color-anchor: #0D3B66;  /* Primary text, titles, nav, logo, dark hero bg */
-  --color-mid:    #1A5F9E;  /* CTA buttons, active interactive elements */
-  --color-soft:   #4A7BA7;  /* Secondary text, metadata, captions, dates */
-  --color-mist:   #AED6F1;  /* Borders and separators ONLY — never as text */
-  --color-ice:    #E8F4FD;  /* Card/input/section backgrounds */
-  --color-white:  #FFFFFF;  /* Dominant page background (80%+ viewport) */
-}
-```
-
-Rules:
-- `--color-white`: default `body` background
-- `--color-anchor`: dark bg with white text (hero/banner), or text on light bg
-- `--color-mid`: CTA buttons; hover → `--color-anchor`
-- `--color-soft`: secondary text only (≥18px or bold for WCAG AA on white)
-- `--color-mist`: borders/separators only — **never** as text color
-- `--color-ice`: alternate section/card/input backgrounds
-- State colors (error/success/warning/info) not defined — define separately before use
+- Official colors only: Prussian Blue `#0D1A2D` and Silver `#B3B3B3`. Other shades in project UI are supporting colors, not official brand colors; do not claim the manual specifies them.
+- Typography: General Sans is primary; Poppins Medium is secondary. Use the supplied logo artwork as a graphic asset; do not rebuild its lettering with a substitute font or text.
+- Use the logo versions shown in the manual: blue on light backgrounds and silver on dark backgrounds. Preserve proportions, color treatment, and legibility; no distortion or arbitrary recoloring.
+- Brand character and copy: strategic, trustworthy, professional, preventive, solid, elegant; use a restrained, clear, precise tone.
+- Use the manual's pattern and mockups as visual references. Do not invent exact spacing, logo clear-space, gradient values, or extra brand tokens.
+- Keep interfaces restrained and legible. Meet contrast needs through implementation choices without misrepresenting derived colors as official brand specifications.
+- Never create an SVG design unless explicitly requested.
 
 ## Skills
 

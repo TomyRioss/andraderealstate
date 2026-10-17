@@ -51,7 +51,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm('Â¿Eliminar este testimonio?')) return
+    if (!window.confirm('¿Eliminar este testimonio?')) return
     setLoading(`${id}-delete`)
     try {
       const res = await fetch(`${BASE}/api/testimonials/${id}`, { method: 'DELETE' })
@@ -86,10 +86,10 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
     }
   }
 
-  const stars = (n: number) => 'â˜…'.repeat(Math.max(0, Math.min(5, n))) + 'â˜†'.repeat(Math.max(0, 5 - n))
+  const stars = (n: number) => '?'.repeat(Math.max(0, Math.min(5, n))) + '?'.repeat(Math.max(0, 5 - n))
   const fmtDate = (d: string | Date) =>
     new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
-  const truncate = (s: string, max = 80) => s.length > max ? s.slice(0, max) + 'â€¦' : s
+  const truncate = (s: string, max = 80) => s.length > max ? s.slice(0, max) + '…' : s
 
   return (
     <>
@@ -97,13 +97,13 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
       <div className="px-6 mb-4 flex gap-2">
         <button
           onClick={() => setTab('active')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'active' ? 'bg-[#18140D] text-[#C9A96E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'active' ? 'bg-[#0D1A2D] text-[#B3B3B3]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
         >
           Activos <span className="ml-1 opacity-70">({testimonials.length})</span>
         </button>
         <button
           onClick={() => setTab('archived')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'archived' ? 'bg-[#18140D] text-[#C9A96E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'archived' ? 'bg-[#0D1A2D] text-[#B3B3B3]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
         >
           Archivados <span className="ml-1 opacity-70">({archived.length})</span>
         </button>
@@ -113,8 +113,8 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
       <div className="hidden md:block overflow-x-auto bg-white w-full">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#18140D] text-[#C9A96E]">
-              {['Autor', 'Rating', 'ReseÃ±a', 'Fecha', 'Status', 'Acciones'].map((h) => (
+            <tr className="bg-[#0D1A2D] text-[#B3B3B3]">
+              {['Autor', 'Rating', 'Reseña', 'Fecha', 'Status', 'Acciones'].map((h) => (
                 <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>
               ))}
             </tr>
@@ -136,7 +136,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
                 <td className="px-4 py-3">
                   <div className="flex gap-1 flex-wrap">
                     {tab === 'active' && t.status !== 'APPROVED' && (
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white"
+                      <Button size="sm" className="bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80"
                         disabled={loading === `${t.id}-APPROVED`}
                         onClick={() => setStatus(t.id, 'APPROVED')}>
                         Aprobar
@@ -190,7 +190,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
             <div className="text-xs text-slate-600" title={t.content}>{truncate(t.content)}</div>
             <div className="flex gap-2 flex-wrap mt-1">
               {tab === 'active' && t.status !== 'APPROVED' && (
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white"
+                <Button size="sm" className="bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80"
                   onClick={() => setStatus(t.id, 'APPROVED')}>Aprobar</Button>
               )}
               {tab === 'active' && t.status !== 'REJECTED' && (

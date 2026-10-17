@@ -11,7 +11,7 @@ export const propertySchema = z.object({
   lat: z.number().optional(),
   lng: z.number().optional(),
   contractType: z.enum(['SALE', 'RENT', 'DEVELOPMENT']),
-  category: z.enum(['HOUSE', 'APARTMENT', 'LAND', 'COMMERCIAL', 'DEVELOPMENT_PROJECT', 'OTHER']),
+  category: z.enum(['HOUSE', 'APARTMENT', 'LAND', 'COMMERCIAL', 'DEVELOPMENT_PROJECT', 'VACATION_STAY', 'OTHER']),
   priceMXN: z.number().optional(),
   priceUSD: z.number().optional(),
   priceVisible: z.boolean().default(true),

@@ -1,9 +1,16 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import TextType from '@/components/ui/TextType'
+
+const SEARCH_HINTS = [
+  'Casa en Puerto Vallarta',
+  'Departamento en Zapopan',
+  'Casa en Bahía de Banderas',
+]
 
 type HeroProperty = {
   id: string
@@ -15,213 +22,205 @@ type HeroProperty = {
   slug: string
 }
 
-function fmtPrice(priceMXN: number | null): string | null {
-  if (!priceMXN) return null
-  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(priceMXN)
+function formatPrice(priceMXN: number | null): string | null {
+  if (priceMXN == null || priceMXN <= 0) return null
+
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    maximumFractionDigits: 0,
+  }).format(priceMXN)
 }
 
 export default function Hero({ properties = [] }: { properties?: HeroProperty[] }) {
   const router = useRouter()
   const [query, setQuery] = useState('')
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
   const [current, setCurrent] = useState(0)
-  const [next, setNext] = useState<number | null>(null)
+  const activeIndex = properties.length
+    ? ((current % properties.length) + properties.length) % properties.length
+    : 0
+  const activeProperty = properties[activeIndex]
+  const activePhoto = activeProperty?.photos.find((photo) => photo.trim()) ?? null
+  const activePrice = formatPrice(activeProperty?.priceMXN ?? null)
 
-  const goTo = (idx: number) => {
-    if (idx === current) return
-    setNext(idx)
-    setTimeout(() => { setCurrent(idx); setNext(null) }, 700)
-  }
-
-  useEffect(() => {
-    if (properties.length === 0) return
-    const interval = setInterval(() => goTo((current + 1) % properties.length), 5000)
-    return () => clearInterval(interval)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current])
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault()
+  function handleSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     const trimmed = query.trim()
     router.push(trimmed ? `/propiedades?search=${encodeURIComponent(trimmed)}` : '/propiedades')
   }
 
+  function goTo(index: number) {
+    if (properties.length === 0) return
+
+    setCurrent(((index % properties.length) + properties.length) % properties.length)
+  }
+
   return (
-    <section className="bg-[#0D3B66] relative overflow-hidden min-h-[92vh] flex flex-col">
-      {/* Dot texture */}
-      <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(circle at 1px 1px, #AED6F1 1px, transparent 0)',
-        backgroundSize: '28px 28px'
-      }} />
+    <section className="relative isolate overflow-hidden bg-[#0D1A2D] text-white">
+      {activePhoto && (
+        <Image
+          key={activePhoto}
+          src={activePhoto}
+          alt=""
+          aria-hidden="true"
+          fill
+          preload
+          quality={75}
+          sizes="100vw"
+          className="object-cover object-[58%_50%]"
+        />
+      )}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,26,45,0.99)_0%,rgba(13,26,45,0.96)_32%,rgba(13,26,45,0.76)_56%,rgba(13,26,45,0.12)_100%)] max-lg:bg-[linear-gradient(90deg,rgba(13,26,45,0.99)_0%,rgba(13,26,45,0.94)_56%,rgba(13,26,45,0.64)_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(0deg,rgba(13,26,45,0.82)_0%,rgba(13,26,45,0)_100%)]"
+      />
 
-      <div className="relative w-full max-w-7xl mx-auto px-6 py-20 md:py-28 flex-1 flex items-center">
-        <div className="w-full flex flex-col lg:flex-row items-center gap-12 xl:gap-16">
+      <div className="relative z-10 flex min-h-[700px] w-full flex-col justify-between gap-12 px-6 pb-16 pt-16 sm:px-10 sm:max-lg:pb-16 sm:pt-20 lg:min-h-[clamp(720px,92svh,900px)] lg:px-[6vw] lg:pb-9 lg:pt-16">
+        <div className="w-full max-w-[620px] lg:pt-14">
+          <h1 className="font-display text-4xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem]">
+            Atención personal.<br />
+            <span className="text-[#B3B3B3]">
+              Propiedades<br />
+              extraordinarias.
+            </span>
+            <br />
+            Atención personal.
+          </h1>
 
-          {/* LEFT */}
-          <div className="flex-1 min-w-0 w-full">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-px w-10 bg-[#1A5F9E] shrink-0" />
-              <span className="text-[#AED6F1] text-xs tracking-[0.3em] uppercase font-medium">
-                Inmobiliaria · México
-              </span>
-            </div>
+          <p className="mt-6 max-w-lg text-base leading-7 text-[#B3B3B3] md:text-lg">
+            Encuentra un hogar a la altura de tu estilo de vida
+          </p>
 
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.05] mb-5"
-              style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
-            >
-              Tu próxima
-              <br />
-              <span className="text-[#AED6F1]">propiedad</span>
-              <br />
-              te espera.
-            </h1>
-
-            <p className="text-[#AED6F1] text-base leading-relaxed max-w-sm mb-8">
-              Compra, venta y renta de inmuebles en México con respaldo profesional y atención personalizada.
-            </p>
-
-            <form onSubmit={handleSearch} className="flex items-center bg-white rounded-xl overflow-hidden max-w-sm mb-7 shadow-lg">
+          <form
+            onSubmit={handleSearch}
+            className="mt-8 flex w-full max-w-[560px] items-center rounded-md border border-[#B3B3B3]/70 bg-white p-1.5 focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-[#B3B3B3]"
+          >
+            <label htmlFor="property-search" className="sr-only">
+              Buscar por nombre o ciudad
+            </label>
+            <div className="relative min-w-0 flex-1">
               <input
-                type="text"
+                id="property-search"
+                type="search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar por nombre o ciudad..."
-                className="flex-1 min-w-0 px-4 py-3.5 text-sm text-[#1A5F9E] bg-transparent outline-none placeholder:text-[#4A7BA7]"
+                onChange={(event) => setQuery(event.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                placeholder="Buscar por nombre o ciudad"
+                className="min-w-0 w-full bg-transparent px-4 py-3.5 text-base text-[#0D1A2D] outline-none placeholder:text-transparent focus:placeholder:text-[#0D1A2D]"
               />
-              <button
-                type="submit"
-                className="bg-[#1A5F9E] hover:bg-[#0D3B66] text-white text-sm font-bold px-5 py-3.5 transition-colors tracking-wide shrink-0 m-1 rounded-lg"
-              >
-                Buscar
-              </button>
-            </form>
-
-            <div className="flex flex-wrap gap-5 items-center">
-              <Link
-                href="/propiedades"
-                className="text-white border border-[#AED6F1]/50 hover:border-[#AED6F1] rounded-full px-5 py-2 text-sm font-medium transition-colors"
-              >
-                Ver catálogo completo
-              </Link>
-              <Link
-                href="/#contacto"
-                className="text-[#AED6F1] hover:text-white text-sm transition-colors underline underline-offset-4"
-              >
-                Contáctanos
-              </Link>
+              {!query && !isSearchFocused && (
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 left-4 right-2 flex items-center overflow-hidden text-base text-[#0D1A2D]"
+                >
+                  <TextType
+                    text={SEARCH_HINTS}
+                    typingSpeed={30}
+                    pauseDuration={1500}
+                    deletingSpeed={20}
+                    showCursor
+                    cursorCharacter="|"
+                    cursorBlinkDuration={0.5}
+                    className="tracking-tight"
+                  />
+                </span>
+              )}
             </div>
+            <button
+              type="submit"
+              className="shrink-0 rounded-sm bg-[#0D1A2D] px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0D1A2D]"
+            >
+              Buscar
+            </button>
+          </form>
+
+          <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3">
+            <Link
+              href="/propiedades"
+              className="inline-flex min-h-11 items-center border border-[#B3B3B3] px-5 text-sm font-medium text-white transition-colors hover:bg-[#B3B3B3] hover:text-[#0D1A2D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3]"
+            >
+              Ver catálogo completo
+            </Link>
+            <Link
+              href="/#contacto"
+              className="text-sm font-medium text-[#B3B3B3] underline decoration-[#B3B3B3] underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B3B3B3]"
+            >
+              Contáctanos
+            </Link>
+          </div>
+        </div>
+
+        <div className="relative flex w-full max-w-[620px] flex-col gap-4 border-t border-white/35 pt-5 md:flex-row md:items-end md:justify-between lg:absolute lg:bottom-9 lg:left-[6vw] lg:right-[calc(6vw+320px)] lg:w-auto lg:max-w-none lg:border-0 lg:pt-0">
+          <div className="min-w-0">
+            <p className="mb-2 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-[#B3B3B3]">
+              Propiedad destacada
+            </p>
+            {activeProperty && (
+              <p className="mb-1 text-xs font-medium uppercase tracking-[0.14em] text-white/80">
+                {activeProperty.city}, {activeProperty.state}
+              </p>
+            )}
+            <h2 className="font-display text-lg font-medium leading-snug sm:text-xl">
+              {activeProperty?.title ?? 'Propiedades seleccionadas con criterio.'}
+            </h2>
+            {activePrice && <p className="mt-1 text-sm font-medium text-[#B3B3B3]">{activePrice}</p>}
           </div>
 
-          {/* RIGHT — vertical peek carousel */}
-          <div className="hidden lg:flex flex-1 min-w-0 w-full items-center justify-center">
-            {properties.length === 0 ? (
-              <div
-                className="flex justify-center items-center rounded-2xl w-full"
-                style={{ height: 500, border: '1.5px solid rgba(174,214,241,0.3)', background: 'rgba(26,95,158,0.08)' }}
-              >
-                <div className="text-center px-8">
-                  <div className="text-5xl mb-4">🏗️</div>
-                  <p className="text-white text-lg font-semibold" style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}>
-                    ¡Pronto nuevos proyectos inmobiliarios!
-                  </p>
+          <div className="flex w-full shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-1 max-lg:pr-16 max-sm:gap-x-1 md:w-auto md:justify-end">
+            <Link
+              href={activeProperty ? `/propiedades/${activeProperty.slug}` : '/propiedades'}
+              className="inline-flex min-h-10 items-center gap-2 text-sm font-medium text-white/90 underline decoration-white/55 underline-offset-4 transition-colors hover:text-white hover:decoration-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B3B3B3]"
+            >
+              {activeProperty ? 'Ver propiedad' : 'Explorar catálogo'}
+              <span aria-hidden="true" className="size-2 rotate-45 border-r border-t border-current" />
+            </Link>
+
+            {properties.length > 1 && (
+              <div className="flex items-center gap-1" role="group" aria-label="Navegar propiedades destacadas">
+                <button
+                  type="button"
+                  onClick={() => goTo(current - 1)}
+                  aria-label="Propiedad anterior"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3] max-sm:h-9 max-sm:w-9 max-[380px]:h-7 max-[380px]:w-7"
+                >
+                  <span aria-hidden="true" className="block size-2 rotate-[-45deg] border-l border-t border-current" />
+                </button>
+                <div className="flex items-center gap-2 px-1 max-sm:gap-1 max-sm:px-0" role="group" aria-label="Elegir propiedad destacada">
+                  {properties.map((property, index) => (
+                    <button
+                      key={property.id}
+                      type="button"
+                      onClick={() => goTo(index)}
+                      aria-label={`Mostrar propiedad ${index + 1}: ${property.title}`}
+                      aria-current={index === activeIndex ? 'true' : undefined}
+                      className={`h-1.5 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B3B3B3] ${
+                        index === activeIndex
+                          ? 'w-8 bg-[#B3B3B3] max-sm:w-5 max-[380px]:w-4'
+                          : 'w-4 bg-white/55 hover:bg-white max-sm:w-2.5 max-[380px]:w-2'
+                      }`}
+                    />
+                  ))}
                 </div>
-              </div>
-            ) : (
-              <div className="relative w-full overflow-hidden" style={{ height: 500 }}>
-                {/* Top fade */}
-                <div className="absolute top-0 left-0 right-0 z-10 pointer-events-none" style={{ height: 80, background: 'linear-gradient(to bottom, #0D3B66 0%, transparent 100%)' }} />
-                {/* Bottom fade */}
-                <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none" style={{ height: 80, background: 'linear-gradient(to top, #0D3B66 0%, transparent 100%)' }} />
-                {properties.map((prop, i) => {
-                  let offset = i - current
-                  const half = properties.length / 2
-                  if (offset > half) offset -= properties.length
-                  if (offset < -half) offset += properties.length
-                  const CARD_H = 380
-                  const GAP = 12
-                  const centerY = (500 - CARD_H) / 2
-                  const translateY = centerY + offset * (CARD_H + GAP)
-                  const isActive = offset === 0
-                  const isAdjacent = Math.abs(offset) === 1
-                  const isVisible = Math.abs(offset) <= 1
-
-                  if (!isVisible) return null
-
-                  return (
-                    <div
-                      key={prop.id}
-                      onClick={() => !isActive && goTo(i)}
-                      className="absolute left-0 right-0 rounded-2xl overflow-hidden"
-                      style={{
-                        height: CARD_H,
-                        top: translateY,
-                        transition: 'top 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.55s ease, transform 0.55s ease',
-                        opacity: isActive ? 1 : 0.4,
-                        transform: isAdjacent ? 'scaleX(0.94)' : 'scaleX(1)',
-                        transformOrigin: 'center',
-                        cursor: isActive ? 'default' : 'pointer',
-                        border: '1.5px solid rgba(174,214,241,0.25)',
-                      }}
-                    >
-                      <Image
-                        src={prop.photos[0] ?? ''}
-                        alt={prop.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width:1280px) 50vw, 580px"
-                        priority={i === 0}
-                      />
-                      {/* Gradient */}
-                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(13,59,102,0.88) 0%, rgba(13,59,102,0.35) 45%, transparent 70%)' }} />
-                      {/* Info — only on active */}
-                      {isActive && (
-                        <div className="absolute bottom-0 left-0 right-0 px-7 pb-7">
-                          <p className="text-[#AED6F1] text-xs tracking-[0.2em] uppercase mb-2 flex items-center gap-1.5">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            {prop.city}, {prop.state}
-                          </p>
-                          <h3 className="text-white text-xl font-semibold mb-1 leading-snug" style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}>
-                            {prop.title}
-                          </h3>
-                          {fmtPrice(prop.priceMXN) && (
-                            <p className="text-white text-2xl font-bold tracking-tight mb-4">
-                              {fmtPrice(prop.priceMXN)}
-                            </p>
-                          )}
-                          <Link
-                            href={`/propiedades/${prop.slug}`}
-                            className="inline-flex items-center gap-2 bg-[#1A5F9E] hover:bg-[#0D3B66] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
-                          >
-                            Ver detalles
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-
-                {/* Dots */}
-                {properties.length > 1 && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20">
-                    {properties.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => goTo(i)}
-                        className="w-2 h-2 rounded-full transition-all duration-300"
-                        style={{ background: i === current ? '#AED6F1' : 'rgba(174,214,241,0.35)' }}
-                      />
-                    ))}
-                  </div>
-                )}
+                <button
+                  type="button"
+                  onClick={() => goTo(current + 1)}
+                  aria-label="Propiedad siguiente"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B3B3B3] max-sm:h-9 max-sm:w-9 max-[380px]:h-7 max-[380px]:w-7"
+                >
+                  <span aria-hidden="true" className="block size-2 rotate-[135deg] border-l border-t border-current" />
+                </button>
               </div>
             )}
           </div>
 
         </div>
       </div>
-
-      <div className="h-12 bg-gradient-to-b from-transparent to-white" />
-      <style>{`@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }`}</style>
     </section>
   )
 }

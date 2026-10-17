@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -72,20 +72,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (isLogin) return <>{children}</>
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: '#F5F0EA' }}>
+    <div className="min-h-screen flex bg-slate-50">
       {/* Mobile topbar */}
       <div
         className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-4"
-        style={{ backgroundColor: '#18140D' }}
+        style={{ backgroundColor: '#0D1A2D' }}
       >
-        <span className="text-sm font-semibold tracking-[0.15em] uppercase" style={{ color: '#C9A96E' }}>
-          Andrade & Co
-        </span>
+        <div className="h-8 w-[116px] overflow-hidden">
+          <Image
+            src="/andrade_realstate_logo.png"
+            alt="Andrade & Co Real Estate"
+            width={116}
+            height={77}
+            className="h-[77px] w-[116px] -translate-y-[22px] object-cover"
+          />
+        </div>
         <button
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Toggle menu"
           className="transition-opacity hover:opacity-70"
-          style={{ color: '#A89880' }}
+          style={{ color: '#B3B3B3' }}
         >
           {menuOpen ? (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -104,18 +110,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         className={`fixed md:static top-0 left-0 h-full md:h-auto z-40 w-64 flex-shrink-0 flex flex-col
           transition-transform duration-300 ease-in-out
           ${menuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
-        style={{ backgroundColor: '#18140D', minHeight: '100vh' }}
+        style={{ backgroundColor: '#0D1A2D', minHeight: '100vh' }}
       >
         {/* Brand */}
-        <div className="px-7 pt-8 pb-6 border-b flex flex-col items-center" style={{ borderColor: '#2E2820' }}>
-          <Image
-            src="/andrade_realstate_logo.png"
-            alt="Andrade & Co"
-            width={140}
-            height={60}
-            className="brightness-[1.6]"
-          />
-          <p className="mt-3 text-[10px] tracking-[0.2em] uppercase font-medium" style={{ color: '#A89880' }}>
+        <div className="px-7 pt-8 pb-6 border-b border-white/15 flex flex-col items-center">
+          <div className="h-[42px] w-[140px] overflow-hidden">
+            <Image
+              src="/andrade_realstate_logo.png"
+              alt="Andrade & Co Real Estate"
+              width={140}
+              height={94}
+              className="h-[94px] w-[140px] -translate-y-[15px] object-cover"
+            />
+          </div>
+          <p className="mt-3 text-[10px] tracking-[0.2em] uppercase font-medium text-[#B3B3B3]">
             Panel de administración
           </p>
         </div>
@@ -129,14 +137,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group hover:bg-[rgba(201,169,110,0.06)] hover:text-[#C9A96E]"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group hover:bg-[rgba(179,179,179,0.06)] hover:text-[#B3B3B3]"
                 style={{
-                  color: active ? '#C9A96E' : '#B0A090',
-                  backgroundColor: active ? 'rgba(201,169,110,0.08)' : 'transparent',
-                  borderLeft: active ? '2px solid #C9A96E' : '2px solid transparent',
+                  color: active ? '#B3B3B3' : 'rgba(255,255,255,0.82)',
+                  backgroundColor: active ? 'rgba(179,179,179,0.08)' : 'transparent',
+                  borderLeft: active ? '2px solid #B3B3B3' : '2px solid transparent',
                 }}
               >
-                <span className="transition-colors duration-150 group-hover:text-[#C9A96E]" style={{ color: active ? '#C9A96E' : '#8C7B68' }}>{link.icon}</span>
+                <span className="transition-colors duration-150 group-hover:text-[#B3B3B3]" style={{ color: active ? '#B3B3B3' : 'rgba(255,255,255,0.62)' }}>{link.icon}</span>
                 {link.label}
               </Link>
             )
@@ -144,11 +152,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Logout */}
-        <div className="px-4 pb-8 border-t pt-4" style={{ borderColor: '#2E2820' }}>
+        <div className="px-4 pb-8 border-t border-white/15 pt-4">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 hover:bg-red-950/30"
-            style={{ color: '#5C4F42' }}
+            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 text-[#B3B3B3] hover:bg-white/10 hover:text-white"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />

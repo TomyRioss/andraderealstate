@@ -3,7 +3,7 @@
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'RealEstateAgent',
-  name: 'Andrade Real Estate',
+  name: 'Andrade & Co Real Estate',
   url: process.env.NEXT_PUBLIC_SITE_URL,
   address: {
     '@type': 'PostalAddress',

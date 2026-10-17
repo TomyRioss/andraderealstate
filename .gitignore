@@ -39,3 +39,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ruflo local runtime data
+.claude-flow/
+
+# Local agent configuration
+.claude/proven-config.json
+.claude/.proven-config-version
+
+# Local previews and QA artifacts
+/.next-hero-preview/
+/.playwright-cli/
+/dogfood-output/
+/.swarm/
+/tmp/
+
+# Empty files created by local command invocations
+/andrade_realstate@0.1.0
+/next
+/npm

@@ -9,15 +9,10 @@ interface Props {
 export default function PropertyMap({ lat, lng, title }: Props) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
-  if (!apiKey) {
-    return (
-      <div className="w-full h-[350px] bg-gray-100 flex items-center justify-center rounded-lg text-gray-500">
-        Mapa no disponible
-      </div>
-    )
-  }
-
-  const src = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${lat},${lng}`
+  const coordinates = encodeURIComponent(`${lat},${lng}`)
+  const src = apiKey
+    ? `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${coordinates}`
+    : `https://maps.google.com/maps?q=${coordinates}&z=16&output=embed`
 
   return (
     <div className="relative w-full" style={{ paddingTop: '56.25%' }}>

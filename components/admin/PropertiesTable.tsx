@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
@@ -14,6 +14,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   LAND: 'Terreno',
   COMMERCIAL: 'Comercial',
   DEVELOPMENT_PROJECT: 'Proyecto',
+  VACATION_STAY: 'Estancia vacacional',
   OTHER: 'Otro',
 }
 
@@ -156,7 +157,7 @@ export default function PropertiesTable({ properties: initial, archived: initial
           <Link
             href="/admin/propiedades/nueva"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap"
-            style={{ backgroundColor: '#C9A96E', color: '#fff' }}
+            style={{ backgroundColor: '#0D1A2D', color: '#B3B3B3' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M12 5v14M5 12h14" />
@@ -165,20 +166,20 @@ export default function PropertiesTable({ properties: initial, archived: initial
           </Link>
           <button
             onClick={() => setTab('active')}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'active' ? 'bg-[#18140D] text-[#C9A96E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'active' ? 'bg-[#0D1A2D] text-[#B3B3B3]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
           >
             Activas <span className="ml-1 opacity-70">({properties.length})</span>
           </button>
           <button
             onClick={() => setTab('archived')}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'archived' ? 'bg-[#18140D] text-[#C9A96E]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === 'archived' ? 'bg-[#0D1A2D] text-[#B3B3B3]' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
           >
             Archivadas <span className="ml-1 opacity-70">({archived.length})</span>
           </button>
         </div>
         <div className="relative max-w-sm">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C7B68]">
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
             <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
           </svg>
           <input
@@ -186,7 +187,7 @@ export default function PropertiesTable({ properties: initial, archived: initial
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por ID o título…"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#E5DDD5] bg-white text-sm text-[#18140D] focus:outline-none focus:border-[#C9A96E] transition-colors"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 bg-white text-sm text-[#0D1A2D] focus:outline-none focus:border-[#0D1A2D] transition-colors"
           />
         </div>
       </div>
@@ -195,12 +196,12 @@ export default function PropertiesTable({ properties: initial, archived: initial
       <div className="hidden md:block overflow-x-auto bg-white w-full">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#18140D] text-[#C9A96E]">
+            <tr className="bg-[#0D1A2D] text-[#B3B3B3]">
               <th className="px-4 py-3 text-left font-semibold">Imagen</th>
               {cols.map(({ key, label }) => (
                 <React.Fragment key={key}>
                   <th
-                    className="px-4 py-3 text-left font-semibold cursor-pointer select-none whitespace-nowrap hover:text-[#E8C98A] transition-colors"
+                    className="px-4 py-3 text-left font-semibold cursor-pointer select-none whitespace-nowrap hover:text-white transition-colors"
                     onClick={() => handleSort(key)}
                   >
                     {label}

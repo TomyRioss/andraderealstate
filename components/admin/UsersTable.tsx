@@ -117,7 +117,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {/* Action bar */}
       <div className="px-6 mb-4 flex items-center justify-between">
         <span className="text-sm text-slate-500">{users.length} usuario{users.length !== 1 ? 's' : ''}</span>
-        <Button onClick={openCreate} className="bg-[#18140D] text-[#C9A96E] hover:bg-[#2a231a]">
+        <Button onClick={openCreate} className="bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80">
           + Nuevo usuario
         </Button>
       </div>
@@ -126,7 +126,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       <div className="hidden md:block overflow-x-auto bg-white w-full">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#18140D] text-[#C9A96E]">
+            <tr className="bg-[#0D1A2D] text-[#B3B3B3]">
               {['Nombre', 'Email', 'Rol', 'Creado', 'Acciones'].map(h => (
                 <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>
               ))}
@@ -135,7 +135,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
           <tbody>
             {users.map((u, i) => (
               <tr key={u.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                <td className="px-4 py-3 font-medium text-slate-800">{u.name ?? 'â€”'}</td>
+                <td className="px-4 py-3 font-medium text-slate-800">{u.name ?? '—'}</td>
                 <td className="px-4 py-3 text-slate-600">{u.email}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'SUPER_ADMIN' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
@@ -172,7 +172,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
           <div key={u.id} className="bg-white rounded-xl shadow p-4 flex flex-col gap-2">
             <div className="flex justify-between items-start">
               <div>
-                <div className="font-semibold text-slate-800">{u.name ?? 'â€”'}</div>
+                <div className="font-semibold text-slate-800">{u.name ?? '—'}</div>
                 <div className="text-xs text-slate-500">{u.email}</div>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'SUPER_ADMIN' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
@@ -197,14 +197,14 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={closeModal}>
           <div className="w-full max-w-md rounded-2xl p-6 shadow-xl bg-white" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold mb-5 text-slate-800">
+            <h2 className="font-heading text-lg font-medium mb-5 text-[#0D1A2D]">
               {modal === 'create' ? 'Nuevo usuario' : 'Editar usuario'}
             </h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-500">Nombre</label>
                 <input
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#B3B3B3]"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                   placeholder="Nombre completo"
@@ -215,7 +215,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
                 <input
                   required
                   type="email"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#B3B3B3]"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                   placeholder="email@ejemplo.com"
@@ -223,15 +223,15 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-500">
-                  {modal === 'edit' ? 'ContraseÃ±a (vacÃ­o = no cambiar)' : 'ContraseÃ±a *'}
+                  {modal === 'edit' ? 'Contraseña (vacío = no cambiar)' : 'Contraseña *'}
                 </label>
                 <input
                   required={modal === 'create'}
                   type="password"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#B3B3B3]"
                   value={form.password}
                   onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  placeholder="••••••••"
                 />
               </div>
               {isSuperAdmin && (
@@ -249,7 +249,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
               )}
               <div className="flex justify-end gap-3 mt-2">
                 <Button type="button" variant="outline" onClick={closeModal}>Cancelar</Button>
-                <Button type="submit" disabled={loading} className="bg-[#18140D] text-[#C9A96E] hover:bg-[#2a231a]">
+                <Button type="submit" disabled={loading} className="bg-[#0D1A2D] text-[#B3B3B3] hover:opacity-80">
                   {loading ? 'Guardando...' : 'Guardar'}
                 </Button>
               </div>
@@ -262,9 +262,9 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setDeleteTarget(null)}>
           <div className="w-full max-w-sm rounded-2xl p-6 shadow-xl bg-white" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-semibold mb-2 text-slate-800">Eliminar usuario</h2>
+            <h2 className="font-heading text-lg font-medium mb-2 text-[#0D1A2D]">Eliminar usuario</h2>
             <p className="text-sm mb-5 text-slate-600">
-              Â¿ConfirmÃ¡s que querÃ©s eliminar a <strong>{deleteTarget.name ?? deleteTarget.email}</strong>? Esta acciÃ³n no se puede deshacer.
+              ¿Confirmás que querés eliminar a <strong>{deleteTarget.name ?? deleteTarget.email}</strong>? Esta acción no se puede deshacer.
             </p>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancelar</Button>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { Testimonial } from '@/types'
@@ -23,7 +23,7 @@ function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill={i < rating ? '#C9A96E' : '#DCDCE6'}>
+        <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill={i < rating ? '#0D1A2D' : '#B3B3B3'}>
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
       ))}
@@ -66,25 +66,25 @@ export default function TestimoniosPage() {
     : 0
 
   return (
-    <main className="min-h-screen py-16 px-6" style={{ backgroundColor: '#F5F2EE' }}>
+    <main className="min-h-screen py-16 px-6" style={{ backgroundColor: '#F5F5F5' }}>
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-px w-8 bg-[#C9A96E]" />
-            <span className="text-[#C9A96E] text-xs tracking-[0.25em] uppercase font-semibold">Reseñas verificadas</span>
+            <div className="h-px w-8 bg-[#B3B3B3]" />
+            <span className="text-[#0D1A2D] text-xs tracking-[0.25em] uppercase font-semibold">Reseñas verificadas</span>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <h1 className="text-4xl text-[#18140D]" style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}>
+            <h1 className="font-display text-4xl text-[#0D1A2D]">
               Todas las reseñas
             </h1>
             {testimonials.length > 0 && (
               <div className="flex items-center gap-3">
-                <span className="text-4xl font-bold text-[#18140D]">{avg}</span>
+                <span className="text-4xl font-bold text-[#0D1A2D]">{avg}</span>
                 <div>
                   <StarRating rating={Math.round(avg)} />
-                  <p className="text-xs text-[#8C7B68] mt-1">{testimonials.length} reseña{testimonials.length !== 1 ? 's' : ''}</p>
+                  <p className="text-xs text-[#525252] mt-1">{testimonials.length} reseña{testimonials.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
             )}
@@ -99,8 +99,8 @@ export default function TestimoniosPage() {
               onClick={() => setSort(opt.key)}
               className="px-4 py-2 text-xs font-semibold rounded-full transition-colors"
               style={{
-                backgroundColor: sort === opt.key ? '#18140D' : '#EDE8E0',
-                color: sort === opt.key ? '#C9A96E' : '#5C4F42',
+                backgroundColor: sort === opt.key ? '#0D1A2D' : '#F8F8F8',
+            color: sort === opt.key ? '#FFFFFF' : '#0D1A2D',
               }}
             >
               {opt.label}
@@ -110,25 +110,25 @@ export default function TestimoniosPage() {
 
         {/* Grid */}
         {loading ? (
-          <div className="text-center py-20 text-sm text-[#8C7B68]">Cargando reseñas...</div>
+          <div className="text-center py-20 text-sm text-[#525252]">Cargando reseñas...</div>
         ) : sorted.length === 0 ? (
-          <div className="text-center py-20 text-sm text-[#8C7B68]">No hay reseñas aún.</div>
+          <div className="text-center py-20 text-sm text-[#525252]">No hay reseñas aún.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {sorted.map((t) => {
               const initials = t.author.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase()
               return (
-                <div key={t.id} className="bg-white rounded-xl p-6 flex flex-col gap-4" style={{ border: '1px solid #E8E0D5' }}>
+                <div key={t.id} className="bg-white rounded-xl p-6 flex flex-col gap-4" style={{ border: '1px solid #CCCCCC' }}>
                   <div className="flex items-center justify-between">
                     <StarRating rating={Math.max(0, Math.min(5, t.rating))} />
-                    <span className="text-[10px] text-[#B0A090]">{timeAgo(typeof t.createdAt === 'string' ? t.createdAt : t.createdAt.toISOString())}</span>
+                    <span className="text-[10px] text-[#525252]">{timeAgo(typeof t.createdAt === 'string' ? t.createdAt : t.createdAt.toISOString())}</span>
                   </div>
-                  <p className="text-[#3D342A] text-sm leading-relaxed flex-1">&ldquo;{t.content}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-2 border-t border-[#F0EAE0]">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ backgroundColor: '#18140D', color: '#C9A96E' }}>
+                  <p className="text-[#0D1A2D] text-sm leading-relaxed flex-1">&ldquo;{t.content}&rdquo;</p>
+                  <div className="flex items-center gap-3 pt-2 border-t border-neutral-200">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ backgroundColor: '#0D1A2D', color: '#B3B3B3' }}>
                       {initials}
                     </div>
-                    <p className="text-sm font-semibold text-[#18140D]">{t.author}</p>
+                    <p className="text-sm font-semibold text-[#0D1A2D]">{t.author}</p>
                   </div>
                 </div>
               )
@@ -137,7 +137,7 @@ export default function TestimoniosPage() {
         )}
 
         <div className="mt-10 text-center">
-          <a href="/" className="text-sm underline text-[#8C7B68] hover:text-[#C9A96E] transition-colors">
+          <a href="/" className="text-sm underline text-[#525252] hover:text-[#0D1A2D] transition-colors">
             ← Volver al inicio
           </a>
         </div>

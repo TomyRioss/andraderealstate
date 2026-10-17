@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -9,8 +9,8 @@ interface Banner {
 }
 
 const inputCls =
-  'w-full border border-[#AED6F1] rounded-xl px-4 py-3 text-sm text-[#0D3B66] focus:outline-none focus:border-[#1A5F9E] focus:ring-1 focus:ring-[#1A5F9E] transition bg-white placeholder:text-[#4A7BA7]'
-const labelCls = 'block text-sm font-medium text-[#0D3B66] mb-1'
+  'w-full border border-neutral-300 rounded-xl px-4 py-3 text-sm text-[#0D1A2D] focus:outline-none focus:border-[#0D1A2D] focus:ring-1 focus:ring-[#0D1A2D] transition bg-white placeholder:text-neutral-500'
+const labelCls = 'block text-sm font-medium text-[#0D1A2D] mb-1'
 
 export default function ContactPageClient() {
   const [name, setName] = useState('')
@@ -40,11 +40,11 @@ export default function ContactPageClient() {
         setMessage('')
       } else {
         const data = await res.json().catch(() => ({}))
-        setBanner({ type: 'error', message: data?.error ?? 'Error al enviar. Intentalo de nuevo.' })
+        setBanner({ type: 'error', message: data?.error ?? 'No se pudo enviar el mensaje. Inténtalo de nuevo.' })
         console.error('[ContactPageClient] API error:', data)
       }
     } catch (err) {
-      setBanner({ type: 'error', message: 'Error de red. Intentalo de nuevo.' })
+      setBanner({ type: 'error', message: 'No fue posible conectar. Inténtalo de nuevo.' })
       console.error('[ContactPageClient] fetch error:', err)
     } finally {
       setLoading(false)
@@ -52,7 +52,7 @@ export default function ContactPageClient() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-[#AED6F1] p-8 max-w-xl w-full mx-auto">
+    <div className="bg-white rounded-2xl shadow-sm border border-[#B3B3B3] p-8 max-w-xl w-full mx-auto">
       {banner && (
         <div
           className={`mb-5 rounded-xl px-4 py-3 text-sm font-medium flex items-center gap-2 ${
@@ -114,7 +114,7 @@ export default function ContactPageClient() {
             onChange={(e) => setInterest(e.target.value)}
             className={inputCls}
           >
-            <option value="">Seleccioná una opción</option>
+            <option value="">Selecciona una opción</option>
             <option value="Comprar propiedad">Comprar propiedad</option>
             <option value="Vender propiedad">Vender propiedad</option>
             <option value="Alquilar propiedad">Alquilar propiedad</option>
@@ -129,7 +129,7 @@ export default function ContactPageClient() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
-            placeholder="Contanos más sobre lo que necesitás..."
+            placeholder="Cuéntanos más sobre lo que necesitas..."
             className={`${inputCls} resize-none`}
           />
         </div>
@@ -137,7 +137,7 @@ export default function ContactPageClient() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#0D3B66] hover:bg-[#1A5F9E] disabled:opacity-60 text-white font-bold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
+          className="w-full bg-[#0D1A2D] hover:bg-[#0D1A2D]/90 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm tracking-wide transition-colors cursor-pointer"
         >
           {loading ? 'Enviando...' : 'Enviar consulta'}
         </Button>

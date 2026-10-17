@@ -1,17 +1,17 @@
-import { prisma } from '@/lib/prisma'
+import { listContactForms } from '@/lib/pocketbase-data'
+import { sortByCreatedAtDescending } from '@/lib/property-search'
 import LeadsTable from '@/components/admin/LeadsTable'
 import { ContactFormEntry } from '@/types'
 
 export default async function LeadsPage() {
-  const [active, archived] = await Promise.all([
-    prisma.contactForm.findMany({ where: { active: true }, orderBy: { createdAt: 'desc' } }),
-    prisma.contactForm.findMany({ where: { active: false }, orderBy: { createdAt: 'desc' } }),
-  ])
+  const entries = sortByCreatedAtDescending(await listContactForms())
+  const active = entries.filter((entry) => entry.active)
+  const archived = entries.filter((entry) => !entry.active)
 
   return (
     <div className="flex flex-col h-full">
       <div className="px-6 py-5">
-        <h1 className="text-3xl font-light" style={{ color: '#18140D', fontFamily: 'Georgia, serif' }}>Leads</h1>
+        <h1 className="font-heading text-3xl font-medium text-[#0D1A2D]">Leads</h1>
       </div>
       <LeadsTable leads={active as unknown as ContactFormEntry[]} archived={archived as unknown as ContactFormEntry[]} />
     </div>

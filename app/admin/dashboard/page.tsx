@@ -1,4 +1,6 @@
-import { prisma } from '@/lib/prisma'
+import { listContactForms, listProperties, listTestimonials } from '@/lib/pocketbase-data'
+import { sortByCreatedAtDescending } from '@/lib/property-search'
+import type { ContactFormEntry } from '@/types'
 import Link from 'next/link'
 
 function getGreeting() {
@@ -34,18 +36,16 @@ export default async function DashboardPage() {
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [activeProperties, pendingLeads, pendingTestimonials, thisMonthProperties, recentLeads] =
-    await Promise.all([
-      prisma.property.count({ where: { active: true } }),
-      prisma.contactForm.count({ where: { status: 'PENDING' } }),
-      prisma.testimonial.count({ where: { status: 'PENDING' } }),
-      prisma.property.count({ where: { createdAt: { gte: startOfMonth } } }),
-      prisma.contactForm.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 6,
-        select: { id: true, name: true, phone: true, type: true, status: true, createdAt: true },
-      }),
-    ])
+  const [properties, contactForms, testimonials] = await Promise.all([
+    listProperties(),
+    listContactForms(),
+    listTestimonials(),
+  ])
+  const activeProperties = properties.filter((property) => property.active).length
+  const pendingLeads = contactForms.filter((entry) => entry.status === 'PENDING').length
+  const pendingTestimonials = testimonials.filter((entry) => entry.status === 'PENDING').length
+  const thisMonthProperties = properties.filter((property) => new Date(property.createdAt).getTime() >= startOfMonth.getTime()).length
+  const recentLeads = sortByCreatedAtDescending(contactForms).slice(0, 6)
 
   const stats = [
     {
@@ -106,13 +106,13 @@ export default async function DashboardPage() {
     <div>
       {/* Header */}
       <div className="mb-10">
-        <p className="text-xs tracking-[0.15em] uppercase mb-1" style={{ color: '#4A7BA7' }}>
+        <p className="text-xs tracking-[0.15em] uppercase mb-1" style={{ color: '#525252' }}>
           {month}
         </p>
-        <h1 className="text-3xl font-light mb-0.5" style={{ color: '#0D3B66', fontFamily: 'Georgia, serif' }}>
+        <h1 className="font-heading text-3xl font-medium mb-0.5 text-[#0D1A2D]">
           {getGreeting()}
         </h1>
-        <p className="text-sm" style={{ color: '#4A7BA7' }}>Resumen general del panel</p>
+        <p className="text-sm" style={{ color: '#525252' }}>Resumen general del panel</p>
       </div>
 
       {/* Stats grid */}
@@ -123,16 +123,16 @@ export default async function DashboardPage() {
               className="rounded-xl p-6 flex flex-col justify-between gap-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer h-full"
               style={{
                 backgroundColor: '#fff',
-                border: stat.urgent ? '1px solid #AED6F1' : '1px solid #AED6F1',
-                borderLeft: stat.urgent ? '3px solid #1A5F9E' : '1px solid #AED6F1',
+                border: stat.urgent ? '1px solid #B3B3B3' : '1px solid #B3B3B3',
+                borderLeft: stat.urgent ? '3px solid #0D1A2D' : '1px solid #B3B3B3',
               }}
             >
               <div className="flex items-start justify-between">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center"
                   style={{
-                    backgroundColor: stat.urgent ? 'rgba(26,95,158,0.1)' : '#E8F4FD',
-                    color: stat.urgent ? '#1A5F9E' : '#4A7BA7',
+                    backgroundColor: stat.urgent ? 'rgba(13,26,45,0.08)' : '#F8F8F8',
+                    color: stat.urgent ? '#0D1A2D' : '#525252',
                   }}
                 >
                   {stat.icon}
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
                 {stat.urgent && (
                   <span
                     className="text-[10px] font-semibold tracking-[0.1em] uppercase px-2 py-1 rounded-full"
-                    style={{ backgroundColor: 'rgba(26,95,158,0.1)', color: '#1A5F9E' }}
+                    style={{ backgroundColor: 'rgba(13,26,45,0.08)', color: '#0D1A2D' }}
                   >
                     Pendiente
                   </span>
@@ -148,12 +148,11 @@ export default async function DashboardPage() {
               </div>
               <div>
                 <p
-                  className="text-5xl font-light leading-none mb-2"
-                  style={{ color: stat.urgent ? '#1A5F9E' : '#0D3B66', fontFamily: 'Georgia, serif' }}
+                  className="font-heading text-5xl font-medium leading-none mb-2 text-[#0D1A2D]"
                 >
                   {stat.value}
                 </p>
-                <p className="text-xs font-medium tracking-wide" style={{ color: '#4A7BA7' }}>
+                <p className="text-xs font-medium tracking-wide" style={{ color: '#525252' }}>
                   {stat.label}
                 </p>
               </div>
@@ -164,14 +163,14 @@ export default async function DashboardPage() {
 
       {/* Quick actions */}
       <div className="mb-10">
-        <p className="text-xs tracking-[0.15em] uppercase mb-4" style={{ color: '#4A7BA7' }}>
+        <p className="text-xs tracking-[0.15em] uppercase mb-4" style={{ color: '#525252' }}>
           Acciones rápidas
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
             href="/admin/propiedades/nueva"
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 hover:opacity-80 text-white"
-            style={{ backgroundColor: '#0D3B66' }}
+            style={{ backgroundColor: '#0D1A2D' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
@@ -181,14 +180,14 @@ export default async function DashboardPage() {
           <Link
             href="/admin/leads"
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 hover:opacity-80"
-            style={{ backgroundColor: '#E8F4FD', color: '#0D3B66', border: '1px solid #AED6F1' }}
+            style={{ backgroundColor: '#F8F8F8', color: '#0D1A2D', border: '1px solid #B3B3B3' }}
           >
             Ver leads
           </Link>
           <Link
             href="/admin/testimonios"
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 hover:opacity-80"
-            style={{ backgroundColor: '#E8F4FD', color: '#0D3B66', border: '1px solid #AED6F1' }}
+            style={{ backgroundColor: '#F8F8F8', color: '#0D1A2D', border: '1px solid #B3B3B3' }}
           >
             Ver testimonios
           </Link>
@@ -198,10 +197,10 @@ export default async function DashboardPage() {
       {/* Recent leads */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xs tracking-[0.15em] uppercase" style={{ color: '#4A7BA7' }}>
+          <p className="text-xs tracking-[0.15em] uppercase" style={{ color: '#525252' }}>
             Leads recientes
           </p>
-          <Link href="/admin/leads" className="text-xs font-medium transition-colors hover:opacity-70" style={{ color: '#1A5F9E' }}>
+            <Link href="/admin/leads" className="text-xs font-medium text-[#0D1A2D] transition-colors hover:opacity-70">
             Ver todos →
           </Link>
         </div>
@@ -209,43 +208,43 @@ export default async function DashboardPage() {
         {recentLeads.length === 0 ? (
           <div
             className="rounded-xl p-8 text-center text-sm"
-            style={{ backgroundColor: '#fff', border: '1px solid #AED6F1', color: '#4A7BA7' }}
+            style={{ backgroundColor: '#fff', border: '1px solid #B3B3B3', color: '#525252' }}
           >
             No hay leads registrados aún.
           </div>
         ) : (
-          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #AED6F1' }}>
+          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #B3B3B3' }}>
             <table className="w-full text-sm">
               <thead>
-                <tr style={{ backgroundColor: '#E8F4FD', borderBottom: '1px solid #AED6F1' }}>
-                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide" style={{ color: '#4A7BA7' }}>Nombre</th>
-                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide" style={{ color: '#4A7BA7' }}>Teléfono</th>
-                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide hidden sm:table-cell" style={{ color: '#4A7BA7' }}>Tipo</th>
-                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide" style={{ color: '#4A7BA7' }}>Estado</th>
-                  <th className="text-right px-5 py-3 font-medium text-xs tracking-wide hidden md:table-cell" style={{ color: '#4A7BA7' }}>Recibido</th>
+                <tr style={{ backgroundColor: '#F8F8F8', borderBottom: '1px solid #B3B3B3' }}>
+                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide" style={{ color: '#525252' }}>Nombre</th>
+                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide" style={{ color: '#525252' }}>Teléfono</th>
+                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide hidden sm:table-cell" style={{ color: '#525252' }}>Tipo</th>
+                  <th className="text-left px-5 py-3 font-medium text-xs tracking-wide" style={{ color: '#525252' }}>Estado</th>
+                  <th className="text-right px-5 py-3 font-medium text-xs tracking-wide hidden md:table-cell" style={{ color: '#525252' }}>Recibido</th>
                 </tr>
               </thead>
               <tbody style={{ backgroundColor: '#fff' }}>
-                {recentLeads.map((lead, i) => (
-                  <tr key={lead.id} style={{ borderBottom: i < recentLeads.length - 1 ? '1px solid #E8F4FD' : 'none' }}>
-                    <td className="px-5 py-3.5 font-medium" style={{ color: '#0D3B66' }}>{lead.name ?? '—'}</td>
-                    <td className="px-5 py-3.5" style={{ color: '#4A7BA7' }}>{lead.phone}</td>
-                    <td className="px-5 py-3.5 hidden sm:table-cell" style={{ color: '#4A7BA7' }}>{TYPE_LABEL[lead.type] ?? lead.type}</td>
+                {recentLeads.map((lead: ContactFormEntry, i: number) => (
+                  <tr key={lead.id} style={{ borderBottom: i < recentLeads.length - 1 ? '1px solid #F8F8F8' : 'none' }}>
+                    <td className="px-5 py-3.5 font-medium" style={{ color: '#0D1A2D' }}>{lead.name ?? '—'}</td>
+                    <td className="px-5 py-3.5" style={{ color: '#525252' }}>{lead.phone}</td>
+                    <td className="px-5 py-3.5 hidden sm:table-cell" style={{ color: '#525252' }}>{TYPE_LABEL[lead.type] ?? lead.type}</td>
                     <td className="px-5 py-3.5">
                       <span
                         className="text-[11px] font-semibold tracking-wide px-2.5 py-1 rounded-full"
                         style={
                           lead.status === 'PENDING'
-                            ? { backgroundColor: 'rgba(26,95,158,0.1)', color: '#1A5F9E' }
+                            ? { backgroundColor: 'rgba(13,26,45,0.08)', color: '#0D1A2D' }
                             : lead.status === 'CONTACTED'
                             ? { backgroundColor: 'rgba(100,160,120,0.12)', color: '#3A8A5A' }
-                            : { backgroundColor: '#E8F4FD', color: '#4A7BA7' }
+                            : { backgroundColor: '#F8F8F8', color: '#525252' }
                         }
                       >
                         {STATUS_LABEL[lead.status] ?? lead.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-right hidden md:table-cell text-xs" style={{ color: '#4A7BA7' }}>
+                    <td className="px-5 py-3.5 text-right hidden md:table-cell text-xs" style={{ color: '#525252' }}>
                       {timeAgo(new Date(lead.createdAt))}
                     </td>
                   </tr>

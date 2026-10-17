@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -16,6 +16,7 @@ const CATS_RENT: CategoryOption[] = [
   { value: 'HOUSE', label: 'Casa' },
   { value: 'APARTMENT', label: 'Departamento' },
   { value: 'COMMERCIAL', label: 'Oficina' },
+  { value: 'VACATION_STAY', label: 'Estancia vacacional' },
 ]
 
 function getCategoriesForType(type: string): CategoryOption[] | null {
@@ -27,6 +28,7 @@ function getCategoriesForType(type: string): CategoryOption[] | null {
     { value: 'APARTMENT', label: 'Departamento' },
     { value: 'LAND', label: 'Terreno' },
     { value: 'COMMERCIAL', label: 'Comercial / Oficina' },
+    { value: 'VACATION_STAY', label: 'Estancia vacacional' },
   ]
 }
 
@@ -126,11 +128,11 @@ export default function PropertyFilters({
     push({ [field]: value })
   }
 
-  const inputCls = 'border border-[#E0D9CF] bg-white rounded-lg px-3 py-2 text-sm text-[#18140D] outline-none focus:ring-2 focus:ring-[#B07030] placeholder:text-[#A89880]'
-  const labelCls = 'text-xs font-medium text-[#8C7B68] mb-1'
+  const inputCls = 'border border-neutral-300 bg-white rounded-lg px-3 py-2 text-sm text-[#0D1A2D] outline-none focus:ring-2 focus:ring-[#0D1A2D] placeholder:text-neutral-500'
+  const labelCls = 'text-xs font-medium text-[#525252] mb-1'
 
   return (
-    <div className="w-full bg-white border border-[#E8E2D9] rounded-xl p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-3 md:items-end">
+    <div className="w-full bg-white border border-[#CCCCCC] rounded-xl p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:gap-3 md:items-end">
       {/* Search */}
       <div className="flex flex-col flex-1 min-w-[160px]">
         <label className={labelCls}>Buscar</label>
@@ -232,7 +234,7 @@ export default function PropertyFilters({
       <div className="flex items-end">
         <Button
           variant="outline"
-          className="border-[#E8E2D9] text-[#5C5047] hover:bg-[#18140D] hover:text-white hover:border-[#18140D] text-sm"
+          className="border-neutral-300 text-[#0D1A2D] hover:bg-[#0D1A2D] hover:text-white hover:border-[#0D1A2D] text-sm"
           onClick={() => {
             setSearchVal('')
             setCityVal('')
