@@ -42,8 +42,8 @@ export default async function LandingPage() {
       <BrandSection properties={brandProperties} />
       <PropertiesSection title="Propiedades en Venta" properties={saleProps} />
       <PropertiesSection title="Propiedades en Renta" properties={rentProps} />
-      <PropertiesSection title="Desarrollos" properties={devProps} />
       <PropertiesSection title="Estancias vacacionales" properties={vacationProps} href="/propiedades?category=VACATION_STAY" />
+      <PropertiesSection title="Desarrollos" properties={devProps} />
       <ContactSection />
       <TestimonialsSection testimonials={testimonials} />
       <Footer />
