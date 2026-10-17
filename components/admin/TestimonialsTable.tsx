@@ -51,7 +51,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm('¿Eliminar este testimonio?')) return
+    if (!window.confirm('Â¿Eliminar este testimonio?')) return
     setLoading(`${id}-delete`)
     try {
       const res = await fetch(`${BASE}/api/testimonials/${id}`, { method: 'DELETE' })
@@ -89,7 +89,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
   const stars = (n: number) => '?'.repeat(Math.max(0, Math.min(5, n))) + '?'.repeat(Math.max(0, 5 - n))
   const fmtDate = (d: string | Date) =>
     new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
-  const truncate = (s: string, max = 80) => s.length > max ? s.slice(0, max) + '…' : s
+  const truncate = (s: string, max = 80) => s.length > max ? s.slice(0, max) + 'â€¦' : s
 
   return (
     <>
@@ -114,7 +114,7 @@ export default function TestimonialsTable({ testimonials: initial, archived: ini
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-[#0D1A2D] text-[#B3B3B3]">
-              {['Autor', 'Rating', 'Reseña', 'Fecha', 'Status', 'Acciones'].map((h) => (
+              {['Autor', 'Rating', 'ReseÃ±a', 'Fecha', 'Status', 'Acciones'].map((h) => (
                 <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>
               ))}
             </tr>

@@ -107,9 +107,7 @@ export default function PropertiesSection({ title, properties, href = '/propieda
             </p>
             <Link
               href="/contacto"
-              className={`shrink-0 text-sm font-semibold underline decoration-current underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 ${
-                isRent ? 'focus-visible:outline-[#B3B3B3]' : 'focus-visible:outline-[#0D1A2D]'
-              }`}
+              className="shrink-0 text-sm font-semibold underline decoration-current underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B3B3B3]"
             >
               Solicitar orientación
             </Link>

@@ -135,7 +135,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
           <tbody>
             {users.map((u, i) => (
               <tr key={u.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                <td className="px-4 py-3 font-medium text-slate-800">{u.name ?? '—'}</td>
+                <td className="px-4 py-3 font-medium text-slate-800">{u.name ?? 'â€”'}</td>
                 <td className="px-4 py-3 text-slate-600">{u.email}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'SUPER_ADMIN' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
@@ -172,7 +172,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
           <div key={u.id} className="bg-white rounded-xl shadow p-4 flex flex-col gap-2">
             <div className="flex justify-between items-start">
               <div>
-                <div className="font-semibold text-slate-800">{u.name ?? '—'}</div>
+                <div className="font-semibold text-slate-800">{u.name ?? 'â€”'}</div>
                 <div className="text-xs text-slate-500">{u.email}</div>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs font-semibold ${u.role === 'SUPER_ADMIN' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
@@ -223,7 +223,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-500">
-                  {modal === 'edit' ? 'Contraseña (vacío = no cambiar)' : 'Contraseña *'}
+                  {modal === 'edit' ? 'ContraseÃ±a (vacÃ­o = no cambiar)' : 'ContraseÃ±a *'}
                 </label>
                 <input
                   required={modal === 'create'}
@@ -231,7 +231,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
                   className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:ring-2 focus:ring-[#B3B3B3]"
                   value={form.password}
                   onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                  placeholder="••••••••"
+                  placeholder="********"
                 />
               </div>
               {isSuperAdmin && (
@@ -263,9 +263,7 @@ export default function UsersTable({ users: initial, sessionRole, sessionId }: P
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setDeleteTarget(null)}>
           <div className="w-full max-w-sm rounded-2xl p-6 shadow-xl bg-white" onClick={e => e.stopPropagation()}>
             <h2 className="font-heading text-lg font-medium mb-2 text-[#0D1A2D]">Eliminar usuario</h2>
-            <p className="text-sm mb-5 text-slate-600">
-              ¿Confirmás que querés eliminar a <strong>{deleteTarget.name ?? deleteTarget.email}</strong>? Esta acción no se puede deshacer.
-            </p>
+            <p className="text-sm mb-5 text-slate-600">Â¿ConfirmÃ¡s que querÃ©s eliminar a <strong>{deleteTarget.name ?? deleteTarget.email}</strong>? Esta acciÃ³n no se puede deshacer.</p>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
               <Button variant="destructive" disabled={loading} onClick={handleDelete}>
