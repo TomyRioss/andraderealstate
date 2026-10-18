@@ -23,6 +23,69 @@ enum Role {
   SUPER_ADMIN
 }
 
+model Property {
+  id           String          @id @default(cuid())
+  title        String
+  slug         String          @unique
+  description  String
+  address      String
+  city         String
+  state        String
+  zipCode      String?
+  lat          Float?
+  lng          Float?
+  contractType ContractType
+  category     PropertyCategory
+  priceMXN     Float?
+  priceUSD     Float?
+  priceVisible Boolean         @default(true)
+  bedrooms     Int?
+  bathrooms    Int?
+  halfBaths    Int?
+  parkingSpots Int?
+  areaSqm      Float?
+  landAreaSqm  Float?
+  floors       Int?
+  yearBuilt    Int?
+  photos       String[]
+  videoUrl     String?
+  mapsUrl      String?
+  whatsapp     String?
+  amenities    String[]
+  features     String[]
+  active       Boolean         @default(true)
+  featured     Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model ContactForm {
+  id        String     @id @default(cuid())
+  type      FormType
+  name      String?
+  phone     String
+  email     String
+  address   String?
+  photos    String[]
+  status    LeadStatus @default(PENDING)
+  notes     String?
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Testimonial {
+  id        String            @id @default(cuid())
+  author    String
+  location  String?
+  rating    Int
+  content   String
+  status    TestimonialStatus @default(PENDING)
+  active    Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
 model Category {
   id       String     @id @default(cuid())
   name     String
@@ -37,6 +100,8 @@ model Category {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("WeddingCategory")
 }
 
 model Subcategory {
@@ -122,4 +187,40 @@ model WeddingQuoteItem {
   item       Product      @relation(fields: [itemId], references: [id])
   quantity   Int          @default(1)
   priceAtAdd Float
+}
+
+enum ContractType {
+  SALE
+  RENT
+  DEVELOPMENT
+}
+
+enum PropertyCategory {
+  HOUSE
+  APARTMENT
+  LAND
+  COMMERCIAL
+  DEVELOPMENT_PROJECT
+  OTHER
+
+  @@map("Category")
+}
+
+enum FormType {
+  BUY
+  SELL
+  MANAGE
+}
+
+enum LeadStatus {
+  PENDING
+  CONTACTED
+  CLOSED
+  DISCARDED
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
