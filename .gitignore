@@ -58,3 +58,7 @@ next-env.d.ts
 /andrade_realstate@0.1.0
 /next
 /npm
+
+# Playwright output and temporary local scripts
+/.playwright-mcp/
+/scratch_q2.js
