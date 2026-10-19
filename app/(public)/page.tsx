@@ -5,7 +5,6 @@ import BrandSection from '@/components/landing/BrandSection'
 import PropertiesSection from '@/components/landing/PropertiesSection'
 import TestimonialsSection from '@/components/landing/TestimonialsSection'
 import ContactSection from '@/components/landing/ContactSection'
-import Footer from '@/components/landing/Footer'
 import JsonLd from '@/components/landing/JsonLd'
 import { listProperties, listTestimonials } from '@/lib/pocketbase-data'
 import { sortByCreatedAtDescending } from '@/lib/property-search'
@@ -46,7 +45,6 @@ export default async function LandingPage() {
       <PropertiesSection title="Desarrollos" properties={devProps} />
       <ContactSection />
       <TestimonialsSection testimonials={testimonials} />
-      <Footer />
     </>
   )
 }
